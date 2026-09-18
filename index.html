@@ -5793,7 +5793,511 @@ html.dark #home .homeHeroDashboard * {
 
 
 <!-- v1.27.1: history percentage is text, never a colored square. -->
+
+<style id="themePackageV133Final">
+/* V1.33 — NEW THEME PACKAGE SCREEN
+   Visual-only: package navigation/data/loading logic untouched.
+   Rule: canvas = solid white/black; package accents = solid orange only.
+*/
+#packagesScreen,
+body:not(.dark) #packagesScreen,
+body.dark #packagesScreen{
+  background:#fff!important;
+  background-image:none!important;
+}
+body.dark #packagesScreen{background:#000!important;}
+#packagesScreen:before,#packagesScreen:after,
+body.dark #packagesScreen:before,body.dark #packagesScreen:after{
+  display:none!important;
+  content:none!important;
+  background:none!important;
+  background-image:none!important;
+  opacity:0!important;
+}
+
+/* Header */
+#packagesScreen .packagePageHead{background:transparent!important;background-image:none!important;}
+#packagesScreen .packagePageHead:after{display:none!important;content:none!important;}
+#packagesScreen .packagePageHead .sectionKicker,
+body.dark #packagesScreen .packagePageHead .sectionKicker{
+  color:#ff6548!important;
+  background:none!important;
+  -webkit-text-fill-color:#ff6548!important;
+}
+#packagesScreen .packagePageHead h2,
+body.dark #packagesScreen .packagePageHead h2{
+  color:#17181b!important;
+  background:none!important;
+  -webkit-text-fill-color:#17181b!important;
+}
+body.dark #packagesScreen .packagePageHead h2{color:#f4f4f5!important;-webkit-text-fill-color:#f4f4f5!important;}
+#packagesScreen .packagePageHead .sub{color:#667085!important;}
+body.dark #packagesScreen .packagePageHead .sub{color:#a3a5aa!important;}
+
+/* Search */
+#packagesScreen .packageSearchBox,
+body.dark #packagesScreen .packageSearchBox{
+  background:#fff!important;
+  background-image:none!important;
+  border:1.5px solid #d9dde3!important;
+  box-shadow:none!important;
+}
+#packagesScreen .packageSearchBox:focus-within{border-color:#ff6548!important;}
+#packagesScreen .packageSearchBox .ico{color:#ff6548!important;}
+#packagesScreen .packageSearchBox input{color:#17181b!important;}
+#packagesScreen .packageSearchBox input::placeholder{color:#8a93a1!important;}
+body.dark #packagesScreen .packageSearchBox{
+  background:#111214!important;
+  border-color:#2b2c30!important;
+}
+body.dark #packagesScreen .packageSearchBox:focus-within{border-color:#ff6548!important;}
+body.dark #packagesScreen .packageSearchBox input{color:#f4f4f5!important;}
+body.dark #packagesScreen .packageSearchBox input::placeholder{color:#8f9299!important;}
+
+/* Package cards — one visual language for every package. */
+#packagesGrid .packageTile,
+#packagesGrid .packageTile.packageTileShell,
+#packagesGrid .packageTileMain{
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+#packagesGrid .packageTile{
+  background:#fff!important;
+  background-image:none!important;
+  border:1px solid #dfe3e8!important;
+  color:#17181b!important;
+  border-radius:24px!important;
+  overflow:hidden!important;
+}
+#packagesGrid .packageTile:hover{
+  transform:none!important;
+  border-color:#ff6548!important;
+  box-shadow:none!important;
+}
+#packagesGrid .packageTileMain{background:transparent!important;background-image:none!important;}
+
+/* Remove old multicolor variants everywhere inside package cards. */
+#packagesGrid .packageTile-blue,
+#packagesGrid .packageTile-purple,
+#packagesGrid .packageTile-orange,
+#packagesGrid .packageTile-pink,
+#packagesGrid .packageTile-green{
+  --accent:#ff6548!important;
+  --accentSoft:#fff0ec!important;
+}
+#packagesGrid .packageHanziIcon,
+#packagesGrid .pkgHanziIcon,
+#packagesGrid .tileIcon{
+  background:#fff0ec!important;
+  background-image:none!important;
+  color:#ff6548!important;
+}
+#packagesGrid .packageHanziIcon span,
+#packagesGrid .pkgHanziIcon span,
+#packagesGrid .packageHanziIcon:before,
+#packagesGrid .pkgHanziIcon:before{color:#ff6548!important;}
+#packagesGrid .statusPill,
+#packagesGrid .statusPillV6{
+  background:#fff0ec!important;
+  background-image:none!important;
+  color:#ff6548!important;
+}
+#packagesGrid .statusDot,
+#packagesGrid .statusPillV6 i{background:#ff6548!important;}
+#packagesGrid .pkgLevelLabel,
+#packagesGrid .packageIndexV6{color:#ff6548!important;}
+#packagesGrid .pkgArrow{
+  background:#fff0ec!important;
+  background-image:none!important;
+  color:#ff6548!important;
+}
+#packagesGrid .pkgMetaChip,
+#packagesGrid .tagV12{
+  background:#fff0ec!important;
+  background-image:none!important;
+  color:#ff6548!important;
+}
+#packagesGrid .packageTile .progressBar,
+#packagesGrid .progressBarV12{
+  background:#e7e9ec!important;
+  background-image:none!important;
+}
+#packagesGrid .packageTile .progressBar .fill,
+#packagesGrid .fillV12{
+  background:#ff6548!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+#packagesGrid .pkgChartDecor,
+#packagesGrid .cardOrnamentV15{display:none!important;}
+
+/* Card typography */
+#packagesGrid .pkgIdentity b,
+#packagesGrid .titleV12{color:#17181b!important;background:none!important;-webkit-text-fill-color:#17181b!important;}
+#packagesGrid .pkgIdentity small,
+#packagesGrid .descV12,
+#packagesGrid .pkgFooter,
+#packagesGrid .progressMetaV12{color:#667085!important;}
+body.dark #packagesGrid .packageTile{
+  background:#111214!important;
+  background-image:none!important;
+  border-color:#2b2c30!important;
+  color:#f4f4f5!important;
+}
+body.dark #packagesGrid .packageTileMain{background:transparent!important;background-image:none!important;}
+body.dark #packagesGrid .packageTile-blue,
+body.dark #packagesGrid .packageTile-purple,
+body.dark #packagesGrid .packageTile-orange,
+body.dark #packagesGrid .packageTile-pink,
+body.dark #packagesGrid .packageTile-green{
+  --accent:#ff7658!important;
+  --accentSoft:#2a1b18!important;
+}
+body.dark #packagesGrid .packageHanziIcon,
+body.dark #packagesGrid .pkgHanziIcon,
+body.dark #packagesGrid .tileIcon,
+body.dark #packagesGrid .statusPill,
+body.dark #packagesGrid .statusPillV6,
+body.dark #packagesGrid .pkgArrow,
+body.dark #packagesGrid .pkgMetaChip,
+body.dark #packagesGrid .tagV12{
+  background:#2a1b18!important;
+  background-image:none!important;
+  color:#ff7658!important;
+}
+body.dark #packagesGrid .packageHanziIcon span,
+body.dark #packagesGrid .pkgHanziIcon span,
+body.dark #packagesGrid .packageHanziIcon:before,
+body.dark #packagesGrid .pkgHanziIcon:before,
+body.dark #packagesGrid .pkgLevelLabel,
+body.dark #packagesGrid .packageIndexV6{color:#ff7658!important;}
+body.dark #packagesGrid .statusDot,
+body.dark #packagesGrid .statusPillV6 i{background:#ff7658!important;}
+body.dark #packagesGrid .packageTile .progressBar,
+body.dark #packagesGrid .progressBarV12{background:#242529!important;background-image:none!important;}
+body.dark #packagesGrid .packageTile .progressBar .fill,
+body.dark #packagesGrid .fillV12{background:#ff7658!important;background-image:none!important;}
+body.dark #packagesGrid .pkgIdentity b,
+body.dark #packagesGrid .titleV12{color:#f4f4f5!important;-webkit-text-fill-color:#f4f4f5!important;}
+body.dark #packagesGrid .pkgIdentity small,
+body.dark #packagesGrid .descV12,
+body.dark #packagesGrid .pkgFooter,
+body.dark #packagesGrid .progressMetaV12{color:#a3a5aa!important;}
+
+/* Mobile: clean editorial card proportions. */
+@media(max-width:760px){
+  #packagesScreen{padding-top:22px!important;}
+  #packagesScreen .packagePageHead{margin:8px 0 20px!important;}
+  #packagesScreen .packagePageHead h2{font-size:38px!important;letter-spacing:-1.8px!important;}
+  #packagesScreen .packagePageHead .sub{font-size:15px!important;}
+  #packagesScreen .packageSearchBox{height:54px!important;border-radius:18px!important;}
+  #packagesGrid{gap:14px!important;}
+  #packagesGrid .packageTile{min-height:0!important;padding:16px!important;border-radius:22px!important;}
+  #packagesGrid .packageTile .pkgTop{min-height:48px!important;}
+  #packagesGrid .packageHanziIcon,#packagesGrid .pkgHanziIcon,#packagesGrid .tileIcon{width:52px!important;height:52px!important;min-width:52px!important;border-radius:14px!important;}
+  #packagesGrid .packageHanziIcon span,#packagesGrid .pkgHanziIcon span{font-size:40px!important;}
+  #packagesGrid .statusPill,#packagesGrid .statusPillV6{padding:7px 10px!important;font-size:10px!important;}
+  #packagesGrid .pkgTitleRow{margin-top:14px!important;}
+  #packagesGrid .pkgIdentity b,#packagesGrid .titleV12{font-size:22px!important;}
+  #packagesGrid .pkgArrow{width:42px!important;height:42px!important;flex-basis:42px!important;}
+  #packagesGrid .pkgArrow .ico{font-size:23px!important;}
+  #packagesGrid .packageTile .progressWrap,#packagesGrid .progressV12{margin-top:15px!important;}
+}
+</style>
 </body>
+
+<style id="packageCardAppliedFinal">
+/* Final package-card application: preserve the existing visual language,
+   restore alternating warm/cool accent washes, and remove the Hanzi box. */
+#packagesGrid .packageTile{
+  position:relative!important;
+  overflow:hidden!important;
+  background:linear-gradient(110deg,#ffffff 0%,#ffffff 57%,#fff1ec 100%)!important;
+  border:1px solid #dfe3e8!important;
+  border-radius:24px!important;
+  box-shadow:none!important;
+}
+#packagesGrid .packageTile:nth-child(even){
+  background:linear-gradient(110deg,#ffffff 0%,#ffffff 57%,#f0f4ff 100%)!important;
+}
+#packagesGrid .packageTile::after{
+  content:""!important;
+  position:absolute!important;
+  width:150px!important;
+  height:150px!important;
+  right:-70px!important;
+  bottom:-72px!important;
+  border-radius:50%!important;
+  background:radial-gradient(circle,rgba(255,101,72,.13) 0%,rgba(255,101,72,0) 72%)!important;
+  pointer-events:none!important;
+}
+#packagesGrid .packageTile:nth-child(even)::after{
+  background:radial-gradient(circle,rgba(112,132,196,.13) 0%,rgba(112,132,196,0) 72%)!important;
+}
+#packagesGrid .packageTileMain{position:relative!important;z-index:2!important;}
+
+/* Hanzi: no square/tile behind the character. */
+#packagesGrid .packageHanziIcon,
+#packagesGrid .pkgHanziIcon,
+#packagesGrid .tileIcon{
+  width:auto!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  color:#ff6548!important;
+  overflow:visible!important;
+  box-shadow:none!important;
+}
+#packagesGrid .packageHanziIcon span,
+#packagesGrid .pkgHanziIcon span,
+#packagesGrid .pkgHanziIcon::before,
+#packagesGrid .tileIcon::before{
+  display:block!important;
+  font-family:"Ma Shan Zheng","Noto Serif SC",serif!important;
+  font-size:50px!important;
+  font-weight:400!important;
+  font-style:normal!important;
+  line-height:.9!important;
+  letter-spacing:0!important;
+  color:#ff6548!important;
+  text-shadow:none!important;
+}
+#packagesGrid .packageTile:nth-child(even) .packageHanziIcon span,
+#packagesGrid .packageTile:nth-child(even) .pkgHanziIcon span,
+#packagesGrid .packageTile:nth-child(even) .pkgHanziIcon::before,
+#packagesGrid .packageTile:nth-child(even) .tileIcon::before{
+  color:#765fc7!important;
+}
+
+/* Alternating accent system: warm / cool / warm / cool. */
+#packagesGrid .packageTile:nth-child(odd){
+  --accent:#ff6548!important;
+  --accentSoft:#fff0ec!important;
+}
+#packagesGrid .packageTile:nth-child(even){
+  --accent:#765fc7!important;
+  --accentSoft:#f0edff!important;
+}
+#packagesGrid .packageTile .statusPill,
+#packagesGrid .packageTile .pkgArrow,
+#packagesGrid .packageTile .pkgMetaChip{
+  background:var(--accentSoft)!important;
+  color:var(--accent)!important;
+}
+#packagesGrid .packageTile .statusDot{background:var(--accent)!important;}
+#packagesGrid .packageTile .pkgArrow{box-shadow:none!important;}
+#packagesGrid .packageTile .progressBar .fill{
+  background:#ff6548!important;
+  background-image:none!important;
+}
+#packagesGrid .packageTile .progressBar{
+  background:#e7e9ec!important;
+  background-image:none!important;
+}
+
+/* Typography proportions: title first, metadata lighter and tighter. */
+#packagesGrid .packageTile .pkgTitleRow{margin-top:12px!important;}
+#packagesGrid .packageTile .pkgIdentity b,
+#packagesGrid .packageTile .titleV12{
+  font-size:23px!important;
+  line-height:1.12!important;
+  letter-spacing:-.6px!important;
+  font-weight:900!important;
+}
+#packagesGrid .packageTile .pkgIdentity small,
+#packagesGrid .packageTile .descV12{
+  margin-top:6px!important;
+  font-size:12px!important;
+  line-height:1.35!important;
+}
+#packagesGrid .packageTile .progressWrap{margin-top:15px!important;}
+#packagesGrid .packageTile .pkgFooter{margin-top:8px!important;font-size:11px!important;}
+
+/* Dark mode mirrors the exact same geometry; only surfaces/colors change. */
+body.dark #packagesGrid .packageTile{
+  background:linear-gradient(110deg,#111214 0%,#111214 57%,#21130f 100%)!important;
+  border-color:#2b2c30!important;
+}
+body.dark #packagesGrid .packageTile:nth-child(even){
+  background:linear-gradient(110deg,#111214 0%,#111214 57%,#111522 100%)!important;
+}
+body.dark #packagesGrid .packageTile::after{
+  background:radial-gradient(circle,rgba(255,101,72,.16) 0%,rgba(255,101,72,0) 72%)!important;
+}
+body.dark #packagesGrid .packageTile:nth-child(even)::after{
+  background:radial-gradient(circle,rgba(118,95,199,.16) 0%,rgba(118,95,199,0) 72%)!important;
+}
+body.dark #packagesGrid .packageTile:nth-child(odd){
+  --accent:#ff7658!important;
+  --accentSoft:#2a1b18!important;
+}
+body.dark #packagesGrid .packageTile:nth-child(even){
+  --accent:#a78bfa!important;
+  --accentSoft:#282337!important;
+}
+body.dark #packagesGrid .packageHanziIcon span,
+body.dark #packagesGrid .pkgHanziIcon span,
+body.dark #packagesGrid .pkgHanziIcon::before,
+body.dark #packagesGrid .tileIcon::before{color:var(--accent)!important;}
+body.dark #packagesGrid .packageTile .progressBar{background:#242529!important;}
+body.dark #packagesGrid .packageTile .progressBar .fill{background:#ff7658!important;}
+
+@media(max-width:760px){
+  #packagesGrid .packageTile{padding:16px!important;border-radius:22px!important;}
+  #packagesGrid .packageHanziIcon,
+  #packagesGrid .pkgHanziIcon,
+  #packagesGrid .tileIcon{width:auto!important;height:auto!important;min-width:0!important;}
+  #packagesGrid .packageHanziIcon span,
+  #packagesGrid .pkgHanziIcon span,
+  #packagesGrid .pkgHanziIcon::before,
+  #packagesGrid .tileIcon::before{font-size:46px!important;}
+  #packagesGrid .packageTile .pkgTitleRow{margin-top:10px!important;}
+  #packagesGrid .packageTile .pkgIdentity b,
+  #packagesGrid .packageTile .titleV12{font-size:22px!important;}
+}
+</style>
+
+<style id="packageCardIconCleanGradientV2">
+/* V2 — definitive package-card correction
+   1) Hanzi is pure typography: no box/background/pill/border.
+   2) Keep the existing alternating warm/cool card accents.
+   3) Dark mode uses a stronger, but still clean, accent wash.
+   4) No shadow/glow added. */
+
+#packagesGrid .packageTile .packageHanziIcon,
+#packagesGrid .packageTile .pkgHanziIcon,
+#packagesGrid .packageTile .tileIcon {
+  display:block !important;
+  width:max-content !important;
+  min-width:0 !important;
+  height:auto !important;
+  min-height:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  border-width:0 !important;
+  border-style:none !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+  outline:0 !important;
+  overflow:visible !important;
+}
+
+#packagesGrid .packageTile .packageHanziIcon::before,
+#packagesGrid .packageTile .pkgHanziIcon::before,
+#packagesGrid .packageTile .tileIcon::before {
+  content:none !important;
+  display:none !important;
+  background:none !important;
+  box-shadow:none !important;
+}
+
+#packagesGrid .packageTile .packageHanziIcon span,
+#packagesGrid .packageTile .pkgHanziIcon span {
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  background-image:none !important;
+  box-shadow:none !important;
+  font-family:"Ma Shan Zheng","Noto Serif SC",serif !important;
+  font-size:50px !important;
+  font-weight:400 !important;
+  font-style:normal !important;
+  line-height:.9 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+}
+
+/* Existing alternating accent language — warm / cool / warm / cool. */
+#packagesGrid .packageTile:nth-child(odd) {
+  --accent:#ff6548 !important;
+  --accentSoft:#fff0ec !important;
+  background:linear-gradient(110deg,#ffffff 0%,#ffffff 50%,#fff8f5 72%,#fff0eb 100%) !important;
+}
+#packagesGrid .packageTile:nth-child(even) {
+  --accent:#765fc7 !important;
+  --accentSoft:#f0edff !important;
+  background:linear-gradient(110deg,#ffffff 0%,#ffffff 50%,#f7f8ff 72%,#edf1ff 100%) !important;
+}
+
+#packagesGrid .packageTile:nth-child(odd) .packageHanziIcon span,
+#packagesGrid .packageTile:nth-child(odd) .pkgHanziIcon span {
+  color:#ff6548 !important;
+}
+#packagesGrid .packageTile:nth-child(even) .packageHanziIcon span,
+#packagesGrid .packageTile:nth-child(even) .pkgHanziIcon span {
+  color:#765fc7 !important;
+}
+
+/* Dark mode: same layout, noticeably denser accent gradient. */
+body.dark #packagesGrid .packageTile:nth-child(odd) {
+  --accent:#ff7658 !important;
+  --accentSoft:#321b17 !important;
+  background:linear-gradient(110deg,#090a0b 0%,#0d0d0f 34%,#17100e 64%,#32150f 100%) !important;
+  border-color:#303136 !important;
+}
+body.dark #packagesGrid .packageTile:nth-child(even) {
+  --accent:#a78bfa !important;
+  --accentSoft:#29213b !important;
+  background:linear-gradient(110deg,#090a0b 0%,#0d0e11 34%,#111622 64%,#1b2540 100%) !important;
+  border-color:#303136 !important;
+}
+
+body.dark #packagesGrid .packageTile:nth-child(odd) .packageHanziIcon span,
+body.dark #packagesGrid .packageTile:nth-child(odd) .pkgHanziIcon span {
+  color:#ff7658 !important;
+}
+body.dark #packagesGrid .packageTile:nth-child(even) .packageHanziIcon span,
+body.dark #packagesGrid .packageTile:nth-child(even) .pkgHanziIcon span {
+  color:#a78bfa !important;
+}
+
+/* Remove any legacy icon background from dark-mode selectors. */
+body.dark #packagesGrid .packageHanziIcon,
+body.dark #packagesGrid .pkgHanziIcon,
+body.dark #packagesGrid .tileIcon,
+body.dark #packagesGrid .packageHanziIcon span,
+body.dark #packagesGrid .pkgHanziIcon span {
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+
+@media (max-width:760px) {
+  #packagesGrid .packageTile .packageHanziIcon,
+  #packagesGrid .packageTile .pkgHanziIcon,
+  #packagesGrid .packageTile .tileIcon {
+    width:max-content !important;
+    min-width:0 !important;
+    height:auto !important;
+    min-height:0 !important;
+    padding:0 !important;
+  }
+
+  #packagesGrid .packageTile .packageHanziIcon span,
+  #packagesGrid .packageTile .pkgHanziIcon span {
+    font-size:46px !important;
+  }
+}
+</style>
+
 </html>
 
 <!-- v1.28: Dashboard dark mode follows the existing mobile/light dashboard proportions. No other dashboard logic/layout is changed. -->
@@ -6035,5 +6539,113 @@ body:not(.dark) #home .homeHistoryCard:nth-child(3) .homeHistoryPct {
   background-image:none !important;
   color:#ff6548 !important;
   -webkit-text-fill-color:#ff6548 !important;
+}
+</style>
+
+<style id="packageCardFinalCorrectionV134">
+/* FINAL CARD CORRECTION — keep the established style, no new visual system. */
+#packagesGrid .packageTile{
+  position:relative!important;
+  overflow:hidden!important;
+  box-shadow:none!important;
+}
+
+/* Hanzi is typography only: absolutely no square, pill, background or border. */
+#packagesGrid .packageHanziIcon,
+#packagesGrid .pkgHanziIcon,
+#packagesGrid .tileIcon,
+#packagesGrid .packageHanziIcon span,
+#packagesGrid .pkgHanziIcon span{
+  width:auto!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+
+/* Keep the alternating accent system already used by the package cards. */
+#packagesGrid .packageTile:nth-child(odd){
+  --accent:#ff6548!important;
+  --accentSoft:#fff0ec!important;
+  background:linear-gradient(110deg,#ffffff 0%,#ffffff 48%,#fff8f5 72%,#fff0eb 100%)!important;
+}
+#packagesGrid .packageTile:nth-child(even){
+  --accent:#765fc7!important;
+  --accentSoft:#f0edff!important;
+  background:linear-gradient(110deg,#ffffff 0%,#ffffff 48%,#f7f8ff 72%,#edf1ff 100%)!important;
+}
+
+#packagesGrid .packageTile .statusPill,
+#packagesGrid .packageTile .pkgArrow,
+#packagesGrid .packageTile .pkgMetaChip{
+  background:var(--accentSoft)!important;
+  color:var(--accent)!important;
+}
+#packagesGrid .packageTile .statusDot{background:var(--accent)!important;}
+#packagesGrid .packageTile .progressBar .fill{
+  background:var(--accent)!important;
+  background-image:none!important;
+}
+
+/* Dark Mode: same geometry, but make the established accent wash noticeably richer. */
+body.dark #packagesGrid .packageTile:nth-child(odd){
+  --accent:#ff7658!important;
+  --accentSoft:#321b17!important;
+  background:linear-gradient(110deg,#090a0b 0%,#0d0d0f 42%,#17100e 68%,#2b1511 100%)!important;
+  border-color:#2d2e32!important;
+}
+body.dark #packagesGrid .packageTile:nth-child(even){
+  --accent:#a78bfa!important;
+  --accentSoft:#29213b!important;
+  background:linear-gradient(110deg,#090a0b 0%,#0d0e11 42%,#111622 68%,#172039 100%)!important;
+  border-color:#2d2e32!important;
+}
+
+/* Subtle broad ambient accent, not a glow/shadow. */
+body.dark #packagesGrid .packageTile::after{
+  content:""!important;
+  position:absolute!important;
+  width:300px!important;
+  height:300px!important;
+  right:-135px!important;
+  bottom:-155px!important;
+  border-radius:50%!important;
+  pointer-events:none!important;
+  background:radial-gradient(circle,rgba(255,101,72,.20) 0%,rgba(255,101,72,.08) 36%,rgba(255,101,72,0) 72%)!important;
+}
+body.dark #packagesGrid .packageTile:nth-child(even)::after{
+  background:radial-gradient(circle,rgba(118,95,199,.22) 0%,rgba(118,95,199,.09) 36%,rgba(118,95,199,0) 72%)!important;
+}
+
+body.dark #packagesGrid .packageTile .progressBar{
+  background:#242529!important;
+}
+body.dark #packagesGrid .packageTile .progressBar .fill{
+  background:var(--accent)!important;
+}
+body.dark #packagesGrid .packageHanziIcon span,
+body.dark #packagesGrid .pkgHanziIcon span,
+body.dark #packagesGrid .packageHanziIcon::before,
+body.dark #packagesGrid .pkgHanziIcon::before,
+body.dark #packagesGrid .tileIcon::before{
+  color:var(--accent)!important;
+}
+
+@media(max-width:760px){
+  #packagesGrid .packageHanziIcon,
+  #packagesGrid .pkgHanziIcon,
+  #packagesGrid .tileIcon{
+    width:auto!important;
+    height:auto!important;
+    min-width:0!important;
+    min-height:0!important;
+  }
 }
 </style>
