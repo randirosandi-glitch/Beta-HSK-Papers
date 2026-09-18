@@ -4745,12 +4745,12 @@ body.dark .homeEditorial h1 em {
   -webkit-background-clip:text!important; background-clip:text!important; color:transparent!important;
 }
 /* Focus/history cards keep their orange → purple → pink identity. */
-body.dark #home .homeHistoryCard:nth-child(1) .homeHistoryPct,
-body.dark #home .homeHistoryCard:nth-child(1) .homeHistoryProgressFill { color:#ff7658!important; background:#ff7658!important; }
-body.dark #home .homeHistoryCard:nth-child(2) .homeHistoryPct,
-body.dark #home .homeHistoryCard:nth-child(2) .homeHistoryProgressFill { color:#9b7cff!important; background:#9b7cff!important; }
-body.dark #home .homeHistoryCard:nth-child(3) .homeHistoryPct,
-body.dark #home .homeHistoryCard:nth-child(3) .homeHistoryProgressFill { color:#f06b9d!important; background:#f06b9d!important; }
+body.dark #home .homeHistoryCard:nth-child(1) .homeHistoryPct { color:#ff7658!important; background:transparent!important; }
+body.dark #home .homeHistoryCard:nth-child(1) .homeHistoryProgressFill { background:#ff7658!important; }
+body.dark #home .homeHistoryCard:nth-child(2) .homeHistoryPct { color:#9b7cff!important; background:transparent!important; }
+body.dark #home .homeHistoryCard:nth-child(2) .homeHistoryProgressFill { background:#9b7cff!important; }
+body.dark #home .homeHistoryCard:nth-child(3) .homeHistoryPct { color:#f06b9d!important; background:transparent!important; }
+body.dark #home .homeHistoryCard:nth-child(3) .homeHistoryProgressFill { background:#f06b9d!important; }
 /* Navbar: black frosted glass, orange active state; no blue ambient gradients. */
 body.dark .mainNav {
   background:rgba(17,18,20,.94)!important;
@@ -5085,5 +5085,7 @@ html.dark #home .homeHeroDashboard * {
 }
 </style>
 
+
+<!-- v1.27.1: history percentage is text, never a colored square. -->
 </body>
 </html>
