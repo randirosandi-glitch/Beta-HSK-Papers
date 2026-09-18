@@ -759,203 +759,391 @@ body.dark .bootMark,body.dark .authMark,body.dark .topBrandMark{background:trans
 }
 </style>
 <!-- v1.27 surgical fix: remove decorative dashboard metric icons only; preserve all data/logic/history -->
-
-
-<style id="canvasBackgroundCanonicalV128">
-/* Canvas cleanup only. No layout, sizing, positioning, or responsive rules are changed. */
-html, body { background:#ffffff !important; }
-body:not(.dark) { background:#ffffff !important; }
-body:not(.dark)::before, body:not(.dark)::after {
-  background:#ffffff !important;
-  opacity:1 !important;
-  filter:none !important;
-  animation:none !important;
-}
-body.dark, html.dark, html.dark body { background:#000000 !important; }
-body.dark::before, body.dark::after, html.dark body::before, html.dark body::after {
-  background:#000000 !important;
-  opacity:1 !important;
-  filter:none !important;
-  animation:none !important;
+<style id="v127-dashboard-icon-cleanup">
+/* v1.27: dashboard metrics stay exactly the same, but decorative icons are removed. */
+body.dark #home .homeMetric::after,
+html.dark #home .homeMetric::after {
+  content:none !important;
+  display:none !important;
 }
 </style>
 
-<style id="dashboardDarkLayoutMasterV128">
-/* DASHBOARD GEOMETRY MASTER V1.28
-   Dark Mode is the layout reference.
-   Geometry only; existing HTML/JS and app navigation are untouched. */
 
-html:not(.dark), body:not(.dark) {
-  background:#fff !important;
+<style id="packageCardsFinalPolish">
+/* Final package-card polish: single section divider + alternating accents.
+   Deliberately scoped to #levelsScreen so existing package/question UI is untouched. */
+#levelsScreen .levelGroupDivider{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:12px!important;
+  margin:12px 2px 10px!important;
+  padding:0!important;
+  border-top:0!important;
+  color:var(--muted)!important;
+  font-size:10px!important;
+  line-height:1!important;
+  font-weight:800!important;
+  letter-spacing:2.2px!important;
+  text-transform:uppercase!important;
 }
-body:not(.dark)::before, body:not(.dark)::after {
-  background:#fff !important;
-  opacity:1 !important;
-  filter:none !important;
-  animation:none !important;
+#levelsScreen .levelGroupDivider::after{
+  content:""!important;
+  display:block!important;
+  height:1px!important;
+  flex:1 1 auto!important;
+  margin:0!important;
+  background:color-mix(in srgb,var(--line) 88%,transparent)!important;
+}
+#levelsScreen .levelGroupDivider:first-child{margin-top:0!important;}
+
+#levelsScreen .levelCard{
+  position:relative!important;
+  overflow:hidden!important;
+  background:#fff!important;
+  border:1px solid #d9dde3!important;
+  box-shadow:none!important;
+  transition:transform .14s ease,border-color .14s ease,background .14s ease!important;
+}
+#levelsScreen .levelCard::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  top:50%!important;
+  width:5px!important;
+  height:58px!important;
+  transform:translateY(-50%)!important;
+  border-radius:0 5px 5px 0!important;
+  background:#ff6548!important;
+  opacity:1!important;
+}
+/* Alternating warm / cool cards. nth-of-type counts only buttons, so section dividers do not break the sequence. */
+#levelsScreen .levelGrid > button.levelCard:nth-of-type(even)::before{
+  background:#7f91bd!important;
+}
+#levelsScreen .levelGrid > button.levelCard:nth-of-type(odd){
+  background:linear-gradient(110deg,#fff 0%,#fffaf8 58%,#fff1ed 100%)!important;
+}
+#levelsScreen .levelGrid > button.levelCard:nth-of-type(even){
+  background:linear-gradient(110deg,#fff 0%,#fafbff 58%,#f0f4ff 100%)!important;
+}
+#levelsScreen .levelGrid > button.levelCard:nth-of-type(even) .levelCardArrow{
+  color:#66779f!important;
+  background:rgba(127,145,189,.08)!important;
+}
+#levelsScreen .levelGrid > button.levelCard:nth-of-type(odd) .levelCardArrow{
+  color:#ff6548!important;
+  background:rgba(255,101,72,.07)!important;
+}
+#levelsScreen .levelCard5{opacity:1!important;}
+
+body.dark #levelsScreen .levelGroupDivider{color:#aeb7c6!important;}
+body.dark #levelsScreen .levelGroupDivider::after{background:rgba(210,220,235,.18)!important;}
+body.dark #levelsScreen .levelCard{
+  background:#000!important;
+  border-color:#2a2c30!important;
+  box-shadow:none!important;
+}
+body.dark #levelsScreen .levelGrid > button.levelCard:nth-of-type(odd){
+  background:linear-gradient(110deg,#000 0%,#090605 58%,#170b08 100%)!important;
+}
+body.dark #levelsScreen .levelGrid > button.levelCard:nth-of-type(even){
+  background:linear-gradient(110deg,#000 0%,#07090d 58%,#101827 100%)!important;
+}
+body.dark #levelsScreen .levelGrid > button.levelCard:nth-of-type(even)::before{background:#8192bd!important;}
+body.dark #levelsScreen .levelGrid > button.levelCard:nth-of-type(even) .levelCardArrow{
+  color:#a9b7d8!important;
+  background:rgba(129,146,189,.09)!important;
+}
+body.dark #levelsScreen .levelGrid > button.levelCard:nth-of-type(odd) .levelCardArrow{
+  color:#ff765d!important;
+  background:rgba(255,101,72,.09)!important;
 }
 
-/* Remove the Home-only ambient layer responsible for the light-mode tint. */
-#home::before {
-  display:none !important;
+@media(max-width:760px){
+  #levelsScreen .levelCard::before{width:5px!important;height:58px!important;}
+  #levelsScreen .levelGroupDivider{margin:12px 2px 10px!important;}
 }
+</style>
 
-/* Canonical dashboard shell: same one-column structure as Dark Mode. */
+<style id="hsk4-typography-final">
+/* HSK 4 typography refinement — intentionally isolated from layout/logic */
+#levelsScreen .levelCard4 .levelCardBody strong{font-size:28px!important;line-height:1.08!important;letter-spacing:-.65px!important;}
+@media(max-width:760px){#levelsScreen .levelCard4 .levelCardBody strong{font-size:28px!important;line-height:1.08!important;letter-spacing:-.65px!important;}}
+</style>
+
+<style id="fullWhiteBlackBackgroundFinal">
+/* Final background rule: one solid page background only. */
+:root{--bg:#ffffff!important;}
+html,body{background:#ffffff!important;background-image:none!important;}
+body::before,body::after{display:none!important;background:none!important;background-image:none!important;opacity:0!important;filter:none!important;}
+#app,main,.screen{background:transparent!important;background-image:none!important;}
+.top{background:#ffffff!important;background-image:none!important;}
+body.dark{--bg:#000000!important;}
+html.dark,html.dark body,body.dark{background:#000000!important;background-image:none!important;}
+body.dark #app,body.dark main,body.dark .screen{background:transparent!important;background-image:none!important;}
+body.dark .top{background:#000000!important;background-image:none!important;}
+</style>
+<style id="homeEditorialAccentTypographyV129">
+/* v1.29 — HOME editorial typography + restrained accent gradients
+   Visual-only layer. No HTML, data, routing, package loading, or progress logic changed. */
+
+/* Keep the canvas truly white / black. Accent gradients live only inside selected UI surfaces. */
+html, body { background:#fff !important; }
+body.dark, html.dark body { background:#000 !important; }
+
+/* --- Editorial hero typography --- */
+#home .homeEditorial {
+  padding-top:52px !important;
+  padding-bottom:38px !important;
+}
+#home .homeEditorial h1 {
+  max-width:760px !important;
+  margin:0 !important;
+  font-size:clamp(46px,7vw,70px) !important;
+  line-height:.94 !important;
+  letter-spacing:-3.9px !important;
+  font-weight:850 !important;
+}
+#home .homeEditorial h1 em {
+  font-style:normal !important;
+  background:linear-gradient(100deg,#ff6548 0%,#ff5b62 52%,#d95aa5 100%) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
+}
+#home .homeEditorial p {
+  max-width:610px !important;
+  margin-top:20px !important;
+  font-size:17px !important;
+  line-height:1.52 !important;
+  letter-spacing:-.15px !important;
+}
+#home .homeGreeting {
+  margin-top:22px !important;
+  font-size:13px !important;
+  letter-spacing:-.05px !important;
+}
+#home .homeGreeting b { color:var(--blue) !important; }
+
+/* --- Progress dashboard: charcoal card with a barely-there accent wash --- */
 #home .homeHeroDashboard {
-  display:grid !important;
-  grid-template-columns:1fr !important;
-  gap:0 !important;
-  width:100% !important;
-  max-width:100% !important;
-  box-sizing:border-box !important;
-  overflow:hidden !important;
+  background:linear-gradient(118deg,
+    var(--surface) 0%,
+    var(--surface) 64%,
+    color-mix(in srgb,var(--blue) 7%,var(--surface)) 100%) !important;
+  border-color:color-mix(in srgb,var(--text) 10%,transparent) !important;
   box-shadow:none !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
 }
-
-#home .homeMetricStrip {
-  display:grid !important;
-  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  gap:0 !important;
-  min-width:0 !important;
-  width:100% !important;
-}
-
-#home .homeMetric {
-  position:relative !important;
-  min-width:0 !important;
-  box-sizing:border-box !important;
-  border-radius:0 !important;
-  box-shadow:none !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-}
-#home .homeMetric:last-child { border-right:0 !important; }
-
+#home .homeMetric,
 #home .homeOverall {
-  position:relative !important;
-  min-width:0 !important;
-  box-sizing:border-box !important;
-  border-radius:0 !important;
+  background:transparent !important;
   box-shadow:none !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  display:flex !important;
-  align-items:center !important;
+}
+#home .homeOverall {
+  border-top-color:color-mix(in srgb,var(--text) 10%,transparent) !important;
+}
+#home .homeMetricValue {
+  font-size:26px !important;
+  font-weight:850 !important;
+  letter-spacing:-1.1px !important;
+}
+#home .homeMetric:first-child .homeMetricValue { color:var(--text) !important; }
+#home .homeMetric:nth-child(2) .homeMetricValue { color:var(--text) !important; }
+#home .homeMetric:nth-child(3) .homeMetricValue {
+  background:linear-gradient(100deg,#ff6548,#d95aa5) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
+}
+#home .homeRing {
+  background:conic-gradient(#ff6548 0%,#d95aa5 calc(var(--p) * 1%),color-mix(in srgb,var(--line) 65%,transparent) 0) !important;
 }
 
-/* Light Mode keeps its existing colors, but cannot inherit the old shadow. */
-body:not(.dark) #home .homeHeroDashboard,
-body:not(.dark) #home .homeMetric,
-body:not(.dark) #home .homeOverall {
+/* --- Continue card: warm editorial wash, not a loud gradient --- */
+#home .homeContinue {
+  background:linear-gradient(115deg,
+    var(--surface) 0%,
+    var(--surface) 58%,
+    color-mix(in srgb,#ff6548 8%,var(--surface)) 100%) !important;
+  border-color:color-mix(in srgb,#ff6548 15%,var(--line)) !important;
   box-shadow:none !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
+}
+#home .homeContinue:before { display:none !important; }
+#home .homeContinueTitle {
+  font-size:23px !important;
+  letter-spacing:-.8px !important;
+  font-weight:850 !important;
+}
+#home .homeContinuePct {
+  font-size:29px !important;
+  font-weight:850 !important;
+  background:linear-gradient(100deg,#ff6548,#d95aa5) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
+}
+#home .homeContinueBtn {
+  background:linear-gradient(100deg,#ff6548,#e65f78) !important;
+  box-shadow:none !important;
 }
 
-/* Mobile: exactly the compact Dark Mode dashboard geometry. */
-@media (max-width:760px) {
-  #home .homeHeroDashboard {
-    margin-top:22px !important;
-    grid-template-columns:1fr !important;
-    gap:0 !important;
-    border-radius:21px !important;
-  }
-  #home .homeMetricStrip {
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    gap:0 !important;
-  }
-  #home .homeMetric {
-    min-height:86px !important;
-    padding:13px 9px !important;
-  }
-  #home .homeMetricLabel {
-    font-size:6.5px !important;
-    letter-spacing:.75px !important;
-    white-space:nowrap !important;
-  }
-  #home .homeMetricValue {
-    margin-top:6px !important;
-    font-size:19px !important;
-    line-height:1 !important;
-  }
-  #home .homeMetricNote {
-    margin-top:4px !important;
-    font-size:7px !important;
-    line-height:1.25 !important;
-    white-space:nowrap !important;
-  }
-  #home .homeOverall {
-    min-height:100px !important;
-    padding:13px 16px !important;
-    justify-content:flex-start !important;
-    gap:13px !important;
-  }
-  #home .homeRing {
-    width:74px !important;
-    height:74px !important;
-    flex-basis:74px !important;
-  }
-  #home .homeRing::after { inset:6px !important; }
-  #home .homeRing span { font-size:15px !important; }
-  #home .homeOverallText b { font-size:11px !important; }
-  #home .homeOverallText span {
-    font-size:8px !important;
-    line-height:1.4 !important;
-    margin-top:4px !important;
-  }
+/* --- History cards: alternating warm / cool editorial accents --- */
+#home .homeHistoryCard {
+  box-shadow:none !important;
+  border-color:color-mix(in srgb,var(--text) 10%,transparent) !important;
+  transition:none !important;
+}
+#home .homeHistoryCard:nth-child(1) {
+  background:linear-gradient(112deg,var(--surface) 0%,var(--surface) 57%,color-mix(in srgb,#ff6548 8%,var(--surface)) 100%) !important;
+}
+#home .homeHistoryCard:nth-child(2) {
+  background:linear-gradient(112deg,var(--surface) 0%,var(--surface) 57%,color-mix(in srgb,#7188c5 8%,var(--surface)) 100%) !important;
+}
+#home .homeHistoryCard:nth-child(3) {
+  background:linear-gradient(112deg,var(--surface) 0%,var(--surface) 57%,color-mix(in srgb,#d95aa5 7%,var(--surface)) 100%) !important;
+}
+#home .homeHistoryCard:nth-child(1) .homeHistoryPct,
+#home .homeHistoryCard:nth-child(1) .homeHistoryProgressFill { color:#ff6548 !important; background-color:#ff6548 !important; }
+#home .homeHistoryCard:nth-child(2) .homeHistoryPct,
+#home .homeHistoryCard:nth-child(2) .homeHistoryProgressFill { color:#7188c5 !important; background-color:#7188c5 !important; }
+#home .homeHistoryCard:nth-child(3) .homeHistoryPct,
+#home .homeHistoryCard:nth-child(3) .homeHistoryProgressFill { color:#d95aa5 !important; background-color:#d95aa5 !important; }
+
+/* --- Dark mode: true black canvas, charcoal cards, restrained warm/cool washes --- */
+body.dark #home .homeHeroDashboard {
+  background:linear-gradient(118deg,#111214 0%,#111214 64%,#1b1413 100%) !important;
+  border-color:#2b2c30 !important;
+}
+body.dark #home .homeContinue {
+  background:linear-gradient(112deg,#111214 0%,#111214 58%,#1d1412 100%) !important;
+  border-color:#2b2c30 !important;
+}
+body.dark #home .homeHistoryCard:nth-child(1) {
+  background:linear-gradient(112deg,#111214 0%,#111214 57%,#1b1413 100%) !important;
+}
+body.dark #home .homeHistoryCard:nth-child(2) {
+  background:linear-gradient(112deg,#111214 0%,#111214 57%,#111721 100%) !important;
+}
+body.dark #home .homeHistoryCard:nth-child(3) {
+  background:linear-gradient(112deg,#111214 0%,#111214 57%,#1b1318 100%) !important;
+}
+body.dark #home .homeEditorial h1 em {
+  background:linear-gradient(100deg,#ff7658 0%,#ff5f67 52%,#d86ca9 100%) !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
 }
 
-/* Desktop/tablet: same one-column Dark Mode geometry. */
-@media (min-width:761px) {
-  #home .homeHeroDashboard {
-    grid-template-columns:1fr !important;
-    gap:0 !important;
+@media(max-width:760px){
+  #home .homeEditorial {
+    padding-top:31px !important;
+    padding-bottom:28px !important;
   }
-  #home .homeMetric {
-    min-height:126px !important;
-    padding:28px 28px 22px !important;
+  #home .homeEditorial h1 {
+    font-size:44px !important;
+    line-height:.95 !important;
+    letter-spacing:-2.9px !important;
+    max-width:370px !important;
   }
-  #home .homeMetricLabel {
-    padding-right:58px !important;
-    font-size:12px !important;
-    line-height:1.2 !important;
-    letter-spacing:2.4px !important;
-  }
-  #home .homeMetricValue {
-    margin-top:18px !important;
-    font-size:40px !important;
-    line-height:1 !important;
-    letter-spacing:-1.5px !important;
-  }
-  #home .homeMetricNote {
-    margin-top:10px !important;
+  #home .homeEditorial p {
+    margin-top:17px !important;
     font-size:14px !important;
-    line-height:1.35 !important;
+    line-height:1.52 !important;
   }
-  #home .homeOverall {
-    min-height:138px !important;
-    padding:30px 32px !important;
-    gap:26px !important;
+  #home .homeGreeting {
+    margin-top:18px !important;
+    font-size:12px !important;
   }
-  #home .homeRing {
-    width:92px !important;
-    height:92px !important;
-    flex-basis:92px !important;
+  #home .homeHeroDashboard {
+    margin-top:20px !important;
+    border-radius:20px !important;
   }
-  #home .homeRing::after { inset:10px !important; }
-  #home .homeRing span { font-size:22px !important; }
-  #home .homeOverallText b {
-    font-size:24px !important;
-    line-height:1.2 !important;
-    letter-spacing:-.6px !important;
+  #home .homeMetricValue {
+    font-size:20px !important;
+    letter-spacing:-.7px !important;
   }
-  #home .homeOverallText span {
-    margin-top:9px !important;
-    font-size:15px !important;
-    line-height:1.4 !important;
-  }
+  #home .homeContinueTitle { font-size:20px !important; }
+  #home .homeContinuePct { font-size:25px !important; }
+  #home .homeHistoryCard { border-radius:17px !important; }
+}
+
+</style>
+<!-- v1.29-3: home accent cleanup -->
+<style id="v1293-home-accent-cleanup">
+/* v1.29-3: Home accent cleanup. Card accents may use gradients; text and progress bars never do. */
+#home .homeEditorial h1 em,
+#home .homeGreeting b,
+#home .homeContinuePct,
+#home .homeKicker,
+#home .homeLastHeading .sectionKicker,
+#home .homeHistoryCard .homeHistoryPct {
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+
+/* Light Home: replace blue→orange card tint with white→orange only. */
+html:not(.dark) #home .homeHeroDashboard,
+body:not(.dark) #home .homeHeroDashboard,
+html:not(.dark) #home .homeContinue,
+body:not(.dark) #home .homeContinue,
+html:not(.dark) #home .homeHistoryCard,
+body:not(.dark) #home .homeHistoryCard {
+  background:linear-gradient(135deg,#ffffff 0%,#ffffff 52%,#fff1ec 100%) !important;
+}
+
+/* Keep the overall progress area clean: no blue ambient tint. */
+html:not(.dark) #home .homeOverall {
+  background:#fff8f5 !important;
+}
+
+/* Orange is the single progress-bar fill on Home. */
+#home .homeContinue .progressBar .fill,
+#home .homeContinue .progressFill,
+#home .progressBar .fill,
+#home .progressFill,
+#home .homeHistoryProgressFill {
+  background:#ff6548 !important;
+  background-image:none !important;
+}
+
+/* Solid orange primary accents — never gradient text. */
+#home .homeEditorial h1 em,
+#home .homeGreeting b,
+#home .homeContinuePct {
+  color:#ff6548 !important;
+}
+
+/* Dark Home: retain a restrained card-only accent, with no gradient text/bars. */
+body.dark #home .homeHeroDashboard,
+html.dark #home .homeHeroDashboard,
+body.dark #home .homeContinue,
+html.dark #home .homeContinue {
+  background:linear-gradient(135deg,#111214 0%,#111214 58%,#1d1514 100%) !important;
+}
+body.dark #home .homeHistoryCard {
+  background:#111214 !important;
+}
+body.dark #home .homeEditorial h1 em,
+html.dark #home .homeEditorial h1 em,
+body.dark #home .homeGreeting b,
+html.dark #home .homeGreeting b,
+body.dark #home .homeContinuePct,
+html.dark #home .homeContinuePct {
+  background:none !important;
+  color:#ff6548 !important;
+  -webkit-text-fill-color:#ff6548 !important;
+}
+body.dark #home .homeContinue .progressBar .fill,
+html.dark #home .homeContinue .progressBar .fill,
+body.dark #home .progressBar .fill,
+html.dark #home .progressBar .fill,
+body.dark #home .homeHistoryProgressFill,
+html.dark #home .homeHistoryProgressFill {
+  background:#ff6548 !important;
+  background-image:none !important;
 }
 </style>
 
@@ -4877,8 +5065,9 @@ body:has(#home.active) #topBack{display:none!important;}
   }
 }
 </style>
-<style id="finalThemeDashboardCleanV128">
 
+
+<style id="targetBlackOrangeThemeV125">
 /* FINAL TARGET: true-black canvas + charcoal surfaces + orange/red primary.
    This is a single canonical layer for the current dark theme. */
 html.dark, html.dark body, body.dark {
@@ -4972,9 +5161,9 @@ body.dark .flatPartCard { background:#121316!important; border-color:#2b2c30!imp
 body.dark .flatPartCard .progressBar { background:#111214!important; }
 body.dark .appFooter { color:#8f9096!important; }
 /* Theme-color must also report true black to the Android/browser chrome. */
+</style>
 
-
-
+<style id="dashboardFullBlackTargetV126">
 /*
  * DASHBOARD TARGET V1.26
  * Only the Home dashboard visual layer is changed here.
@@ -5054,6 +5243,36 @@ body.dark #home .homeMetric:last-child,
 html.dark #home .homeMetric:last-child {
   border-right:0 !important;
 }
+
+/* Metric icons: orange, thin, understated. */
+body.dark #home .homeMetric::after,
+html.dark #home .homeMetric::after {
+  position:absolute !important;
+  top:25px !important;
+  right:28px !important;
+  font-family:"Material Symbols Rounded" !important;
+  font-size:44px !important;
+  line-height:1 !important;
+  font-weight:450 !important;
+  color:#ff7658 !important;
+  font-variation-settings:"FILL" 0,"wght" 450,"GRAD" 0,"opsz" 44 !important;
+  opacity:1 !important;
+  pointer-events:none !important;
+}
+
+body.dark #home .homeMetric:nth-child(1)::after,
+html.dark #home .homeMetric:nth-child(1)::after {
+  content:"description" !important;
+}
+body.dark #home .homeMetric:nth-child(2)::after,
+html.dark #home .homeMetric:nth-child(2)::after {
+  content:"edit_note" !important;
+}
+body.dark #home .homeMetric:nth-child(3)::after,
+html.dark #home .homeMetric:nth-child(3)::after {
+  content:"track_changes" !important;
+}
+
 body.dark #home .homeMetricLabel,
 html.dark #home .homeMetricLabel {
   display:block !important;
@@ -5243,9 +5462,15 @@ html.dark #home .homeHeroDashboard * {
     font-size:10px !important;
   }
 }
+</style>
 
 
+<!-- v1.27.1: history percentage is text, never a colored square. -->
+</body>
+</html>
 
+<!-- v1.28: Dashboard dark mode follows the existing mobile/light dashboard proportions. No other dashboard logic/layout is changed. -->
+<style id="v128-dashboard-dark-size-fix">
 @media (max-width:760px){
   /* Dashboard shell: same compact proportion as Light Mode, with no black drop shadow. */
   body.dark #home .homeHeroDashboard,
@@ -5326,73 +5551,28 @@ html.dark #home .homeHeroDashboard * {
   }
 }
 
-</style>
-
-
-
-
-
-
-
-<!-- v1.27.1: history percentage is text, never a colored square. -->
-</body>
-</html>
-
-<!-- v1.28: Dashboard dark mode follows the existing mobile/light dashboard proportions. No other dashboard logic/layout is changed. -->
-<style id="fullCanvasThemeMasterV128">
-/* FINAL CANVAS MASTER: only the page canvas is forced to true white/black.
-   Component surfaces (cards, nav, etc.) are intentionally untouched. */
-html, body {
-  background:#ffffff !important;
+/* FINAL PACKAGE CARD RULE — remove level icon boxes permanently.
+   The package card typography carries the hierarchy; no colored/gradient icon container. */
+#levelsScreen .levelCard .levelCardIcon{
+  display:none!important;
+  width:0!important;
+  min-width:0!important;
+  flex:0 0 0!important;
+  height:0!important;
+  margin:0!important;
+  padding:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  border:0!important;
+  overflow:hidden!important;
 }
-html:not(.dark),
-html:not(.dark) body,
-body:not(.dark),
-body:has(#home.active) {
-  background:#ffffff !important;
+#levelsScreen .levelCard{
+  gap:0!important;
 }
-html.dark,
-html.dark body,
-body.dark,
-body.dark:has(#home.active) {
-  background:#000000 !important;
+#levelsScreen .levelCard .levelCardBody{
+  min-width:0!important;
 }
-
-/* Kill every legacy ambient canvas pseudo-layer. */
-body::before,
-body::after,
-body.dark::before,
-body.dark::after,
-html.dark body::before,
-html.dark body::after,
-body:has(#home.active)::before,
-body:has(#home.active)::after,
-body.dark:has(#home.active)::before,
-body.dark:has(#home.active)::after,
-#home::before,
-#home::after,
-body:has(#home.active) #home::before,
-body.dark:has(#home.active) #home::before {
-  background:none !important;
-  background-image:none !important;
-  opacity:0 !important;
-  filter:none !important;
-  animation:none !important;
-  box-shadow:none !important;
-}
-
-/* Main content must not paint a second canvas behind the page. */
-main,
-.screen,
-#home {
-  background:transparent !important;
-}
-
-/* Preserve the dashboard/card surfaces themselves. */
-#home .homeHeroDashboard,
-#home .homeMetric,
-#home .homeOverall {
-  /* no background override here */
+#levelsScreen .levelCard .levelCardArrow{
+  margin-left:auto!important;
 }
 </style>
-
