@@ -6007,3 +6007,33 @@ body.dark .mainNav .navItem[aria-current="page"] .navLabel{
   color:#ff7658!important;
 }
 </style>
+
+<style id="v132-light-home-percent-text-fix">
+/* v1.32 — Light Home history percentages: text only, never a colored block. */
+html:not(.dark) #home .homeHistoryCard .homeHistoryPct,
+body:not(.dark) #home .homeHistoryCard .homeHistoryPct {
+  display:inline-block !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  color:#ff6548 !important;
+  -webkit-text-fill-color:#ff6548 !important;
+  text-fill-color:#ff6548 !important;
+}
+
+/* Keep every Light Home percentage as solid orange, including cards 2 and 3. */
+html:not(.dark) #home .homeHistoryCard:nth-child(1) .homeHistoryPct,
+html:not(.dark) #home .homeHistoryCard:nth-child(2) .homeHistoryPct,
+html:not(.dark) #home .homeHistoryCard:nth-child(3) .homeHistoryPct,
+body:not(.dark) #home .homeHistoryCard:nth-child(1) .homeHistoryPct,
+body:not(.dark) #home .homeHistoryCard:nth-child(2) .homeHistoryPct,
+body:not(.dark) #home .homeHistoryCard:nth-child(3) .homeHistoryPct {
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  color:#ff6548 !important;
+  -webkit-text-fill-color:#ff6548 !important;
+}
+</style>
