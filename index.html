@@ -759,12 +759,203 @@ body.dark .bootMark,body.dark .authMark,body.dark .topBrandMark{background:trans
 }
 </style>
 <!-- v1.27 surgical fix: remove decorative dashboard metric icons only; preserve all data/logic/history -->
-<style id="v127-dashboard-icon-cleanup">
-/* v1.27: dashboard metrics stay exactly the same, but decorative icons are removed. */
-body.dark #home .homeMetric::after,
-html.dark #home .homeMetric::after {
-  content:none !important;
+
+
+<style id="canvasBackgroundCanonicalV128">
+/* Canvas cleanup only. No layout, sizing, positioning, or responsive rules are changed. */
+html, body { background:#ffffff !important; }
+body:not(.dark) { background:#ffffff !important; }
+body:not(.dark)::before, body:not(.dark)::after {
+  background:#ffffff !important;
+  opacity:1 !important;
+  filter:none !important;
+  animation:none !important;
+}
+body.dark, html.dark, html.dark body { background:#000000 !important; }
+body.dark::before, body.dark::after, html.dark body::before, html.dark body::after {
+  background:#000000 !important;
+  opacity:1 !important;
+  filter:none !important;
+  animation:none !important;
+}
+</style>
+
+<style id="dashboardDarkLayoutMasterV128">
+/* DASHBOARD GEOMETRY MASTER V1.28
+   Dark Mode is the layout reference.
+   Geometry only; existing HTML/JS and app navigation are untouched. */
+
+html:not(.dark), body:not(.dark) {
+  background:#fff !important;
+}
+body:not(.dark)::before, body:not(.dark)::after {
+  background:#fff !important;
+  opacity:1 !important;
+  filter:none !important;
+  animation:none !important;
+}
+
+/* Remove the Home-only ambient layer responsible for the light-mode tint. */
+#home::before {
   display:none !important;
+}
+
+/* Canonical dashboard shell: same one-column structure as Dark Mode. */
+#home .homeHeroDashboard {
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+#home .homeMetricStrip {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:0 !important;
+  min-width:0 !important;
+  width:100% !important;
+}
+
+#home .homeMetric {
+  position:relative !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+#home .homeMetric:last-child { border-right:0 !important; }
+
+#home .homeOverall {
+  position:relative !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  display:flex !important;
+  align-items:center !important;
+}
+
+/* Light Mode keeps its existing colors, but cannot inherit the old shadow. */
+body:not(.dark) #home .homeHeroDashboard,
+body:not(.dark) #home .homeMetric,
+body:not(.dark) #home .homeOverall {
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+/* Mobile: exactly the compact Dark Mode dashboard geometry. */
+@media (max-width:760px) {
+  #home .homeHeroDashboard {
+    margin-top:22px !important;
+    grid-template-columns:1fr !important;
+    gap:0 !important;
+    border-radius:21px !important;
+  }
+  #home .homeMetricStrip {
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:0 !important;
+  }
+  #home .homeMetric {
+    min-height:86px !important;
+    padding:13px 9px !important;
+  }
+  #home .homeMetricLabel {
+    font-size:6.5px !important;
+    letter-spacing:.75px !important;
+    white-space:nowrap !important;
+  }
+  #home .homeMetricValue {
+    margin-top:6px !important;
+    font-size:19px !important;
+    line-height:1 !important;
+  }
+  #home .homeMetricNote {
+    margin-top:4px !important;
+    font-size:7px !important;
+    line-height:1.25 !important;
+    white-space:nowrap !important;
+  }
+  #home .homeOverall {
+    min-height:100px !important;
+    padding:13px 16px !important;
+    justify-content:flex-start !important;
+    gap:13px !important;
+  }
+  #home .homeRing {
+    width:74px !important;
+    height:74px !important;
+    flex-basis:74px !important;
+  }
+  #home .homeRing::after { inset:6px !important; }
+  #home .homeRing span { font-size:15px !important; }
+  #home .homeOverallText b { font-size:11px !important; }
+  #home .homeOverallText span {
+    font-size:8px !important;
+    line-height:1.4 !important;
+    margin-top:4px !important;
+  }
+}
+
+/* Desktop/tablet: same one-column Dark Mode geometry. */
+@media (min-width:761px) {
+  #home .homeHeroDashboard {
+    grid-template-columns:1fr !important;
+    gap:0 !important;
+  }
+  #home .homeMetric {
+    min-height:126px !important;
+    padding:28px 28px 22px !important;
+  }
+  #home .homeMetricLabel {
+    padding-right:58px !important;
+    font-size:12px !important;
+    line-height:1.2 !important;
+    letter-spacing:2.4px !important;
+  }
+  #home .homeMetricValue {
+    margin-top:18px !important;
+    font-size:40px !important;
+    line-height:1 !important;
+    letter-spacing:-1.5px !important;
+  }
+  #home .homeMetricNote {
+    margin-top:10px !important;
+    font-size:14px !important;
+    line-height:1.35 !important;
+  }
+  #home .homeOverall {
+    min-height:138px !important;
+    padding:30px 32px !important;
+    gap:26px !important;
+  }
+  #home .homeRing {
+    width:92px !important;
+    height:92px !important;
+    flex-basis:92px !important;
+  }
+  #home .homeRing::after { inset:10px !important; }
+  #home .homeRing span { font-size:22px !important; }
+  #home .homeOverallText b {
+    font-size:24px !important;
+    line-height:1.2 !important;
+    letter-spacing:-.6px !important;
+  }
+  #home .homeOverallText span {
+    margin-top:9px !important;
+    font-size:15px !important;
+    line-height:1.4 !important;
+  }
 }
 </style>
 
@@ -4686,9 +4877,8 @@ body:has(#home.active) #topBack{display:none!important;}
   }
 }
 </style>
+<style id="finalThemeDashboardCleanV128">
 
-
-<style id="targetBlackOrangeThemeV125">
 /* FINAL TARGET: true-black canvas + charcoal surfaces + orange/red primary.
    This is a single canonical layer for the current dark theme. */
 html.dark, html.dark body, body.dark {
@@ -4782,9 +4972,9 @@ body.dark .flatPartCard { background:#121316!important; border-color:#2b2c30!imp
 body.dark .flatPartCard .progressBar { background:#111214!important; }
 body.dark .appFooter { color:#8f9096!important; }
 /* Theme-color must also report true black to the Android/browser chrome. */
-</style>
 
-<style id="dashboardFullBlackTargetV126">
+
+
 /*
  * DASHBOARD TARGET V1.26
  * Only the Home dashboard visual layer is changed here.
@@ -4864,36 +5054,6 @@ body.dark #home .homeMetric:last-child,
 html.dark #home .homeMetric:last-child {
   border-right:0 !important;
 }
-
-/* Metric icons: orange, thin, understated. */
-body.dark #home .homeMetric::after,
-html.dark #home .homeMetric::after {
-  position:absolute !important;
-  top:25px !important;
-  right:28px !important;
-  font-family:"Material Symbols Rounded" !important;
-  font-size:44px !important;
-  line-height:1 !important;
-  font-weight:450 !important;
-  color:#ff7658 !important;
-  font-variation-settings:"FILL" 0,"wght" 450,"GRAD" 0,"opsz" 44 !important;
-  opacity:1 !important;
-  pointer-events:none !important;
-}
-
-body.dark #home .homeMetric:nth-child(1)::after,
-html.dark #home .homeMetric:nth-child(1)::after {
-  content:"description" !important;
-}
-body.dark #home .homeMetric:nth-child(2)::after,
-html.dark #home .homeMetric:nth-child(2)::after {
-  content:"edit_note" !important;
-}
-body.dark #home .homeMetric:nth-child(3)::after,
-html.dark #home .homeMetric:nth-child(3)::after {
-  content:"track_changes" !important;
-}
-
 body.dark #home .homeMetricLabel,
 html.dark #home .homeMetricLabel {
   display:block !important;
@@ -5083,9 +5243,156 @@ html.dark #home .homeHeroDashboard * {
     font-size:10px !important;
   }
 }
+
+
+
+@media (max-width:760px){
+  /* Dashboard shell: same compact proportion as Light Mode, with no black drop shadow. */
+  body.dark #home .homeHeroDashboard,
+  html.dark body #home .homeHeroDashboard{
+    margin-top:22px!important;
+    grid-template-columns:1fr!important;
+    gap:0!important;
+    border-radius:21px!important;
+    box-shadow:none!important;
+  }
+
+  /* Three metric columns: match the compact Light Mode dimensions. */
+  body.dark #home .homeMetricStrip,
+  html.dark body #home .homeMetricStrip{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:0!important;
+  }
+  body.dark #home .homeMetric,
+  html.dark body #home .homeMetric{
+    min-height:86px!important;
+    padding:13px 9px!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+  }
+  body.dark #home .homeMetricLabel,
+  html.dark body #home .homeMetricLabel{
+    font-size:6.5px!important;
+    letter-spacing:.75px!important;
+    white-space:nowrap!important;
+  }
+  body.dark #home .homeMetricValue,
+  html.dark body #home .homeMetricValue{
+    margin-top:6px!important;
+    font-size:19px!important;
+    line-height:1!important;
+  }
+  body.dark #home .homeMetricNote,
+  html.dark body #home .homeMetricNote{
+    margin-top:4px!important;
+    font-size:7px!important;
+    line-height:1.25!important;
+    white-space:nowrap!important;
+  }
+
+  /* Overall progress row: same compact Light Mode height and ring size. */
+  body.dark #home .homeOverall,
+  html.dark body #home .homeOverall{
+    min-height:100px!important;
+    padding:13px 16px!important;
+    justify-content:flex-start!important;
+    gap:13px!important;
+    border-top:1px solid color-mix(in srgb,var(--text) 8%,transparent)!important;
+    box-shadow:none!important;
+  }
+  body.dark #home .homeRing,
+  html.dark body #home .homeRing{
+    width:74px!important;
+    height:74px!important;
+    flex-basis:74px!important;
+  }
+  body.dark #home .homeRing:after,
+  html.dark body #home .homeRing:after{
+    inset:6px!important;
+  }
+  body.dark #home .homeRing span,
+  html.dark body #home .homeRing span{
+    font-size:15px!important;
+  }
+  body.dark #home .homeOverallText b,
+  html.dark body #home .homeOverallText b{
+    font-size:11px!important;
+  }
+  body.dark #home .homeOverallText span,
+  html.dark body #home .homeOverallText span{
+    font-size:8px!important;
+    line-height:1.4!important;
+    margin-top:4px!important;
+  }
+}
+
 </style>
+
+
+
+
+
 
 
 <!-- v1.27.1: history percentage is text, never a colored square. -->
 </body>
 </html>
+
+<!-- v1.28: Dashboard dark mode follows the existing mobile/light dashboard proportions. No other dashboard logic/layout is changed. -->
+<style id="fullCanvasThemeMasterV128">
+/* FINAL CANVAS MASTER: only the page canvas is forced to true white/black.
+   Component surfaces (cards, nav, etc.) are intentionally untouched. */
+html, body {
+  background:#ffffff !important;
+}
+html:not(.dark),
+html:not(.dark) body,
+body:not(.dark),
+body:has(#home.active) {
+  background:#ffffff !important;
+}
+html.dark,
+html.dark body,
+body.dark,
+body.dark:has(#home.active) {
+  background:#000000 !important;
+}
+
+/* Kill every legacy ambient canvas pseudo-layer. */
+body::before,
+body::after,
+body.dark::before,
+body.dark::after,
+html.dark body::before,
+html.dark body::after,
+body:has(#home.active)::before,
+body:has(#home.active)::after,
+body.dark:has(#home.active)::before,
+body.dark:has(#home.active)::after,
+#home::before,
+#home::after,
+body:has(#home.active) #home::before,
+body.dark:has(#home.active) #home::before {
+  background:none !important;
+  background-image:none !important;
+  opacity:0 !important;
+  filter:none !important;
+  animation:none !important;
+  box-shadow:none !important;
+}
+
+/* Main content must not paint a second canvas behind the page. */
+main,
+.screen,
+#home {
+  background:transparent !important;
+}
+
+/* Preserve the dashboard/card surfaces themselves. */
+#home .homeHeroDashboard,
+#home .homeMetric,
+#home .homeOverall {
+  /* no background override here */
+}
+</style>
+
