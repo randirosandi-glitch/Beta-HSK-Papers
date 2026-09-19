@@ -4524,12 +4524,15 @@ body.dark #packagesGrid .packageHanziIcon{
   'use strict';
   const REPO='randirosandi-glitch/latihanhsk', REF='main';
   const TREE_API='https://api.github.com/repos/'+REPO+'/git/trees/'+encodeURIComponent(REF)+'?recursive=1';
+  const RAW_BASE='https://raw.githubusercontent.com/'+REPO+'/'+REF+'/';
+  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v2';
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const natural=(a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
   const kind=n=>/^HSK\s*\d+/i.test(n)?'hsk':/^Workbook\b/i.test(n)?'workbook':'custom';
   const level=n=>{const m=String(n).match(/^HSK\s*(\d+)/i);return m?Number(m[1]):null};
   const localURL=p=>'./'+String(p).split('/').map(encodeURIComponent).join('/');
+  const rawURL=p=>RAW_BASE+String(p).split('/').map(encodeURIComponent).join('/');
   const state=window.__hskDatabase={loaded:false,source:null,error:null,groups:[],byCode:new Map(),cache:new Map(),selected:null};
   let resolveReady;
   window.__hskDynamicReadyPromise=new Promise(r=>resolveReady=r);
@@ -4542,7 +4545,7 @@ body.dark #packagesGrid .packageHanziIcon{
 
   function addFile(group,code,path){
     if(group.files.some(x=>x.code===code))return;
-    const meta={code,name:code+'.json',path,url:localURL(path)};
+    const meta={code,name:code+'.json',path,url:localURL(path),remoteUrl:rawURL(path)};
     group.files.push(meta);group.codes.push(code);state.byCode.set(code,meta);
   }
 
@@ -4553,7 +4556,39 @@ body.dark #packagesGrid .packageHanziIcon{
     return [...gm.values()];
   }
 
+  function cacheCatalog(groups){
+    try{
+      localStorage.setItem(CATALOG_CACHE_KEY,JSON.stringify(groups.map(g=>({name:g.name,path:g.path,kind:g.kind,level:g.level,files:g.files.map(f=>({code:f.code,name:f.name,path:f.path}))}))));
+    }catch(e){}
+  }
+
+  function groupsFromCachedCatalog(){
+    try{
+      const raw=localStorage.getItem(CATALOG_CACHE_KEY);
+      if(!raw)return [];
+      const saved=JSON.parse(raw);
+      if(!Array.isArray(saved))return [];
+      const groups=[];
+      for(const sg of saved){
+        if(!sg||!Array.isArray(sg.files))continue;
+        const g={name:String(sg.name||''),path:String(sg.path||''),kind:sg.kind||kind(sg.name),level:sg.level??level(sg.name),files:[],codes:[]};
+        sg.files.forEach(f=>addFile(g,String(f.code||''),String(f.path||('data/'+g.name+'/'+f.code+'.json'))));
+        if(g.files.length)groups.push(g);
+      }
+      return groups;
+    }catch(e){return []}
+  }
+
   async function discover(){
+    // Manifest is the authoritative package catalog. Prefer the raw GitHub copy
+    // so a temporary GitHub API rate-limit cannot make the app appear empty.
+    try{
+      const m=await fetchJSON(RAW_BASE+'data/manifest.json',7000);
+      const groups=groupsFromManifest(m);
+      if(groups.length){cacheCatalog(groups);return {groups,source:'github-raw-manifest'}}
+    }catch(err){console.warn('Raw manifest discovery failed.',err)}
+
+    // Keep the tree API as a secondary way to discover newly added folders.
     try{
       const tree=await fetchJSON(TREE_API);
       if(tree?.truncated)throw new Error('GitHub database tree terlalu besar.');
@@ -4568,17 +4603,21 @@ body.dark #packagesGrid .packageHanziIcon{
         addFile(g,file.replace(/\.json$/i,''),item.path);
       }
       const groups=[...gm.values()].filter(g=>g.files.length);
-      if(groups.length)return {groups,source:'github-tree'};
-      throw new Error('GitHub tree tidak berisi package folder.');
-    }catch(err){
-      console.warn('Dynamic database discovery failed; using manifest fallback.',err);
-      try{
-        const m=await fetchJSON('./data/manifest.json',5000);
-        const groups=groupsFromManifest(m);
-        if(groups.length)return {groups,source:'manifest-fallback'};
-      }catch(e){console.warn('Manifest fallback failed.',e)}
-      throw err;
-    }
+      if(groups.length){cacheCatalog(groups);return {groups,source:'github-tree'}}
+    }catch(err){console.warn('Dynamic database tree discovery failed.',err)}
+
+    // Same-origin manifest fallback for deployments that block raw GitHub.
+    try{
+      const m=await fetchJSON('./data/manifest.json',7000);
+      const groups=groupsFromManifest(m);
+      if(groups.length){cacheCatalog(groups);return {groups,source:'manifest-fallback'}}
+    }catch(err){console.warn('Same-origin manifest fallback failed.',err)}
+
+    // Last resort: use the last known catalog so the UI does not collapse to
+    // “Database tidak berisi package” during a transient network failure.
+    const cached=groupsFromCachedCatalog();
+    if(cached.length)return {groups:cached,source:'local-catalog-cache'};
+    throw new Error('Katalog package tidak dapat dimuat. Periksa koneksi internet lalu coba refresh.');
   }
 
   function sortGroups(groups){
@@ -4629,7 +4668,7 @@ body.dark #packagesGrid .packageHanziIcon{
     code=String(code||'');const meta=state.byCode.get(code);if(!meta)throw new Error('Paket tidak ditemukan di database: '+code);
     if(DB[code]&&!DB[code].__lazy)return DB[code];
     if(state.cache.has(code))return state.cache.get(code);
-    const p=fetchJSON(meta.url,10000).then(d=>{if(!d||typeof d!=='object')throw new Error('JSON package tidak valid: '+code);d.code=d.code||code;d.__folder=meta.path.split('/')[1]||'';d.__lazy=false;DB[code]=d;return d}).catch(e=>{state.cache.delete(code);throw e});
+    const p=fetchJSON(meta.url,10000).catch(()=>fetchJSON(meta.remoteUrl||rawURL(meta.path),10000)).then(d=>{if(!d||typeof d!=='object')throw new Error('JSON package tidak valid: '+code);d.code=d.code||code;d.__folder=meta.path.split('/')[1]||'';d.__lazy=false;DB[code]=d;return d}).catch(e=>{state.cache.delete(code);throw e});
     state.cache.set(code,p);return p;
   }
 
