@@ -6677,6 +6677,223 @@ body.dark #partsScreen #parts > div[style*="grid-column"] .sectionProgress {
 }
 </style>
 
+
+<style id="packageDetailCardHomeStyleV135">
+/* V1.35 — Package Detail cards adopt the existing Home/Package card language.
+   Visual-only override: data, routing and question loading remain untouched. */
+#partsScreen .flatPartCard {
+  --card-accent: var(--part-accent, #ff6548);
+  --card-tint: color-mix(in srgb, var(--card-accent) 9%, #ffffff);
+  position:relative !important;
+  display:grid !important;
+  grid-template-columns:72px minmax(0,1fr) !important;
+  grid-template-rows:auto auto !important;
+  column-gap:18px !important;
+  width:100% !important;
+  min-height:205px !important;
+  padding:24px 28px 20px 30px !important;
+  margin:0 !important;
+  border:1px solid #d9dee5 !important;
+  border-radius:28px !important;
+  background:linear-gradient(112deg,#ffffff 0%,#ffffff 52%,var(--card-tint) 100%) !important;
+  color:#17181b !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+  overflow:hidden !important;
+  text-align:left !important;
+  transition:border-color .18s ease, transform .18s ease !important;
+}
+#partsScreen .flatPartCard:nth-child(2) {
+  --card-accent:#7654e8;
+  --card-tint:color-mix(in srgb,#7654e8 9%,#ffffff);
+  background:linear-gradient(112deg,#ffffff 0%,#ffffff 52%,#f1f3ff 100%) !important;
+}
+#partsScreen .flatPartCard:nth-child(3) {
+  --card-accent:#ef8b25;
+  --card-tint:color-mix(in srgb,#ef8b25 9%,#ffffff);
+  background:linear-gradient(112deg,#ffffff 0%,#ffffff 52%,#fff5e8 100%) !important;
+}
+#partsScreen .flatPartCard::before {
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  top:0 !important;
+  bottom:0 !important;
+  width:6px !important;
+  background:var(--card-accent) !important;
+  opacity:1 !important;
+  pointer-events:none !important;
+}
+#partsScreen .flatPartCard::after { display:none !important; }
+#partsScreen .flatPartCard:hover {
+  transform:translateY(-1px) !important;
+  border-color:color-mix(in srgb,var(--card-accent) 42%,#d9dee5) !important;
+  box-shadow:none !important;
+}
+
+/* Hanzi: pure typography, matching the visual treatment of the package cards. */
+#partsScreen .flatPartCard .partHanzi {
+  grid-column:1 !important;
+  grid-row:1 / span 2 !important;
+  align-self:start !important;
+  justify-self:start !important;
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  background-image:none !important;
+  box-shadow:none !important;
+  color:var(--card-accent) !important;
+  font-family:"Ma Shan Zheng","Noto Serif CJK SC",serif !important;
+  font-size:66px !important;
+  font-weight:400 !important;
+  font-style:normal !important;
+  line-height:.92 !important;
+  letter-spacing:0 !important;
+  overflow:visible !important;
+  text-shadow:none !important;
+}
+
+#partsScreen .flatPartCard .partMain {
+  grid-column:2 !important;
+  grid-row:1 !important;
+  min-width:0 !important;
+  width:100% !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-start !important;
+}
+#partsScreen .flatPartCard .partEyebrow {
+  color:var(--card-accent) !important;
+  font-size:10px !important;
+  line-height:1.15 !important;
+  font-weight:800 !important;
+  letter-spacing:1.8px !important;
+  text-transform:none !important;
+}
+#partsScreen .flatPartCard strong {
+  margin:5px 0 0 !important;
+  color:#17181b !important;
+  font-size:25px !important;
+  line-height:1.08 !important;
+  letter-spacing:-.7px !important;
+  font-weight:900 !important;
+}
+#partsScreen .flatPartCard .partMeta {
+  margin-top:7px !important;
+  color:#687384 !important;
+  font-size:14px !important;
+  line-height:1.35 !important;
+}
+#partsScreen .flatPartCard .partTags {
+  display:flex !important;
+  flex-wrap:wrap !important;
+  gap:6px !important;
+  margin-top:10px !important;
+}
+#partsScreen .flatPartCard .partTags i {
+  font-style:normal !important;
+  padding:5px 9px !important;
+  border-radius:999px !important;
+  background:color-mix(in srgb,var(--card-accent) 8%,#fff) !important;
+  color:var(--card-accent) !important;
+  font-size:9px !important;
+  line-height:1 !important;
+  font-weight:850 !important;
+}
+#partsScreen .flatPartCard .progressWrap {
+  grid-column:2 !important;
+  grid-row:2 !important;
+  width:100% !important;
+  margin:18px 0 0 !important;
+}
+#partsScreen .flatPartCard .progressMeta {
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  margin:0 0 7px !important;
+  color:#687384 !important;
+  font-size:11px !important;
+}
+#partsScreen .flatPartCard .progressMeta strong {
+  margin:0 !important;
+  color:#687384 !important;
+  font-size:11px !important;
+  font-weight:650 !important;
+  letter-spacing:0 !important;
+}
+#partsScreen .flatPartCard .progressBar {
+  width:100% !important;
+  height:7px !important;
+  border-radius:999px !important;
+  background:#e6ebf0 !important;
+  box-shadow:none !important;
+}
+#partsScreen .flatPartCard .progressBar .fill {
+  background:var(--card-accent) !important;
+  border-radius:999px !important;
+  box-shadow:none !important;
+}
+
+/* Dark Mode: same card geometry, stronger accent wash on the right. */
+body.dark #partsScreen .flatPartCard {
+  border-color:#2d3035 !important;
+  color:#f3f5f8 !important;
+  background:linear-gradient(112deg,#0b0c0e 0%,#101114 42%,#25130f 73%,#3a1712 100%) !important;
+  box-shadow:none !important;
+}
+body.dark #partsScreen .flatPartCard:nth-child(2) {
+  background:linear-gradient(112deg,#0b0c0e 0%,#101114 42%,#171b2c 73%,#26335a 100%) !important;
+}
+body.dark #partsScreen .flatPartCard:nth-child(3) {
+  background:linear-gradient(112deg,#0b0c0e 0%,#101114 42%,#281b0e 73%,#3b260d 100%) !important;
+}
+body.dark #partsScreen .flatPartCard::before { background:var(--card-accent) !important; }
+body.dark #partsScreen .flatPartCard .partHanzi {
+  background:transparent !important;
+  color:var(--card-accent) !important;
+  text-shadow:none !important;
+}
+body.dark #partsScreen .flatPartCard strong { color:#f3f5f8 !important; }
+body.dark #partsScreen .flatPartCard .partMeta,
+body.dark #partsScreen .flatPartCard .progressMeta,
+body.dark #partsScreen .flatPartCard .progressMeta strong { color:#a9b1be !important; }
+body.dark #partsScreen .flatPartCard .partTags i {
+  background:color-mix(in srgb,var(--card-accent) 13%,#111214) !important;
+  color:var(--card-accent) !important;
+}
+body.dark #partsScreen .flatPartCard .progressBar { background:#202226 !important; }
+body.dark #partsScreen .flatPartCard .progressBar .fill { background:var(--card-accent) !important; }
+
+@media (max-width:760px) {
+  #partsScreen .flatPartCard {
+    grid-template-columns:56px minmax(0,1fr) !important;
+    grid-template-rows:auto auto !important;
+    column-gap:14px !important;
+    min-height:0 !important;
+    padding:21px 17px 17px 22px !important;
+    border-radius:24px !important;
+  }
+  #partsScreen .flatPartCard .partHanzi {
+    font-size:53px !important;
+    line-height:.92 !important;
+  }
+  #partsScreen .flatPartCard strong {
+    font-size:22px !important;
+    letter-spacing:-.55px !important;
+  }
+  #partsScreen .flatPartCard .partMeta { font-size:13px !important; margin-top:6px !important; }
+  #partsScreen .flatPartCard .partTags { margin-top:9px !important; }
+  #partsScreen .flatPartCard .progressWrap { margin-top:15px !important; }
+}
+</style>
+
 </html>
 
 <!-- v1.28: Dashboard dark mode follows the existing mobile/light dashboard proportions. No other dashboard logic/layout is changed. -->
