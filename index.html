@@ -1736,6 +1736,7 @@ function performLogout(){
   flushCloudSync();
   clearTimeout(cloudSyncTimer);
   try{localStorage.removeItem(USERNAME_KEY)}catch(e){}
+  try{window.__hskClearPersistedRoute?.()}catch(e){}
   currentUsername='';
   answers={};checked={};resultState=null;
   route={screen:'home',packageCode:null,type:null,sectionIndex:null};
@@ -1747,8 +1748,14 @@ function performLogout(){
   resetAuthChoices();
 }
 function renderNavState(){document.querySelectorAll('.mainNav .navItem').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.screen||((route.screen==='studyPlans'||route.screen==='studyPlanDetail')&&b.dataset.nav==='studyPlans')||((route.screen==='levels'||route.screen==='packages'||route.screen==='package'||route.screen==='parts'||route.screen==='exercise'||route.screen==='result')&&b.dataset.nav==='packages')))}
-function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');document.body.classList.toggle('exercise-focus',name==='exercise');document.body.classList.toggle('result-focus',name==='result');renderContext();renderNavState();/* canonical navigation guard owns browser history */}
+function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');document.body.classList.toggle('exercise-focus',name==='exercise');document.body.classList.toggle('result-focus',name==='result');renderContext();renderNavState();/* canonical navigation guard owns browser history */if(!window.__hskRestoringLastRoute&&typeof window.__hskPersistRoute==='function')window.__hskPersistRoute();}
 function saveState(){return route}
+/* Persist only the current app route so a browser refresh returns to the same page.
+   This is intentionally separate from answer/progress storage. */
+const LAST_ROUTE_KEY='hsk4-kelas-e-last-route-v1';
+window.__hskPersistRoute=function(){try{if(!currentUsername)return;const r=route||{};localStorage.setItem(LAST_ROUTE_KEY+':'+currentUsername,JSON.stringify({screen:r.screen||'home',packageCode:r.packageCode??null,type:r.type??null,sectionIndex:r.sectionIndex??null,studyPlanId:r.studyPlanId??null,materialKey:r.materialKey??null,updatedAt:Date.now()}));}catch(e){console.warn('HSK route persist:',e)}};
+window.__hskReadPersistedRoute=function(){try{if(!currentUsername)return null;const raw=localStorage.getItem(LAST_ROUTE_KEY+':'+currentUsername);if(!raw)return null;const r=JSON.parse(raw);if(!r||typeof r!=='object')return null;return {screen:String(r.screen||'home'),packageCode:r.packageCode??null,type:r.type??null,sectionIndex:r.sectionIndex??null,studyPlanId:r.studyPlanId??null,materialKey:r.materialKey??null};}catch(e){return null}};
+window.__hskClearPersistedRoute=function(){try{if(currentUsername)localStorage.removeItem(LAST_ROUTE_KEY+':'+currentUsername)}catch(e){}};
 const STORAGE_PREFIX='hsk4-kelas-e-progress-v4:';
 function storageKey(){return STORAGE_PREFIX+(currentUsername||'guest')}
 function readStore(){try{return JSON.parse(localStorage.getItem(storageKey())||'{}')||{}}catch(e){return {}}}
@@ -1982,6 +1989,13 @@ async function loadQuestionData(){
   HSK_DATA_STATE.loaded=true;
   document.dispatchEvent(new Event('hsk:data-ready'));
 }
+function showExerciseLoadRecovery(title='Soal belum berhasil dimuat',message='Soal kosong atau belum berhasil dimuat. Silakan refresh halaman untuk mencoba lagi.'){
+  const q=$('questions');if(!q)return;
+  const dark=document.body.classList.contains('dark');
+  q.innerHTML=`<div class="questionLoadRecovery" role="alert" aria-live="polite"><div class="questionLoadRecoveryIcon">!</div><div class="questionLoadRecoveryBody"><strong>${esc(title)}</strong><p>${esc(message)}</p><button class="btn primary" type="button" onclick="window.__hskRefreshExercise()"><span class="material-symbols-rounded ico" aria-hidden="true">refresh</span>Refresh soal</button></div></div>`;
+}
+window.__hskRefreshExercise=function(){try{window.__hskPersistRoute?.();}catch(e){} location.reload();};
+
 async function initApp(){
   await loadQuestionData();
   // Wait briefly for the runtime catalog so the first package screen cannot race
@@ -1990,6 +2004,7 @@ async function initApp(){
   try{const savedTheme=localStorage.getItem('hsk-theme');applyTheme(savedTheme==='dark'?'dark':'light')}catch(e){applyTheme('light')}
   route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;
   currentUsername=getUsername();
+  const persistedRoute=window.__hskReadPersistedRoute?.();
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
   if(currentUsername){
     const a=$('authScreen');if(a)a.style.display='none';
@@ -2000,6 +2015,34 @@ async function initApp(){
     renderHome();renderPackagesScreen();renderScores();
     await pullCloudState(true);
     renderHome();renderPackagesScreen();renderScores();
+    /* Restore the last page only after auth/cloud bootstrap has completed.
+       Dynamic package data is loaded on demand so deep refreshes remain safe. */
+    if(persistedRoute&&persistedRoute.screen&&persistedRoute.screen!=='home'){
+      window.__hskRestoringLastRoute=true;
+      try{
+        const r=persistedRoute;
+        if(r.screen==='package'&&r.packageCode&&window.__hskLoadPackage){await window.__hskLoadPackage(String(r.packageCode));}
+        if((r.screen==='parts'||r.screen==='exercise')&&r.packageCode&&window.__hskLoadPackage){await window.__hskLoadPackage(String(r.packageCode));}
+        route={...route,...r};
+        if(r.screen==='levels'){renderLevelsScreen();setScreen('levelsScreen',false);}
+        else if(r.screen==='packages'){renderPackagesScreen();setScreen('packagesScreen',false);}
+        else if(r.screen==='scores'){renderScores();setScreen('scores',false);}
+        else if(r.screen==='studyPlans'){renderStudyPlans();setScreen('studyPlans',false);}
+        else if(r.screen==='studyPlanDetail'){studyPlanDetailId=r.studyPlanId||null;renderStudyPlanDetail();setScreen('studyPlanDetail',false);}
+        else if(r.screen==='package'){renderPackage();setScreen('package',false);}
+        else if(r.screen==='parts'){renderSections();setScreen('partsScreen',false);}
+        else if(r.screen==='exercise'){loadCurrentSectionState();renderExercise();setScreen('exercise',false);}
+        else if(r.screen==='result'){renderResult();setScreen('result',false);}
+        else {route={screen:'home',packageCode:null,type:null,sectionIndex:null};renderHome();setScreen('home',false);}
+      }catch(e){
+        console.warn('HSK last-route restore failed:',e);
+        /* Keep the intended route so the recovery UI can explain the load issue. */
+        route={...route,...persistedRoute};
+        if(persistedRoute.screen==='exercise'){setScreen('exercise',false);showExerciseLoadRecovery('Soal belum berhasil dimuat','Data soal belum tersedia setelah halaman dimuat ulang. Coba refresh halaman untuk memuat ulang data.');}
+      }finally{window.__hskRestoringLastRoute=false;}
+    }else{
+      window.__hskPersistRoute();
+    }
   }else{
     const a=$('authScreen');if(a)a.style.display='flex';
     document.documentElement.classList.add('auth-page');
@@ -7244,4 +7287,51 @@ body.dark #packagesGrid .tileIcon::before{
     min-height:0!important;
   }
 }
+</style>
+
+
+
+<script id="questionLoadRecoveryHookV1">
+(function(){
+  'use strict';
+  function install(){
+    if(typeof window.renderExercise!=='function'||window.renderExercise.__hskRecoveryHook)return;
+    const original=window.renderExercise;
+    function wrapped(){
+      let out;
+      try{out=original.apply(this,arguments);}
+      catch(e){
+        console.error('HSK exercise render failed:',e);
+        window.showExerciseLoadRecovery?.('Soal belum berhasil dimuat','Terjadi masalah saat menampilkan soal. Refresh untuk mencoba memuat ulang data soal.');
+        return undefined;
+      }
+      try{
+        const r=window.route||{};
+        if(r.screen!=='exercise')return out;
+        const sec=window.DB?.[r.packageCode]?.[r.type]?.[r.sectionIndex];
+        const qs=sec?.questions;
+        if(!Array.isArray(qs)||qs.length===0){
+          window.showExerciseLoadRecovery?.('Soal belum berhasil dimuat','Bagian ini terbuka, tetapi daftar soal masih kosong. Refresh untuk mencoba memuat ulang data soal.');
+        }
+      }catch(e){console.warn('HSK question recovery check:',e)}
+      return out;
+    }
+    wrapped.__hskRecoveryHook=true;
+    wrapped.__hskOriginal=original;
+    window.renderExercise=wrapped;
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
+  else install();
+  window.addEventListener('hsk:dynamic-catalog-ready',install,{once:true});
+})();
+</script>
+
+<style id="questionLoadRecoveryV1">
+.questionLoadRecovery{display:flex;align-items:flex-start;gap:16px;margin:18px 0;padding:20px;border:1px solid var(--line);border-radius:22px;background:var(--surface);color:var(--text);}
+.questionLoadRecoveryIcon{flex:0 0 40px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--blue) 12%,var(--surface));color:var(--blue);font-weight:900;font-size:20px;}
+.questionLoadRecoveryBody{min-width:0;}
+.questionLoadRecoveryBody strong{display:block;font-size:17px;line-height:1.3;}
+.questionLoadRecoveryBody p{margin:6px 0 13px;color:var(--muted);line-height:1.55;font-size:14px;}
+body.dark .questionLoadRecovery{background:#111214;border-color:#2b2c30;}
+@media(max-width:600px){.questionLoadRecovery{padding:17px;gap:12px}.questionLoadRecoveryIcon{flex-basis:36px;width:36px;height:36px}}
 </style>
