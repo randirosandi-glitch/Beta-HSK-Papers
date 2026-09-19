@@ -1,0 +1,87 @@
+name: Apply beta layout fix
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch index.html
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '<style id="betaLandscapeLayoutFix">'
+          if marker in s:
+              print('Layout fix already present; nothing to do.')
+              raise SystemExit(0)
+          patch = r'''<style id="betaLandscapeLayoutFix">
+          /* Beta layout fix: landscape package grid + dark/light dashboard parity */
+          @media (orientation: landscape) and (min-width: 761px) {
+            #packagesGrid {
+              grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+              gap: 16px !important;
+            }
+
+            .homeHeroDashboard {
+              grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr) !important;
+              gap: 16px !important;
+              align-items: stretch !important;
+            }
+
+            .homeMetricStrip {
+              grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            }
+
+            .homeMetric,
+            .homeOverall {
+              min-width: 0 !important;
+            }
+
+            .homeOverall {
+              min-height: 100% !important;
+            }
+          }
+
+          /* Keep dashboard geometry identical between Light and Dark mode. */
+          @media (min-width: 761px) {
+            body.dark .homeHeroDashboard {
+              grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr) !important;
+              gap: 16px !important;
+            }
+
+            body.dark .homeMetricStrip {
+              grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            }
+
+            body.dark .homeMetric,
+            body.dark .homeOverall {
+              min-width: 0 !important;
+            }
+          }
+          </style>'''
+          s = s.replace('</head>', patch + '\n</head>', 1)
+          p.write_text(s, encoding='utf-8')
+          print('Patched index.html')
+          PY
+
+      - name: Commit and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html .github/workflows/apply-beta-layout-fix.yml
+          git rm .github/workflows/apply-beta-layout-fix.yml
+          git commit -m 'Fix landscape package grid and dashboard parity [skip ci]'
+          git push
