@@ -771,7 +771,10 @@ body.dark .bootMark,body.dark .authMark,body.dark .topBrandMark{background:trans
 }
 </style>
 <!-- v1.27 surgical fix: remove decorative dashboard metric icons only; preserve all data/logic/history -->
+<style id="v127-dashboard-icon-cleanup">
+/* v1.27: dashboard metrics stay exactly the same, but decorative icons are removed. */
 
+</style>
 
 
 <style id="packageCardsFinalPolish">
@@ -889,9 +892,92 @@ html.dark,html.dark body,body.dark{background:#000000!important;background-image
 body.dark #app,body.dark main,body.dark .screen{background:transparent!important;background-image:none!important;}
 body.dark .top{background:#000000!important;background-image:none!important;}
 </style>
+<style id="homeEditorialAccentTypographyV129">
+/* v1.29 — HOME editorial typography + restrained accent gradients
+   Visual-only layer. No HTML, data, routing, package loading, or progress logic changed. */
 
+/* Keep the canvas truly white / black. Accent gradients live only inside selected UI surfaces. */
+html, body { background:#fff !important; }
+body.dark, html.dark body { background:#000 !important; }
+
+/* --- Editorial hero typography --- */
+
+
+
+
+
+
+
+/* --- Progress dashboard: charcoal card with a barely-there accent wash --- */
+
+
+
+
+
+
+
+
+
+/* --- Continue card: warm editorial wash, not a loud gradient --- */
+
+
+
+
+
+
+/* --- History cards: alternating warm / cool editorial accents --- */
+
+
+
+
+
+
+
+
+/* --- Dark mode: true black canvas, charcoal cards, restrained warm/cool washes --- */
+
+
+
+
+
+
+
+@media(max-width:760px){
+  
+  
+  
+  
+  
+  
+  
+  
+  
+}
+
+</style>
 <!-- v1.29-3: home accent cleanup -->
+<style id="v1293-home-accent-cleanup">
+/* v1.29-3: Home accent cleanup. Card accents may use gradients; text and progress bars never do. */
 
+
+/* Light Home: replace blue→orange card tint with white→orange only. */
+
+
+/* Keep the overall progress area clean: no blue ambient tint. */
+
+
+/* Orange is the single progress-bar fill on Home. */
+
+
+/* Solid orange primary accents — never gradient text. */
+
+
+/* Dark Home: retain a restrained card-only accent, with no gradient text/bars. */
+
+
+
+
+</style>
 
 
 <!-- v1.30: FINAL CONTROL GRADIENT CLEANUP
@@ -1160,11 +1246,250 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
   .authScreen .authMark .hskThemeLogo{width:260px!important;max-width:260px!important;height:98px!important;max-height:98px!important;}
 }
 </style>
-<style id="pageBackgroundClean">html,body{background:#ffffff!important;}body.dark,html.dark{background:#000!important;}main,.screen,#home{background:transparent!important;}#home:before,#home:after,.homeEditorial:before,.homeEditorial:after{display:none!important;content:none!important;}</style><style id="weeklyGlobalDashboardV2">
-/* HOME DASHBOARD — consolidated card accent system.
-   One visual source for the current Home dashboard. No stacked dashboard patches.
-   Accent gradients live only on cards; canvas, text, controls and progress fills stay solid.
-*/
+<style id="homeGeometryClean">
+/* HOME — SINGLE RESPONSIVE GEOMETRY
+   Width classes follow adaptive design guidance:
+   compact <600, medium 600–839, expanded 840–1199, large 1200–1599, XL 1600+.
+   The same content grid is shared by hero, dashboard, continue and history. */
+#home{display:none;width:100%;margin:0;padding:0;background:transparent;color:var(--text);}
+#home.active{display:block;}
+#home{
+  --home-max:1120px;
+  --home-gutter:20px;
+  --home-section-gap:64px;
+  --home-card-radius:20px;
+  --home-border:1px solid var(--line);
+}
+#home .homeEditorial,
+#home .homeLastSection,
+#home .homeHistorySection{
+  width:100%;
+  max-width:var(--home-max);
+  margin-left:auto;
+  margin-right:auto;
+}
+#home .homeEditorial{padding:40px 0 0;background:transparent;border:0;overflow:visible;}
+#home .homeEditorialMain{width:100%;max-width:none;margin:0;position:relative;z-index:1;}
+#home .homeEditorial h1{
+  margin:0;
+  max-width:760px;
+  font-size:clamp(32px,8.1vw,38px);
+  line-height:1.01;
+  letter-spacing:-1.7px;
+  font-weight:850;
+  color:var(--text);
+}
+#home .homeEditorial h1 em{font-style:normal;color:var(--blue);}
+#home .homeEditorial>.homeEditorialMain>p{
+  margin:18px 0 0;
+  max-width:650px;
+  font-size:15px;
+  line-height:1.5;
+  color:var(--muted);
+}
+#home .homeGreeting{margin-top:22px;font-size:14px;line-height:1.45;font-weight:700;color:var(--text);}
+#home .homeGreeting b{color:var(--blue);}
+
+/* Shared dashboard geometry */
+#home .homeHeroDashboard{
+  margin-top:30px;
+  width:100%;
+  display:block;
+  border:var(--home-border);
+  border-radius:var(--home-card-radius);
+  background:var(--surface);
+  overflow:hidden;
+  box-shadow:none;
+}
+#home .homeMetricStrip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;}
+#home .homeMetric{
+  min-width:0;
+  min-height:104px;
+  padding:18px 16px 16px;
+  border:0;
+  border-right:1px solid var(--line);
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+#home .homeMetric:last-child{border-right:0;}
+#home .homeMetricLabel{font-size:8px;line-height:1.25;letter-spacing:1.15px;text-transform:uppercase;font-weight:800;color:var(--muted);}
+#home .homeMetricValue{margin-top:8px;font-size:27px;line-height:1;letter-spacing:-1px;font-weight:850;color:var(--text);}
+#home .homeMetric:nth-child(3) .homeMetricValue{color:var(--blue);}
+#home .homeMetricNote{margin-top:7px;font-size:9px;line-height:1.35;color:var(--muted);}
+#home .homeOverall{
+  min-height:132px;
+  padding:20px 22px;
+  border-top:1px solid var(--line);
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+#home .homeRing{
+  --p:0;
+  width:104px;
+  height:104px;
+  flex:0 0 104px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  position:relative;
+  background:conic-gradient(var(--blue) calc(var(--p)*1%),color-mix(in srgb,var(--muted) 18%,transparent) 0);
+}
+#home .homeRing:after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--surface);}
+#home .homeRing span{position:relative;z-index:1;font-size:17px;font-weight:850;color:var(--text);}
+#home .homeOverallText{min-width:0;}
+#home .homeOverallText b{display:block;font-size:14px;line-height:1.3;font-weight:800;color:var(--text);}
+#home .homeOverallText span{display:block;margin-top:6px;font-size:11px;line-height:1.45;color:var(--muted);}
+
+/* Section rhythm uses the same content width and gutter as the hero. */
+#home .homeLastSection{margin-top:var(--home-section-gap);padding:0;border:0;background:transparent;}
+#home .homeLastHeading{margin:0 0 20px;padding:0;}
+#home .homeLastHeading .sectionKicker,#home .sectionKicker{font-size:9px;line-height:1.2;letter-spacing:1.8px;font-weight:850;color:var(--blue);}
+#home .homeLastHeading h2,#home .homeHistoryHeading h2{
+  margin:8px 0 0;
+  font-size:clamp(27px,6.5vw,34px);
+  line-height:1.02;
+  letter-spacing:-1.35px;
+  font-weight:850;
+  color:var(--text);
+}
+#home .homeLastHeading .sub,#home .homeHistoryHeading .sub{margin-top:7px;font-size:13px;line-height:1.45;color:var(--muted);}
+#home .homeContinue{
+  width:100%;
+  padding:22px;
+  border:var(--home-border);
+  border-radius:var(--home-card-radius);
+  background:var(--surface);
+  box-shadow:none;
+  overflow:hidden;
+}
+#home .homeContinue:before{display:none;}
+#home .homeContinueHead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+#home .homeContinueTitle{font-size:21px;line-height:1.15;letter-spacing:-.65px;font-weight:850;color:var(--text);}
+#home .homeContinueMeta{margin-top:7px;font-size:12px;line-height:1.45;color:var(--muted);}
+#home .homeContinuePct{font-size:30px;line-height:1;letter-spacing:-1.3px;font-weight:850;color:var(--blue);white-space:nowrap;}
+#home .homeContinue .progressWrap{margin:19px 0 17px;}
+#home .homeContinue .progressTrack{height:7px;border-radius:999px;background:color-mix(in srgb,var(--text) 9%,transparent);overflow:hidden;}
+#home .homeContinue .progressFill{height:100%;border-radius:inherit;background:var(--blue);}
+#home .homeContinueActions{display:flex;align-items:center;gap:10px;}
+#home .homeContinueBtn{width:100%;min-height:48px;border:0;border-radius:14px;padding:0 18px;background:linear-gradient(90deg,#ff6548,#ea5d82);color:#fff;box-shadow:none;font-size:15px;font-weight:800;}
+#home .homeContinueSync{margin-top:11px;font-size:10px;line-height:1.4;color:var(--muted);}
+#home .homeContinueSync strong,#home .homeContinueSync b{color:#5cc9a0;}
+
+#home .homeHistorySection{margin-top:var(--home-section-gap);padding:0 0 112px;}
+#home .homeHistoryHeading{margin:0 0 20px;padding:0;}
+#home .homeHistoryList{display:grid;gap:12px;}
+#home .homeHistoryCard{
+  width:100%;
+  min-height:92px;
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr) auto 20px;
+  align-items:center;
+  gap:12px;
+  padding:15px 16px;
+  border:var(--home-border);
+  border-radius:18px;
+  background:var(--surface);
+  color:var(--text);
+  text-align:left;
+  cursor:pointer;
+  box-shadow:none;
+}
+#home .homeHistoryIcon{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;background:color-mix(in srgb,var(--text) 7%,transparent);color:var(--muted);font-size:24px;}
+#home .homeHistoryMain{min-width:0;display:flex;flex-direction:column;gap:5px;}
+#home .homeHistoryTitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;line-height:1.25;font-weight:800;color:var(--text);}
+#home .homeHistoryMeta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:10px;line-height:1.35;}
+#home .homeHistoryProgress{display:block;width:100%;height:5px;border-radius:999px;background:color-mix(in srgb,var(--text) 9%,transparent);overflow:hidden;}
+#home .homeHistoryProgressFill{display:block;height:100%;border-radius:inherit;background:var(--blue);}
+#home .homeHistoryPct{font-size:19px;font-weight:850;letter-spacing:-.7px;color:var(--blue);white-space:nowrap;}
+#home .homeHistoryArrow{color:var(--muted);font-size:23px;}
+#home .homeHistoryEmpty{min-height:90px;padding:18px;border:1px dashed var(--line);border-radius:18px;background:var(--surface);color:var(--muted);box-shadow:none;}
+#home .homeHistoryEmpty strong{color:var(--text);}
+
+/* MEDIUM: 600–839 */
+@media (min-width:600px){
+  #home{--home-gutter:28px;--home-section-gap:72px;--home-card-radius:22px;}
+  #home .homeEditorial{padding-top:48px;}
+  #home .homeEditorial h1{font-size:clamp(40px,6vw,50px);letter-spacing:-2.4px;}
+  #home .homeEditorial>.homeEditorialMain>p{margin-top:20px;font-size:16px;}
+  #home .homeGreeting{margin-top:24px;font-size:14px;}
+  #home .homeHeroDashboard{margin-top:32px;}
+  #home .homeMetric{min-height:116px;padding:20px 18px 18px;}
+  #home .homeMetricLabel{font-size:9px;}
+  #home .homeMetricValue{font-size:29px;}
+  #home .homeMetricNote{font-size:10px;}
+  #home .homeOverall{min-height:146px;padding:22px 24px;gap:20px;}
+  #home .homeRing{width:112px;height:112px;flex-basis:112px;}
+  #home .homeRing span{font-size:18px;}
+  #home .homeLastHeading h2,#home .homeHistoryHeading h2{font-size:34px;}
+  #home .homeContinue{padding:24px;}
+  #home .homeContinueTitle{font-size:23px;}
+  #home .homeContinuePct{font-size:32px;}
+  #home .homeHistoryCard{grid-template-columns:56px minmax(0,1fr) auto 22px;padding:16px 18px;}
+  #home .homeHistoryIcon{width:56px;height:56px;}
+}
+
+/* EXPANDED: 840–1199 */
+@media (min-width:840px){
+  #home{--home-gutter:36px;--home-section-gap:80px;--home-card-radius:22px;}
+  #home .homeEditorial{padding-top:56px;}
+  #home .homeEditorial h1{font-size:clamp(48px,5.1vw,58px);letter-spacing:-2.9px;}
+  #home .homeEditorial>.homeEditorialMain>p{margin-top:22px;font-size:17px;}
+  #home .homeGreeting{margin-top:26px;font-size:15px;}
+  #home .homeHeroDashboard{margin-top:36px;}
+  #home .homeMetric{min-height:124px;padding:22px 20px 19px;}
+  #home .homeMetricValue{font-size:30px;}
+  #home .homeOverall{min-height:158px;padding:24px 28px;}
+  #home .homeRing{width:120px;height:120px;flex-basis:120px;}
+  #home .homeLastHeading h2,#home .homeHistoryHeading h2{font-size:37px;}
+  #home .homeContinue{padding:26px;}
+  #home .homeContinueTitle{font-size:25px;}
+  #home .homeContinuePct{font-size:34px;}
+  #home .homeHistoryCard{min-height:100px;grid-template-columns:60px minmax(0,1fr) auto 24px;padding:18px 20px;}
+  #home .homeHistoryIcon{width:60px;height:60px;}
+}
+
+/* LARGE: 1200–1599 */
+@media (min-width:1200px){
+  #home{--home-gutter:40px;--home-section-gap:88px;--home-card-radius:24px;}
+  #home .homeEditorial{padding-top:64px;}
+  #home .homeEditorial h1{font-size:clamp(54px,4vw,62px);letter-spacing:-3.2px;}
+  #home .homeEditorial>.homeEditorialMain>p{font-size:18px;}
+  #home .homeHeroDashboard{margin-top:40px;}
+  #home .homeMetric{min-height:132px;padding:24px 22px 21px;}
+  #home .homeMetricValue{font-size:32px;}
+  #home .homeOverall{min-height:168px;padding:26px 30px;}
+  #home .homeRing{width:128px;height:128px;flex-basis:128px;}
+  #home .homeRing span{font-size:20px;}
+  #home .homeLastHeading h2,#home .homeHistoryHeading h2{font-size:40px;}
+  #home .homeContinue{padding:28px;}
+  #home .homeContinueTitle{font-size:27px;}
+  #home .homeContinuePct{font-size:38px;}
+  #home .homeHistoryCard{min-height:108px;grid-template-columns:64px minmax(0,1fr) auto 26px;padding:20px 22px;}
+  #home .homeHistoryIcon{width:64px;height:64px;}
+  #home .homeHistoryTitle{font-size:18px;}
+  #home .homeHistoryPct{font-size:21px;}
+}
+
+/* XL desktop: keep content constrained rather than stretching with the monitor. */
+@media (min-width:1600px){
+  #home{--home-gutter:48px;}
+}
+
+/* Short landscape windows: reduce vertical rhythm, not horizontal geometry. */
+@media (orientation:landscape) and (max-height:700px){
+  #home .homeEditorial{padding-top:28px;}
+  #home .homeLastSection,#home .homeHistorySection{margin-top:52px;}
+  #home .homeHistorySection{padding-bottom:88px;}
+}
+</style><style id="pageBackgroundClean">html,body{background:#ffffff!important;}body.dark,html.dark{background:#000!important;}main,.screen,#home{background:transparent!important;}#home:before,#home:after,.homeEditorial:before,.homeEditorial:after{display:none!important;content:none!important;}</style><style id="weeklyGlobalDashboardV1">
 #home .weeklyDashboard{width:100%;padding:34px 0 118px;color:var(--text)}
 #home .weeklyHero{display:flex;justify-content:space-between;gap:28px;align-items:flex-start;padding:0 0 28px;border-bottom:1px solid var(--line)}
 #home .weeklyHero h1{margin:6px 0 8px;font-size:clamp(30px,4vw,48px);letter-spacing:-1.9px;line-height:1.04}
@@ -1172,47 +1497,8 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
 #home .weeklyHero .homeGreeting{margin-top:14px;color:var(--muted);font-size:13px}.weeklyHero .homeGreeting b{color:var(--text)}
 #home .weekBadge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:11px;font-weight:750;color:var(--muted);white-space:nowrap}
 #home .weekDot{width:7px;height:7px;border-radius:50%;background:var(--blue)}
-
 #home .weeklyPrimaryGrid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.9fr);gap:16px;margin-top:24px}
-
-/* Shared card treatment: white/black base + very soft accent wash. */
-#home .weekTargetCard,
-#home .weeklySummaryCard,
-#home .homeContinue,
-#home .weeklyTargetItem,
-#home .performanceItem,
-#home .periodItem{
-  --card-accent:var(--blue);
-  position:relative;
-  overflow:hidden;
-  border:1px solid var(--line);
-  border-radius:20px;
-  background:linear-gradient(110deg,#fff 0%,#fff 46%,color-mix(in srgb,var(--card-accent) 6%,#fff) 100%);
-  box-shadow:none;
-}
-#home .weekTargetCard{--card-accent:var(--blue);padding:20px}
-#home .weeklySummaryCard{--card-accent:#6f8fe8;padding:20px}
-#home .homeContinue{--card-accent:var(--purple);padding:18px}
-#home .weeklyTargetItem:nth-child(1){--card-accent:var(--orange)}
-#home .weeklyTargetItem:nth-child(2){--card-accent:#6f8fe8}
-#home .weeklyTargetItem:nth-child(3){--card-accent:var(--green)}
-#home .performanceItem:nth-child(1){--card-accent:var(--blue)}
-#home .performanceItem:nth-child(2){--card-accent:#6f8fe8}
-#home .performanceItem:nth-child(3){--card-accent:var(--orange)}
-#home .periodItem:nth-child(4n+1){--card-accent:var(--blue)}
-#home .periodItem:nth-child(4n+2){--card-accent:#6f8fe8}
-#home .periodItem:nth-child(4n+3){--card-accent:var(--purple)}
-#home .periodItem:nth-child(4n){--card-accent:var(--orange)}
-body.dark #home .weekTargetCard,
-body.dark #home .weeklySummaryCard,
-body.dark #home .homeContinue,
-body.dark #home .weeklyTargetItem,
-body.dark #home .performanceItem,
-body.dark #home .periodItem{
-  background:linear-gradient(110deg,#000 0%,#000 46%,color-mix(in srgb,var(--card-accent) 5%,#000) 100%);
-  box-shadow:none;
-}
-
+#home .weekTargetCard,#home .weeklySummaryCard,#home .weeklyTargetItem,#home .performanceItem,#home .periodItem{border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:20px}
 #home .cardEyebrow{font-size:10px;letter-spacing:1.8px;font-weight:850;color:var(--muted)}
 #home .weekTargetTop{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-top:12px}.weekTargetTop strong{display:block;font-size:42px;line-height:1;letter-spacing:-1.8px}.weekTargetTop span{display:block;color:var(--muted);font-size:12px;margin-top:6px}.weekTargetPct{font-size:24px;font-weight:850;color:var(--blue)}
 #home .weekProgressTrack{height:9px;background:var(--surface2);border-radius:999px;overflow:hidden;margin-top:20px}.weekProgressFill{height:100%;width:0;background:var(--blue);border-radius:999px;transition:width .25s ease}
@@ -1220,8 +1506,8 @@ body.dark #home .periodItem{
 #home .weekActivity{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-top:20px}.weekDay{min-width:0;text-align:center}.weekDayLabel{font-size:9px;color:var(--muted);margin-bottom:6px}.weekDayBar{height:44px;background:var(--surface2);border-radius:8px;display:flex;align-items:flex-end;overflow:hidden}.weekDayFill{width:100%;height:0;background:var(--blue);border-radius:8px 8px 0 0;min-height:0}.weekDayCount{font-size:9px;color:var(--muted);margin-top:5px}
 #home .skillRows{display:grid;gap:15px;margin-top:16px}.skillRow{display:grid;grid-template-columns:92px minmax(0,1fr) 42px;align-items:center;gap:10px}.skillName{font-size:12px;font-weight:750}.skillTrack{height:7px;border-radius:999px;background:var(--surface2);overflow:hidden}.skillFill{height:100%;width:0;background:var(--blue);border-radius:999px}.skillValue{text-align:right;font-size:11px;color:var(--muted);font-weight:750}.weeklyAccuracy{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:15px;margin-top:18px;color:var(--muted);font-size:11px}.weeklyAccuracy strong{font-size:20px;color:var(--text)}
 #home .weeklySection{margin-top:34px}.weeklySectionHead{display:flex;justify-content:space-between;align-items:end;margin-bottom:14px}.weeklySectionHead h2{margin:4px 0 0;font-size:25px;letter-spacing:-.7px}.weeklySectionHead .sub{margin-top:5px}
-#home .homeContinueHead{display:flex;justify-content:space-between;gap:14px}.homeContinueTitle{font-size:17px;font-weight:800}.homeContinueMeta{font-size:11px;color:var(--muted);margin-top:5px}.homeContinuePct{font-size:20px;font-weight:850;color:var(--blue)}.homeContinue .progressWrap{margin-top:14px}.homeContinueActions{display:flex;justify-content:flex-end;margin-top:14px}.homeContinueBtn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:12px;padding:10px 14px;font-weight:750;cursor:pointer;box-shadow:none}.homeContinueBtn:hover{border-color:var(--blue)}.homeEmpty{border:1px dashed var(--line);border-radius:18px;padding:20px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface);box-shadow:none}.homeEmpty strong{color:var(--text)}
-#home .weeklyTargets,#home .performanceGrid,#home .periodGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.weeklyTargetItem,.performanceItem,.periodItem{display:flex;flex-direction:column;gap:7px;padding:20px}.weeklyTargetItem strong,.performanceItem strong,.periodItem strong{font-size:22px;letter-spacing:-.5px}.weeklyTargetItem span,.performanceItem span,.periodItem span{font-size:11px;color:var(--muted)}.targetStatus{color:var(--green)!important;font-weight:750}.targetPending{color:var(--muted)!important}
+#home .homeContinue{border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:18px}.homeContinueHead{display:flex;justify-content:space-between;gap:14px}.homeContinueTitle{font-size:17px;font-weight:800}.homeContinueMeta{font-size:11px;color:var(--muted);margin-top:5px}.homeContinuePct{font-size:20px;font-weight:850;color:var(--blue)}.homeContinue .progressWrap{margin-top:14px}.homeContinueActions{display:flex;justify-content:flex-end;margin-top:14px}.homeContinueBtn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:12px;padding:10px 14px;font-weight:750;cursor:pointer}.homeContinueBtn:hover{border-color:var(--blue)}.homeEmpty{border:1px dashed var(--line);border-radius:18px;padding:20px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:16px}.homeEmpty strong{color:var(--text)}
+#home .weeklyTargets,#home .performanceGrid,#home .periodGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.weeklyTargetItem,.performanceItem,.periodItem{display:flex;flex-direction:column;gap:7px}.weeklyTargetItem strong,.performanceItem strong,.periodItem strong{font-size:22px;letter-spacing:-.5px}.weeklyTargetItem span,.performanceItem span,.periodItem span{font-size:11px;color:var(--muted)}.targetStatus{color:var(--green)!important;font-weight:750}.targetPending{color:var(--muted)!important}
 #home .collapsibleSection{border-top:1px solid var(--line);padding-top:4px}.collapseHead{width:100%;border:0;background:transparent;color:var(--text);padding:18px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;text-align:left}.collapseHead>span:first-child{display:flex;flex-direction:column;gap:4px}.collapseHead strong{font-size:21px}.collapseHead .ico{color:var(--muted);transition:transform .18s}.collapseHead[aria-expanded="true"] .ico{transform:rotate(180deg)}.collapseBody{padding-bottom:4px}.periodGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important}.periodItem small{font-size:10px;color:var(--muted)}
 @media(max-width:900px){#home .weeklyPrimaryGrid{grid-template-columns:1fr}.periodGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:760px){#home .weeklyDashboard{padding:24px 0 112px}#home .weeklyHero{display:block;padding-bottom:22px}.weekBadge{margin-top:16px}.weeklyHero h1{font-size:31px!important}.weeklyHero p{font-size:13px}.weeklyPrimaryGrid{gap:12px!important;margin-top:18px!important}.weekTargetCard,.weeklySummaryCard,.weeklyTargetItem,.performanceItem,.periodItem{border-radius:17px;padding:16px}.weekTargetTop strong{font-size:36px}.weekActivity{gap:5px!important}.weekDayBar{height:38px}.skillRow{grid-template-columns:78px minmax(0,1fr) 34px}.weeklyTargets,.performanceGrid{grid-template-columns:1fr!important}.periodGrid{grid-template-columns:1fr 1fr!important}.weeklySection{margin-top:28px!important}.weeklySectionHead h2{font-size:22px}.homeContinue{padding:16px}.homeEmpty{display:block}.homeEmpty .homeContinueBtn{margin-top:12px}}
@@ -1414,55 +1700,68 @@ async function cloudUpdateUser(username,store){
   if(!r.ok)throw new Error(cloudErrorMessage(r.status));
   return true;
 }
+function mergeProgressStores(local,remote){
+  const L=local&&typeof local==='object'?local:{};
+  const R=remote&&typeof remote==='object'?remote:{};
+  const out={...R};
+  const keys=new Set([...Object.keys(L),...Object.keys(R)]);
+  for(const k of keys){
+    if(k==='_resume')continue;
+    if(k==='_studyPlans'){
+      const lm=Array.isArray(L[k])?new Map(L[k].map(x=>[String(x.id),x])):new Map();
+      const rm=Array.isArray(R[k])?new Map(R[k].map(x=>[String(x.id),x])):new Map();
+      const ids=new Set([...lm.keys(),...rm.keys()]);
+      out[k]=[...ids].map(id=>{
+        const a=lm.get(id),b=rm.get(id);if(!b)return a;if(!a)return b;
+        return Number(a.updatedAt||0)>=Number(b.updatedAt||0)?a:b;
+      }).filter(Boolean);
+      continue;
+    }
+    const a=L[k],b=R[k];
+    if(a===undefined){out[k]=b;continue}
+    if(b===undefined){out[k]=a;continue}
+    if(k.includes('|')&&a&&b&&typeof a==='object'&&typeof b==='object'){
+      const answers={...(b.answers||{}),...(a.answers||{})};
+      const checked={...(b.checked||{}),...(a.checked||{})};
+      out[k]={...b,...a,answers,checked,updatedAt:Math.max(Number(a.updatedAt)||0,Number(b.updatedAt)||0)};
+      continue;
+    }
+    if(a&&b&&typeof a==='object'&&typeof b==='object'&&(a.updatedAt!==undefined||b.updatedAt!==undefined))out[k]=Number(a.updatedAt||0)>=Number(b.updatedAt||0)?a:b;
+    else out[k]=a;
+  }
+  const lr=L._resume,rr=R._resume;
+  if(lr||rr)out._resume=Number(lr?.updatedAt||0)>=Number(rr?.updatedAt||0)?(lr||rr):rr;
+  return out;
+}
+
 async function pullCloudState(force=false){
   if(!currentUsername||!cloudEnabled())return false;
+  if(navigator.onLine===false){window.__cloudSyncState='offline';return false}
   try{
     const local=readStore();
     const row=await cloudFindUser(currentUsername);
     if(!row){
-      // Akun belum punya row cloud. Jangan pernah menghapus progres lokal; upload sekarang.
       await cloudCreateUser(currentUsername);
+      if(Object.keys(local).length)await cloudUpdateUser(currentUsername,local);
+      window.__cloudSyncState='synced';
       renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
       return true;
     }
-    const remote=row.data||{};
-    const merged={...remote};
-    let localNewer=false;
-
-    /*
-       Study plans are stored as an ARRAY, so the generic updatedAt merge above
-       cannot detect an edit to one plan (the array itself has no updatedAt).
-       That caused a freshly saved description to be replaced by an older cloud
-       copy on the next pull. Merge individual plans by their own updatedAt.
-    */
-    const localPlans=Array.isArray(local._studyPlans)?local._studyPlans:null;
-    const remotePlans=Array.isArray(remote._studyPlans)?remote._studyPlans:null;
-    if(localPlans||remotePlans){
-      const lp=new Map((localPlans||[]).map(x=>[String(x.id),x]));
-      const rp=new Map((remotePlans||[]).map(x=>[String(x.id),x]));
-      const ids=new Set([...lp.keys(),...rp.keys()]);
-      const mergedPlans=[];
-      ids.forEach(id=>{
-        const l=lp.get(id),r=rp.get(id);
-        if(!r){ mergedPlans.push(l); localNewer=true; return; }
-        if(!l){ mergedPlans.push(r); return; }
-        const lt=Number(l.updatedAt||0),rt=Number(r.updatedAt||0);
-        if(lt>=rt){ mergedPlans.push(l); if(lt>rt) localNewer=true; }
-        else mergedPlans.push(r);
-      });
-      merged._studyPlans=mergedPlans;
-    }
-
-    Object.entries(local).forEach(([k,v])=>{
-      if(k==='_studyPlans')return;
-      if(!merged[k]||Number(v.updatedAt||0)>Number(merged[k].updatedAt||0)){merged[k]=v;localNewer=true}
-    });
+    const remote=row.data&&typeof row.data==='object'?row.data:{};
+    const merged=mergeProgressStores(local,remote);
     writeStore(merged);
-    if(localNewer)await cloudUpdateUser(currentUsername,merged);
+    if(JSON.stringify(merged)!==JSON.stringify(remote))await cloudUpdateUser(currentUsername,merged);
+    window.__cloudSyncState='synced';
     renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
     return true;
-  }catch(e){console.warn('Cloud sync pull failed',e);return false}
+  }catch(e){
+    console.warn('Cloud sync pull failed',e);
+    window.__cloudSyncState='warning';
+    renderHome();
+    return false;
+  }
 }
+
 async function pushCloudState(store){
   if(!currentUsername||!cloudEnabled())return false;
   if(cloudSyncBusy){cloudSyncPending=true;return false}
@@ -2180,7 +2479,7 @@ window.correctIndex=function(q,type){
   let studyPlanPickerSource="hsk:4";
   let suppressPackageClickUntil=0;
   function plansStore(){const s=readStore();return Array.isArray(s[PLAN_KEY])?s[PLAN_KEY]:[]}
-  function savePlans(plans){const s=readStore();s[PLAN_KEY]=plans;writeStore(s);scheduleCloudSync()}
+  function savePlans(plans){const s=readStore();s[PLAN_KEY]=plans.map(p=>({...p,updatedAt:Number(p.updatedAt)||Date.now()}));writeStore(s);renderStudyPlans();scheduleCloudSync()}
   function getPlan(id){return plansStore().find(p=>p.id===id)||null}
   function packageTitle(code){return 'Paket '+code}
   function packageStatsSafe(code){try{return packageStats(code)||{answered:0,total:0,pct:0}}catch(e){return {answered:0,total:0,pct:0}}}
@@ -2271,7 +2570,23 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   function closeStudyPlanPicker(){studyPlanPickerCode=null;studyPlanPickerPlanId=null;studyPlanPickerQuery='';studyPlanPickerLevel=4;studyPlanPickerSource='hsk:4';$('studyPlanPickerModal').classList.remove('show');$('studyPlanPickerModal').setAttribute('aria-hidden','true')}
   function openStudyPlanEdit(id){const p=getPlan(id);if(!p)return;studyPlanEditId=id;$('studyPlanEditName').value=p.name;$('studyPlanEditDesc').value=p.description||'';$('studyPlanEditError').textContent='';$('studyPlanEditModal').classList.add('show');$('studyPlanEditModal').setAttribute('aria-hidden','false');setTimeout(()=>$('studyPlanEditName')?.focus(),50)}
   function closeStudyPlanEdit(){studyPlanEditId=null;$('studyPlanEditModal').classList.remove('show');$('studyPlanEditModal').setAttribute('aria-hidden','true')}
-  function saveStudyPlanEdit(){const plans=plansStore(),p=plans.find(x=>x.id===studyPlanEditId);if(!p)return;const name=String($('studyPlanEditName').value||'').trim();if(name.length<2){$('studyPlanEditError').textContent='Nama rencana minimal 2 karakter.';return}if(plans.some(x=>x.id!==p.id&&x.name.toLowerCase()===name.toLowerCase())){$('studyPlanEditError').textContent='Nama rencana tersebut sudah digunakan.';return}p.name=name;p.description=String($('studyPlanEditDesc').value||'').trim();p.updatedAt=Date.now();savePlans(plans);closeStudyPlanEdit();renderStudyPlans();if(route.screen==='studyPlanDetail'&&studyPlanDetailId===p.id)renderStudyPlanDetail()}
+  function saveStudyPlanEdit(){
+    const id=String(studyPlanEditId||'');
+    const source=plansStore();
+    const current=source.find(x=>String(x.id)===id);
+    if(!current)return;
+    const name=String($('studyPlanEditName')?.value||'').trim();
+    const desc=String($('studyPlanEditDesc')?.value||'').trim();
+    const err=$('studyPlanEditError');
+    if(name.length<2){if(err)err.textContent='Nama rencana minimal 2 karakter.';return}
+    if(source.some(x=>String(x.id)!==id&&String(x.name||'').trim().toLowerCase()===name.toLowerCase())){if(err)err.textContent='Nama rencana tersebut sudah digunakan.';return}
+    const now=Date.now();
+    const updated=source.map(x=>String(x.id)===id?{...x,name,description:desc,updatedAt:Math.max(now,Number(x.updatedAt)||0)}:x);
+    savePlans(updated);
+    closeStudyPlanEdit();
+    renderStudyPlans();
+    if(route.screen==='studyPlanDetail'&&studyPlanDetailId===id)renderStudyPlanDetail();
+  }
   function deleteStudyPlan(id){const p=getPlan(id);if(!p)return;appConfirm('Hapus rencana belajar?','Rencana “'+p.name+'” akan dihapus. Paket dan progres belajarmu tetap aman.',()=>{savePlans(plansStore().filter(x=>x.id!==id));if(route.screen==='studyPlanDetail'&&studyPlanDetailId===id)openStudyPlans();else renderStudyPlans()},{icon:'⌫',okText:'Hapus',danger:true})}
   function removePackageFromStudyPlan(id,code){const plans=plansStore(),p=plans.find(x=>x.id===id);if(!p)return;p.packageCodes=p.packageCodes.filter(x=>x!==code);p.updatedAt=Date.now();savePlans(plans);renderStudyPlanDetail();renderStudyPlans()}
   function toggleStudyPlanMenu(id){const target=$('planMenu_'+id);if(!target)return;const wasOpen=target.classList.contains('show');document.querySelectorAll('.studyPlanCardMenu.show').forEach(x=>x.classList.remove('show'));if(!wasOpen)target.classList.add('show')}
@@ -3012,21 +3327,37 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   };
 
   window.saveStudyPlanEdit=function(){
-    const id=MASTER.editId;
-    const p=getPlanMaster(id);if(!p)return;
+    const id=String(MASTER.editId||'');
+    if(!id)return;
     const name=String(has('studyPlanEditName')?.value||'').trim();
     const desc=String(has('studyPlanEditDesc')?.value||'').trim();
     const err=has('studyPlanEditError');
     if(name.length<2){if(err)err.textContent='Nama rencana minimal 2 karakter.';return}
+
+    /* Read the latest local state at save time. Do not mutate an object
+       captured before the modal opened; this keeps the edit path isolated
+       from concurrent cloud merges and other plan actions. */
     const plans=plansStoreMaster();
-    if(plans.some(x=>String(x.id)!==String(id)&&String(x.name||'').toLowerCase()===name.toLowerCase())){
-      if(err)err.textContent='Nama rencana tersebut sudah digunakan.';return;
-    }
-    p.name=name;p.description=desc;p.updatedAt=Date.now();
+    const index=plans.findIndex(x=>String(x.id)===id);
+    if(index<0){if(err)err.textContent='Rencana tidak ditemukan. Silakan buka ulang Rencana.';return}
+
+    const duplicate=plans.some((x,i)=>i!==index&&String(x.name||'').trim().toLowerCase()===name.toLowerCase());
+    if(duplicate){if(err)err.textContent='Nama rencana tersebut sudah digunakan.';return}
+
+    const current=plans[index];
+    const nextUpdatedAt=Math.max(Date.now(),Number(current.updatedAt||0)+1);
+    plans[index]={...current,name,description:desc,updatedAt:nextUpdatedAt};
+
+    /* Persist locally first. Cloud sync is secondary and receives this
+       already-committed state, so the UI never depends on network timing. */
     savePlansMaster(plans);
+    if(typeof flushCloudSync==='function')flushCloudSync();
+
     window.closeStudyPlanEdit();
     window.renderStudyPlans();
-    if(route.screen==='studyPlanDetail')window.renderStudyPlanDetail();
+    if(route.screen==='studyPlanDetail' && String(route.studyPlanId||'')===id){
+      window.renderStudyPlanDetail();
+    }
   };
 
   window.deleteStudyPlan=function(id){
@@ -3695,118 +4026,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 </script>
 
 
-<script id="progressCloudRecoveryPatchV122">
-(function(){
-  'use strict';
 
-  // Recovery-safe cloud merge:
-  // Never let a shorter/newer section snapshot erase answers that already exist
-  // locally or in the cloud. Section answer maps are merged question-by-question.
-  function mergeSectionStateSafe(a,b){
-    const A=(a&&typeof a==='object')?a:{};
-    const B=(b&&typeof b==='object')?b:{};
-    const answers={...(A.answers||{}),...(B.answers||{})};
-    const checked={...(A.checked||{}),...(B.checked||{})};
-    // Prefer a non-empty answer over an empty/undefined value.
-    for(const k of new Set([...Object.keys(A.answers||{}),...Object.keys(B.answers||{})])){
-      const av=A.answers?.[k], bv=B.answers?.[k];
-      if((bv===undefined||String(bv).trim()==='') && av!==undefined && String(av).trim()!=='') answers[k]=av;
-      else if(bv!==undefined) answers[k]=bv;
-    }
-    return {answers,checked,updatedAt:Math.max(Number(A.updatedAt)||0,Number(B.updatedAt)||0)};
-  }
-
-  function mergeStoresSafe(local,remote){
-    const L=local&&typeof local==='object'?local:{};
-    const R=remote&&typeof remote==='object'?remote:{};
-    const out={...R};
-    const keys=new Set([...Object.keys(R),...Object.keys(L)]);
-    for(const k of keys){
-      if(k==='_resume')continue;
-      const lv=L[k],rv=R[k];
-      if(k.includes('|') && (k.split('|').length===3) &&
-         ((lv&&typeof lv==='object')||(rv&&typeof rv==='object'))){
-        out[k]=mergeSectionStateSafe(rv,lv);
-      }else if(lv!==undefined){
-        if(rv===undefined) out[k]=lv;
-        else if(lv&&rv&&typeof lv==='object'&&typeof rv==='object'&&
-                (Number(lv.updatedAt)||Number(rv.updatedAt))){
-          out[k]=Number(lv.updatedAt||0)>=Number(rv.updatedAt||0)?lv:rv;
-        }else{
-          out[k]=lv;
-        }
-      }
-    }
-    const lr=L._resume, rr=R._resume;
-    if(lr&&rr) out._resume=Number(lr.updatedAt||0)>=Number(rr.updatedAt||0)?lr:rr;
-    else if(lr||rr) out._resume=lr||rr;
-    return out;
-  }
-
-  // Replace the public pull with a recovery-safe version while retaining the
-  // existing cloud configuration and UI.
-  if(typeof window.cloudFindUser==='function'){
-    window.pullCloudState=async function(){
-      if(!window.currentUsername || typeof cloudEnabled!=='function' || !cloudEnabled())return false;
-      if(navigator.onLine===false){try{window.__cloudSyncState='offline';renderHome()}catch(e){};return false}
-      try{
-        const local=readStore();
-        const row=await cloudFindUser(currentUsername);
-        if(!row){
-          await cloudCreateUser(currentUsername,local);
-          window.__cloudSyncState='synced';
-          try{renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress()}catch(e){}
-          return true;
-        }
-        const merged=mergeStoresSafe(local,row.data||{});
-        writeStore(merged);
-        // Push the union back so the cloud becomes the complete source of truth.
-        await cloudUpdateUser(currentUsername,merged);
-        window.__cloudSyncState='synced';
-        try{renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress()}catch(e){}
-        return true;
-      }catch(e){
-        console.warn('Recovery-safe cloud sync failed',e);
-        window.__cloudSyncState=navigator.onLine===false?'offline':'warning';
-        try{renderHome()}catch(x){}
-        return false;
-      }
-    };
-  }
-
-  // Progress on catalog screens can be calculated from saved answer maps even
-  // while the package body is still lazy/unloaded. This prevents visible
-  // progress from looking lost merely because a package JSON has not loaded.
-  const originalPackageStats=window.packageStats;
-  if(typeof originalPackageStats==='function'){
-    window.packageStats=function(code){
-      const base=originalPackageStats(code);
-      try{
-        const store=readStore();
-        const prefix=String(code)+'|';
-        let answered=0;
-        Object.keys(store).forEach(k=>{
-          if(!k.startsWith(prefix)||k==='_resume')return;
-          const st=store[k];
-          if(!st||typeof st!=='object')return;
-          answered+=Object.keys(st.answers||{}).filter(q=>st.answers[q]!==undefined&&String(st.answers[q]).trim()!=='').length;
-        });
-        // Once the real package is loaded, the original calculation is more
-        // authoritative for total/score; use the saved-answer count only to
-        // prevent a lazy stub from hiding already-saved progress.
-        if(answered>base.answered){
-          const total=base.total||100;
-          return {...base,answered,pct:total?Math.round(answered/total*100):0};
-        }
-      }catch(e){}
-      return base;
-    };
-  }
-
-  // Re-render progress after a package finishes lazy loading.
-  document.addEventListener('hsk:data-ready',()=>{try{renderHome();renderScores();renderPackagesScreen()}catch(e){}});
-})();
-</script>
 <style id="dynamicFolderCatalogStyles">
 #levelsScreen .levelGroupDivider{grid-column:1/-1;margin:10px 2px 0;padding:8px 2px 0;font-size:10px;font-weight:800;letter-spacing:2px;color:var(--muted);text-transform:uppercase;border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent);}
 #levelsScreen .levelGroupDivider:first-child{border-top:0;margin-top:0;}
@@ -5085,24 +5305,7 @@ body:not(.dark) .top{
     margin:0 auto!important;
   }
 }
-/* Canonical app chrome geometry: one responsive content contract. */
-:root{--app-topbar-h:76px;--app-content-gutter:20px;}
-.top{position:fixed!important;top:0!important;left:0!important;right:0!important;width:100%!important;z-index:2000!important;}
-.topin{box-sizing:border-box!important;}
-main{width:100%!important;max-width:1200px!important;margin:0 auto!important;padding:calc(var(--app-topbar-h) + 18px) var(--app-content-gutter) 96px!important;}
-body.home-route main{padding-top:18px!important;}
-.screen{width:100%!important;min-width:0!important;}
-@media (max-width:760px){
-  :root{--app-topbar-h:102px;--app-content-gutter:16px;}
-  main{padding:calc(var(--app-topbar-h) + 14px) var(--app-content-gutter) 120px!important;}
-  body.home-route main{padding-top:10px!important;}
-}
-@media (min-width:761px) and (max-width:1199px){
-  :root{--app-content-gutter:24px;}
-}
-@media (min-width:1200px){
-  :root{--app-content-gutter:28px;}
-}
+/* Content geometry is owned by responsiveGeometryV6Adaptive below. */
 </style>
 
 
@@ -5358,7 +5561,98 @@ body.dark .appFooter { color:#8f9096!important; }
 /* Theme-color must also report true black to the Android/browser chrome. */
 </style>
 
+<style id="dashboardFullBlackTargetV126">
+/*
+ * DASHBOARD TARGET V1.26
+ * Only the Home dashboard visual layer is changed here.
+ * Existing HTML, DB, history, navigation, question loading, and progress logic
+ * are intentionally left untouched.
+ */
+html.dark,
+html.dark body,
+body.dark {
+  background:#000000 !important;
+  color:#f4f4f5 !important;
+}
 
+body.dark::before,
+body.dark::after,
+html.dark body::before,
+html.dark body::after {
+  background:#000000 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+
+
+/* One unified charcoal dashboard card. */
+
+
+/* Three metrics become one clean row with vertical separators. */
+
+
+
+
+
+
+/* Metric icons: orange, thin, understated. */
+
+
+
+
+
+
+
+
+
+
+
+
+/* Overall progress occupies the full lower half of the dashboard. */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Keep the dashboard completely flat: no hidden blue/gradient/glow layer. */
+
+
+@media (max-width:760px) {
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+}
+</style>
 
 
 <!-- v1.27.1: history percentage is text, never a colored square. -->
@@ -5587,6 +5881,7 @@ body.dark #packagesGrid .progressMetaV12{color:#a3a5aa!important;}
   behaving like a 1200px desktop canvas hidden underneath the sidebar.
 */
 :root{
+  --app-topbar-h:76px;
   --nav-rail:84px;
   --content-max:1180px;
   --content-gutter:clamp(18px,2.4vw,40px);
@@ -5598,9 +5893,10 @@ main{
   width:100%!important;
   max-width:none!important;
   margin:0!important;
-  padding:18px var(--content-gutter) 120px!important;
+  padding:calc(var(--app-topbar-h) + 18px) var(--content-gutter) 120px!important;
   box-sizing:border-box!important;
 }
+body.home-route main{padding-top:18px!important;}
 .screen{width:100%!important;min-width:0!important;max-width:none!important;margin:0!important;}
 .top{left:0!important;right:0!important;width:100%!important;}
 .mainNav{box-sizing:border-box!important;}
@@ -5629,6 +5925,10 @@ main{
 #home .homeLastSection,#home .homeHistorySection{margin-top:56px!important;}
 
 /* Tablet landscape: 761–1199 CSS px. */
+@media (max-width:760px){
+  :root{--app-topbar-h:102px;}
+}
+
 @media (min-width:761px) and (orientation:landscape){
   :root{--content-gutter:clamp(24px,2.8vw,38px);}
 
@@ -5660,7 +5960,7 @@ main{
     max-width:none!important;
     margin-left:var(--nav-rail)!important;
     margin-right:0!important;
-    padding:28px var(--content-gutter) 96px!important;
+    padding:calc(var(--app-topbar-h) + 18px) var(--content-gutter) 96px!important;
   }
   .screen{
     width:min(100%,var(--content-max))!important;
