@@ -1652,6 +1652,9 @@ let currentUsername='';
 let cloudSyncTimer=null;
 let cloudSyncBusy=false;
 let cloudSyncPending=false;
+/* Cloud hydration gate: never render stale LocalStorage progress on initial boot. */
+window.__hskCloudHydrated=false;
+window.__hskCloudHydrationFailed=false;
 function normalizeUsername(v){return String(v||'').trim().toLowerCase()}
 function validUsername(v){return /^[a-z0-9._-]{3,24}$/.test(v)}
 function cloudEnabled(){return /^https:\/\/[^\s]+$/.test(CLOUD_CONFIG.url)&&CLOUD_CONFIG.anonKey.length>20}
@@ -1730,10 +1733,14 @@ function mergeStoresLatest(local,remote){
 async function pullCloudState(force=false){
   if(!currentUsername||!cloudEnabled())return false;
   try{
+    /* If the catalog is asynchronous, wait for it before calculating package progress. */
+    if(window.__hskDynamicReadyPromise){try{await Promise.race([window.__hskDynamicReadyPromise,new Promise(r=>setTimeout(r,5000))])}catch(e){}}
     const local=readStore();
     const row=await cloudFindUser(currentUsername);
     if(!row){
       await cloudCreateUser(currentUsername,local);
+      window.__hskCloudHydrated=true;
+      window.__hskCloudHydrationFailed=false;
       renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
       return true;
     }
@@ -1743,9 +1750,17 @@ async function pullCloudState(force=false){
     writeStore(merged);
     /* Pull is read-first. Only push back when Local actually contains newer data. */
     if(result.localWon) await cloudUpdateUser(currentUsername,merged);
+    /* Only now is the Local+Cloud state authoritative for the UI. */
+    window.__hskCloudHydrated=true;
+    window.__hskCloudHydrationFailed=false;
     renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
     return true;
-  }catch(e){console.warn('Cloud sync pull failed',e);return false}
+  }catch(e){
+    window.__hskCloudHydrated=false;
+    window.__hskCloudHydrationFailed=true;
+    console.warn('Cloud sync pull failed',e);
+    return false;
+  }
 }
 async function pushCloudState(store){
   if(!currentUsername||!cloudEnabled())return false;
@@ -2026,6 +2041,12 @@ function renderHomeHistory(){
 }
 function renderHome(){
   const el=$('homeLastPackage');const sub=$('homeLastSub');if(!el)return;
+  /* Never show a misleading 0/old LocalStorage value while cloud reconciliation is pending. */
+  if(currentUsername && cloudEnabled() && !window.__hskCloudHydrated){
+    if(sub)sub.textContent='';
+    el.innerHTML='<div class="homeEmpty"><strong>Memuat progres tersinkron…</strong><span>Menyesuaikan progres perangkat ini dengan data cloud.</span></div>';
+    return;
+  }
   const greeting=$('homeGreeting');if(greeting)greeting.innerHTML='Halo, <b>'+esc(currentUsername||'—')+'</b>. Mari lanjutkan latihanmu.';
   const last=getLastProgress();
   if(!last){sub.textContent='';el.innerHTML='<div class="homeEmpty"><strong>Kamu belum mengerjakan soal apapun.</strong><button class="homeContinueBtn" type="button" onclick="openPackages()">Mulai belajar <span class="material-symbols-rounded ico actionArrow" aria-hidden="true">arrow_forward</span></button></div>';renderHomeHistory();return}
