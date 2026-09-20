@@ -1722,6 +1722,24 @@ function mergeStoresLatest(local,remote){
     if(localIsCurrentActivity){out[k]=l;localWon=true;continue}
     if(remoteIsCurrentActivity){out[k]=r;continue}
     const lt=Number(l?.updatedAt||0),rt=Number(r?.updatedAt||0);
+    /* Progress snapshots are section-level containers, while individual
+       answers are the real units of progress. Merge the answer maps instead
+       of replacing an older remote section with a newer local snapshot. This
+       preserves existing cloud answers and adds newer local answers. */
+    if(k.includes('|') && l && r && typeof l==='object' && typeof r==='object' &&
+       (l.answers||r.answers||l.checked||r.checked||l.answerEvents||r.answerEvents)){
+      const mergedSection={...r,...l};
+      const answers={...(r.answers||{}),...(l.answers||{})};
+      const checked={...(r.checked||{}),...(l.checked||{})};
+      const answerEvents={...(r.answerEvents||{}),...(l.answerEvents||{})};
+      mergedSection.answers=answers;
+      mergedSection.checked=checked;
+      mergedSection.answerEvents=answerEvents;
+      mergedSection.updatedAt=Math.max(lt,rt);
+      out[k]=mergedSection;
+      if(lt>rt)localWon=true;
+      continue;
+    }
     if(lt>=rt){out[k]=l;if(lt>rt)localWon=true}else out[k]=r;
   }
   const plans=mergePlanArrays(a._studyPlans,b._studyPlans); out._studyPlans=plans.out; localWon ||= plans.localWon;
