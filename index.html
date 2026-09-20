@@ -1677,6 +1677,7 @@ async function cloudCreateUser(username,store={}){
   const r=await fetch(cloudUrl(),{
     method:'POST',
     headers:cloudHeaders({'Prefer':'return=minimal'}),
+    keepalive:true,
     body:JSON.stringify({username,data:store||{}})
   });
   if(!r.ok)throw new Error(cloudErrorMessage(r.status));
@@ -1688,6 +1689,7 @@ async function cloudUpdateUser(username,store){
   const r=await fetch(url,{
     method:'PATCH',
     headers:cloudHeaders({'Prefer':'return=minimal'}),
+    keepalive:true,
     body:JSON.stringify({data:store})
   });
   if(!r.ok)throw new Error(cloudErrorMessage(r.status));
@@ -1757,6 +1759,7 @@ function mergeStoresLatest(local,remote){
 }
 async function pullCloudState(force=false){
   if(!currentUsername||!cloudEnabled())return false;
+  if(cloudSyncBusy){cloudSyncPending=true;return false}
   try{
     const local=readStore();
     const row=await cloudFindUser(currentUsername);
@@ -1779,7 +1782,7 @@ async function pushCloudState(store){
   cloudSyncBusy=true;
   try{
     const local=readStore();
-    const candidate=store||local;
+    const candidate=local;
     const row=await cloudFindUser(currentUsername);
     if(!row){
       await cloudCreateUser(currentUsername,candidate);
