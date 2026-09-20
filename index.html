@@ -1506,29 +1506,19 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
 </style>
 
 
-<style id="levelsLandscapeGridFixV11">
-/* HSK Papers — Levels page landscape geometry fix
-   Source: current live index.html supplied by user.
-   Scope: levels screen only. No data/loading/routing changes. */
-
-/* The levels page uses one real divider per group.
-   Disable the older pseudo WORKBOOK divider and old forced row placement. */
+<style id="levelsLandscapeGridFixV12">
+/* Landscape geometry only — preserve the audited v1.0 database/catalog logic. */
 #levelsScreen .levelGrid:has(.levelCardWorkbook)::before{
   content:none!important;
   display:none!important;
 }
 
-/* Reset legacy hard-coded grid placement so the DOM order controls layout. */
 #levelsScreen .levelGrid > .levelGroupDivider,
 #levelsScreen .levelGrid > .levelCard{
   grid-column:auto!important;
   grid-row:auto!important;
 }
 
-/* Landscape tablet / desktop:
-   HSK 4 + HSK 5 share one row.
-   Workbook cards share the next row.
-   Dividers span the complete content width. */
 @media (min-width:761px){
   #levelsScreen .levelGrid{
     display:grid!important;
@@ -1555,13 +1545,11 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
     box-sizing:border-box!important;
   }
 
-  /* Keep the level cards visually equal in the row. */
   #levelsScreen .levelGrid > .levelCard .levelCardBody{
     min-width:0!important;
   }
 }
 
-/* Portrait remains a single-column reading layout. */
 @media (max-width:760px){
   #levelsScreen .levelGrid{
     display:grid!important;
@@ -1753,13 +1741,13 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
 <div class="section levelLandingHead"><div class="sectionKicker">PAKET SOAL</div><h2>Pilih level HSK</h2><div class="sub">Mulai dari level yang ingin kamu latih.</div></div>
 <div class="levelGrid">
 <button class="levelCard levelCard4" onclick="openLevelPackages(4)" type="button"><div class="levelCardIcon">4</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 4</strong><p>25 paket latihan tersedia</p></div><span class="levelCardArrow"><span aria-hidden="true" class="material-symbols-rounded ico">arrow_forward</span></span></button>
-<button class="levelCard levelCard5" onclick="openLevelPackages(5)" type="button"><div class="levelCardIcon">5</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 5</strong><p>Coming soon · sedang dipersiapkan</p></div><span class="levelCardArrow"><span aria-hidden="true" class="material-symbols-rounded ico">arrow_forward</span></span></button>
+<button class="levelCard levelCard5" onclick="openLevelPackages(5)" type="button"><div class="levelCardIcon">5</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 5</strong><p>Paket tersedia dari database</p></div><span class="levelCardArrow"><span aria-hidden="true" class="material-symbols-rounded ico">arrow_forward</span></span></button>
 </div>
 </section>
 <section class="screen" id="packagesScreen">
 <div class="section packagePageHead"><div class="sectionKicker" id="packageLevelKicker">HSK 4</div><h2 id="packagePageTitle">Pilih paket</h2><div class="sub" id="packagePageSub">25 paket latihan tersedia.</div></div>
 <div class="packageTools"><div class="packageSearchBox" id="packageSearchWrap"><span aria-hidden="true" class="material-symbols-rounded ico">search</span><input aria-label="Cari paket" autocomplete="off" id="packageSearchInput" inputmode="search" oninput="filterPackages(this.value)" placeholder="Cari paket" type="search"/><button aria-label="Hapus pencarian" onclick="clearPackageSearch()" title="Hapus" type="button"><span aria-hidden="true" class="material-symbols-rounded ico">close</span></button></div></div>
-<div class="comingSoonPanel" hidden="" id="hsk5Panel"><div class="comingIcon">5</div><div><strong>HSK 5</strong><span>Coming soon</span><small>Paket HSK 5 sedang dipersiapkan.</small></div></div>
+<div class="comingSoonPanel" hidden="" id="hsk5Panel"><div class="comingIcon">5</div><div><strong>HSK 5</strong><span>Belum dipilih</span><small>Daftar paket akan mengikuti database.</small></div></div>
 <div class="grid" id="packagesGrid"></div>
 </section>
 <section class="screen" id="package"><div class="crumb"><span onclick="goHome()">Beranda</span><span>›</span><span class="current" id="pkgCrumb"></span></div><div class="section"><h2 id="pkgTitle"></h2><div class="sub">Pilih bagian yang ingin dikerjakan.</div></div><div class="grid" id="parts"></div></section>
@@ -2095,7 +2083,7 @@ function applyTheme(t){document.body.classList.toggle('dark',t==='dark');documen
 function showExit(fromBack=false){if(!currentUsername)return;exitFromBack=fromBack;$('exitModal').classList.add('show')}function cancelExit(){$('exitModal').classList.remove('show');if(exitFromBack){exitFromBack=false;if(typeof window.__hskArmBackGuard==='function')window.__hskArmBackGuard()}}function confirmExit(){$('exitModal').classList.remove('show');exitFromBack=false;performLogout()}
 let selectedHSKLevel=4;
 function openPackages(push=true){route={screen:'levels',packageCode:null,type:null,sectionIndex:null};selectedHSKLevel=4;renderLevelsScreen();setScreen('levelsScreen',push)}
-function renderLevelsScreen(){const el=document.querySelector('#levelsScreen .levelGrid');if(!el)return;el.innerHTML=`<button class="levelCard levelCard4" type="button" onclick="openLevelPackages(4)"><div class="levelCardIcon">4</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 4</strong><p>25 paket latihan tersedia</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button><button class="levelCard levelCard5" type="button" onclick="openLevelPackages(5)"><div class="levelCardIcon">5</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 5</strong><p>Coming soon · sedang dipersiapkan</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>`;}
+function renderLevelsScreen(){const el=document.querySelector('#levelsScreen .levelGrid');if(!el)return;el.innerHTML=`<button class="levelCard levelCard4" type="button" onclick="openLevelPackages(4)"><div class="levelCardIcon">4</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 4</strong><p>25 paket latihan tersedia</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button><button class="levelCard levelCard5" type="button" onclick="openLevelPackages(5)"><div class="levelCardIcon">5</div><div class="levelCardBody"><span class="levelEyebrow">HSK LEVEL</span><strong>HSK 5</strong><p>Paket tersedia dari database</p></div><span class="levelCardArrow"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span></span></button>`;}
 function openLevelPackages(level,push=true){selectedHSKLevel=Number(level)===5?5:4;route={screen:'packages',packageCode:null,type:null,sectionIndex:null};renderPackagesScreen();setScreen('packagesScreen',push)}
 function selectHSKLevel(level){openLevelPackages(level)}
 function togglePackageSearch(){const wrap=$('packageSearchWrap'),btn=$('packageSearchToggle');if(!wrap||!btn)return;const show=wrap.hidden;wrap.hidden=!show;btn.setAttribute('aria-expanded',String(show));if(show){setTimeout(()=>$('packageSearchInput')?.focus(),40)}}
@@ -2126,7 +2114,7 @@ function openScoreLevel(level){
   const el=$('scoresGrid');if(!el)return;
   if(selectedScoreLevel===5){
     el.className='scorePackagesView';
-    el.innerHTML=`<div class="scoreBackRow"><button class="btn" type="button" onclick="renderScores()">← Kembali ke level</button></div><div class="scoreLevelTitle"><div class="sectionKicker">HSK 5</div><h3>Nilai HSK 5</h3><p>Belum ada paket yang tersedia.</p></div><div class="comingSoonPanel scoreComing"><div class="comingIcon">5</div><div><strong>HSK 5</strong><span>Coming soon</span><small>Paket HSK 5 sedang dipersiapkan.</small></div></div>`;
+    el.innerHTML=`<div class="scoreBackRow"><button class="btn" type="button" onclick="renderScores()">← Kembali ke level</button></div><div class="scoreLevelTitle"><div class="sectionKicker">HSK 5</div><h3>Nilai HSK 5</h3><p>Belum ada paket yang tersedia.</p></div><div class="comingSoonPanel scoreComing"><div class="comingIcon">5</div><div><strong>HSK 5</strong><span>Belum dipilih</span><small>Daftar paket akan mengikuti database.</small></div></div>`;
     window.scrollTo({top:0,left:0,behavior:'smooth'});return;
   }
   const codes=Object.keys(DB).filter(c=>typeof isWB!=='function'||!isWB(c));
@@ -2862,7 +2850,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       const desc=isHsk
         ? `${count} paket latihan tersedia`
         : `${count} lesson tersedia`;
-      const cls=isHsk && m.level===4?'levelCard4':'levelCardWorkbook';
+      const cls=isHsk?('levelCard'+m.level):'levelCardWorkbook';
       return `<button class="levelCard ${cls}" type="button"
         data-material-key="${escHtml(m.key)}"
         onclick="openLevelPackages('${escHtml(m.key)}')">
@@ -3021,7 +3009,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     el.className='levelGrid scoreLevelGrid';
     el.innerHTML=all.map(m=>{
       const isHsk=m.kind==='hsk';
-      return `<button class="levelCard ${isHsk&&m.level===4?'levelCard4':'levelCardWorkbook'} scoreLevelCard"
+      return `<button class="levelCard ${isHsk?('levelCard'+m.level):'levelCardWorkbook'} scoreLevelCard"
         type="button" onclick="openScoreLevel('${escHtml(m.key)}')">
         <div class="levelCardIcon">${isHsk?m.level:'WB'}</div>
         <div class="levelCardBody">
@@ -4663,7 +4651,7 @@ body.dark #packagesGrid .packageHanziIcon{
   const REPO='randirosandi-glitch/latihanhsk', REF='main';
   const TREE_API='https://api.github.com/repos/'+REPO+'/git/trees/'+encodeURIComponent(REF)+'?recursive=1';
   const RAW_BASE='https://raw.githubusercontent.com/'+REPO+'/'+REF+'/';
-  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v2';
+  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v3';
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const natural=(a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
@@ -4718,15 +4706,41 @@ body.dark #packagesGrid .packageHanziIcon{
   }
 
   async function discover(){
-    // Manifest is the authoritative package catalog. Prefer the raw GitHub copy
-    // so a temporary GitHub API rate-limit cannot make the app appear empty.
+    /*
+      Catalog policy:
+      - manifest is useful as a fast/cheap catalog;
+      - the GitHub tree is the source of truth for newly created folders/files;
+      - both are MERGED, never mutually exclusive.
+      This prevents a stale manifest from hiding a newly uploaded HSK folder.
+    */
+    const merged=new Map();
+    const mergeGroups=(groups)=>{
+      for(const src of (groups||[])){
+        if(!src||!src.name)continue;
+        let dst=merged.get(src.name);
+        if(!dst){
+          dst={name:src.name,path:src.path||('data/'+src.name),kind:src.kind||kind(src.name),level:src.level??level(src.name),files:[],codes:[]};
+          merged.set(src.name,dst);
+        }
+        for(const f of (src.files||[])){
+          const code=String(f?.code||f?.name||'').replace(/\.json$/i,'').trim();
+          if(!code)continue;
+          addFile(dst,code,String(f.path||('data/'+src.name+'/'+code+'.json')));
+        }
+      }
+    };
+
+    let manifestLoaded=false,treeLoaded=false;
+
+    // Fast manifest path. Do not return early: it may be stale.
     try{
       const m=await fetchJSON(RAW_BASE+'data/manifest.json',7000);
-      const groups=groupsFromManifest(m);
-      if(groups.length){cacheCatalog(groups);return {groups,source:'github-raw-manifest'}}
+      mergeGroups(groupsFromManifest(m));
+      manifestLoaded=true;
     }catch(err){console.warn('Raw manifest discovery failed.',err)}
 
-    // Keep the tree API as a secondary way to discover newly added folders.
+    // GitHub tree path. This is what discovers folders/files added after the
+    // manifest was generated (for example data/HSK 5/H51001.json).
     try{
       const tree=await fetchJSON(TREE_API);
       if(tree?.truncated)throw new Error('GitHub database tree terlalu besar.');
@@ -4740,19 +4754,23 @@ body.dark #packagesGrid .packageHanziIcon{
         if(!g){g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};gm.set(folder,g)}
         addFile(g,file.replace(/\.json$/i,''),item.path);
       }
-      const groups=[...gm.values()].filter(g=>g.files.length);
-      if(groups.length){cacheCatalog(groups);return {groups,source:'github-tree'}}
+      mergeGroups([...gm.values()].filter(g=>g.files.length));
+      treeLoaded=true;
     }catch(err){console.warn('Dynamic database tree discovery failed.',err)}
 
-    // Same-origin manifest fallback for deployments that block raw GitHub.
+    const groups=[...merged.values()].filter(g=>g.files.length);
+    if(groups.length){
+      cacheCatalog(groups);
+      return {groups,source:manifestLoaded&&treeLoaded?'github-manifest+tree':treeLoaded?'github-tree': 'github-manifest'};
+    }
+
+    // Same-origin manifest fallback for deployments where GitHub is blocked.
     try{
       const m=await fetchJSON('./data/manifest.json',7000);
       const groups=groupsFromManifest(m);
       if(groups.length){cacheCatalog(groups);return {groups,source:'manifest-fallback'}}
     }catch(err){console.warn('Same-origin manifest fallback failed.',err)}
 
-    // Last resort: use the last known catalog so the UI does not collapse to
-    // “Database tidak berisi package” during a transient network failure.
     const cached=groupsFromCachedCatalog();
     if(cached.length)return {groups:cached,source:'local-catalog-cache'};
     throw new Error('Katalog package tidak dapat dimuat. Periksa koneksi internet lalu coba refresh.');
@@ -6299,6 +6317,76 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
 #appBootLoader .bootDots{display:flex!important;justify-content:center!important;gap:5px!important;margin:16px 0 0!important;}
 #appBootLoader .bootDots i{display:block!important;width:5px!important;height:5px!important;border-radius:50%!important;background:#ff6548!important;}
 @media(max-width:760px){#appBootLoader{padding:20px!important;}#appBootLoader .bootMark{width:260px!important;height:98px!important;min-width:260px!important;min-height:98px!important;margin-bottom:20px!important;}}
+</style>
+<style id="hskBetaAuditFinalLayout">
+/* HSK Papers beta — final audited layout contract.
+   Geometry is shared between Light/Dark. Dark mode changes color only.
+   Flat UI: no component shadows, glows, or decorative radial effects. */
+:root{--hsk-accent:#ff6548;--hsk-line:#e1e4e8;--hsk-card:#fff;--hsk-muted:#737983;--shadow:none!important}
+html,body{background:#fff!important;background-image:none!important}
+body.dark,html.dark body{background:#000!important;background-image:none!important}
+body,button,input,select,textarea{font-family:"Roboto",system-ui,-apple-system,"Segoe UI",sans-serif}
+*,*::before,*::after{box-shadow:none!important;text-shadow:none!important}
+
+/* Level screen */
+#levelsScreen .levelGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#levelsScreen .levelCard{
+  min-height:112px!important;padding:18px 20px!important;border-radius:20px!important;
+  border:1px solid var(--hsk-line)!important;background:#fff!important;transform:none!important;
+}
+#levelsScreen .levelCard::before{width:4px!important;height:52px!important;left:0!important;border-radius:0 4px 4px 0!important}
+#levelsScreen .levelCard:hover{transform:none!important}
+#levelsScreen .levelCardIcon{width:52px!important;height:52px!important;flex:0 0 52px!important;border-radius:15px!important;box-shadow:none!important}
+#levelsScreen .levelCardBody strong{font-size:23px!important;line-height:1.1!important}
+#levelsScreen .levelCard5 .levelCardIcon{background:#765fc7!important}
+#levelsScreen .levelCard5::before{background:#765fc7!important}
+#levelsScreen .levelCard4::before{background:#ff6548!important}
+#levelsScreen .levelCardWorkbook::before{background:#7d8bb0!important}
+body.dark #levelsScreen .levelCard{background:#000!important;border-color:#2a2c30!important}
+body.dark #levelsScreen .levelCard5 .levelCardIcon{background:#765fc7!important}
+
+/* Package grid: compact in landscape so cards do not become oversized. */
+#packagesGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px!important}
+#packagesGrid .packageTile{
+  min-height:0!important;height:auto!important;padding:18px!important;border-radius:20px!important;
+  border:1px solid #dfe3e8!important;background:#fff!important;background-image:none!important;
+  position:relative!important;overflow:hidden!important;transform:none!important;
+}
+#packagesGrid .packageTile::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:0 4px 4px 0;
+  background:var(--accent,#ff6548)!important;pointer-events:none;
+}
+#packagesGrid .packageTile::after{display:none!important}
+#packagesGrid .packageTile:nth-child(odd){--accent:#ff6548!important;background:#fff!important}
+#packagesGrid .packageTile:nth-child(even){--accent:#765fc7!important;background:#fff!important}
+#packagesGrid .packageTile .statusPill,
+#packagesGrid .packageTile .pkgArrow,
+#packagesGrid .packageTile .pkgMetaChip{background:transparent!important;color:var(--accent)!important}
+#packagesGrid .packageTile .progressBar .fill{background:var(--accent)!important;background-image:none!important}
+body.dark #packagesGrid .packageTile{background:#000!important;border-color:#2a2c30!important}
+body.dark #packagesGrid .packageTile:nth-child(odd),
+body.dark #packagesGrid .packageTile:nth-child(even){background:#000!important}
+body.dark #packagesGrid .packageTile .progressBar{background:#242529!important}
+
+/* Score package grid uses the same card geometry. */
+#scoresGrid.scorePackagesGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px!important}
+
+@media (min-width:1100px){
+  #packagesGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  #scoresGrid.scorePackagesGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media (max-width:760px){
+  #levelsScreen .levelGrid{grid-template-columns:1fr!important;gap:12px!important}
+  #levelsScreen .levelCard{min-height:94px!important;padding:15px 16px!important;border-radius:17px!important}
+  #levelsScreen .levelCardIcon{width:46px!important;height:46px!important;flex-basis:46px!important;border-radius:13px!important;font-size:22px!important}
+  #levelsScreen .levelCardBody strong{font-size:20px!important}
+  #packagesGrid,#scoresGrid.scorePackagesGrid{grid-template-columns:1fr!important;gap:12px!important}
+  #packagesGrid .packageTile{padding:16px!important;border-radius:17px!important}
+}
+@media (min-width:761px) and (orientation:landscape) and (max-width:1099px){
+  #packagesGrid,#scoresGrid.scorePackagesGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #packagesGrid .packageTile{padding:16px!important;border-radius:18px!important}
+}
 </style>
 </body>
 
