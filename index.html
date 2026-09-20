@@ -1505,6 +1505,84 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
 @media(max-width:760px){#home .homeCornerLogo{width:180px;max-height:68px;margin-bottom:22px}#home .weeklyDashboard{padding:24px 0 112px}#home .weeklyHero{display:block;padding-bottom:22px}.weekBadge{margin-top:16px}.weeklyHero h1{font-size:31px!important}.weeklyHero p{font-size:13px}.weeklyPrimaryGrid{gap:12px!important;margin-top:18px!important}.weekTargetCard,.weeklySummaryCard,.weeklyTargetItem,.performanceItem,.periodItem{border-radius:17px;padding:16px}.weekTargetTop strong{font-size:36px}.weekActivity{gap:5px!important}.weekDayBar{height:38px}.skillRow{grid-template-columns:78px minmax(0,1fr) 34px}.weeklyTargets,.performanceGrid{grid-template-columns:1fr!important}.periodGrid{grid-template-columns:1fr 1fr!important}.weeklySection{margin-top:28px!important}.weeklySectionHead h2{font-size:22px}.homeContinue{padding:16px}.homeEmpty{display:block}.homeEmpty .homeContinueBtn{margin-top:12px}}
 </style>
 
+
+<style id="levelsLandscapeGridFixV11">
+/* HSK Papers — Levels page landscape geometry fix
+   Source: current live index.html supplied by user.
+   Scope: levels screen only. No data/loading/routing changes. */
+
+/* The levels page uses one real divider per group.
+   Disable the older pseudo WORKBOOK divider and old forced row placement. */
+#levelsScreen .levelGrid:has(.levelCardWorkbook)::before{
+  content:none!important;
+  display:none!important;
+}
+
+/* Reset legacy hard-coded grid placement so the DOM order controls layout. */
+#levelsScreen .levelGrid > .levelGroupDivider,
+#levelsScreen .levelGrid > .levelCard{
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
+
+/* Landscape tablet / desktop:
+   HSK 4 + HSK 5 share one row.
+   Workbook cards share the next row.
+   Dividers span the complete content width. */
+@media (min-width:761px){
+  #levelsScreen .levelGrid{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-flow:row!important;
+    grid-auto-rows:auto!important;
+    column-gap:16px!important;
+    row-gap:14px!important;
+    align-items:stretch!important;
+  }
+
+  #levelsScreen .levelGrid > .levelGroupDivider{
+    grid-column:1 / -1!important;
+    width:auto!important;
+    margin:8px 2px 0!important;
+  }
+
+  #levelsScreen .levelGrid > .levelCard{
+    grid-column:auto!important;
+    grid-row:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:132px!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Keep the level cards visually equal in the row. */
+  #levelsScreen .levelGrid > .levelCard .levelCardBody{
+    min-width:0!important;
+  }
+}
+
+/* Portrait remains a single-column reading layout. */
+@media (max-width:760px){
+  #levelsScreen .levelGrid{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    grid-auto-flow:row!important;
+    gap:11px!important;
+  }
+
+  #levelsScreen .levelGrid > .levelGroupDivider{
+    grid-column:1!important;
+    grid-row:auto!important;
+  }
+
+  #levelsScreen .levelGrid > .levelCard{
+    grid-column:1!important;
+    grid-row:auto!important;
+    width:100%!important;
+  }
+}
+</style>
+
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg class="bootLogoSvg bootLogoLight" viewBox="0 0 1536 581" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 581" width="1536" height="581">
   <defs>
