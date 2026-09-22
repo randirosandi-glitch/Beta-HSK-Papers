@@ -2575,10 +2575,10 @@ function grade(push=true){
     if(has && !(route.type==='writing' && !isSequenceWriting(route.type,route.sectionIndex))) checked[id]=true;
   });
   saveSectionState(route.packageCode,route.type,route.sectionIndex);
-  resultState={score,total:currentQuestions.length,answered,checkedAt:Date.now()};
   /* Keep the exact exercise route. Assessment is now an inline state. */
   route={...route,screen:'exercise'};
-  loadCurrentSectionState();
+  /* IMPORTANT: do not call loadCurrentSectionState() here. It intentionally
+     resets resultState, which would make the inline result disappear. */
   resultState={score,total:currentQuestions.length,answered,checkedAt:Date.now()};
   const preserveScrollY=window.scrollY||window.pageYOffset||0;
   renderExercise();
@@ -6489,7 +6489,7 @@ body.dark .mainNav .navItem[aria-current="page"] .navLabel{
 </style>
 
 <style id="v132-light-home-percent-text-fix">
-/* v1.32 — Light Home history percentages: text only, never a colored block. */
+/* v1.33 — Light Home history percentages: text only, never a colored block. */
 
 
 /* Keep every Light Home percentage as solid orange, including cards 2 and 3. */
