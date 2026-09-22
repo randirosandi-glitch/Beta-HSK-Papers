@@ -2572,10 +2572,15 @@ function grade(push=true){
   resultState={score,total:currentQuestions.length,answered,checkedAt:Date.now()};
   renderExercise();
   setScreen('exercise',false);
-  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'smooth'}));
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      const card=document.querySelector('#questions .finishCard.checked');
+      if(card)card.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
 }
 function renderResult(){let r=resultState||{score:0,total:currentQuestions.length,answered:0};const rp=$('resultPkg'),rt=$('resultType'),rpart=$('resultPart');if(rp)rp.textContent=route.packageCode;if(rt)rt.textContent=META[route.type]?.label||route.type;if(rpart)rpart.textContent='Hasil · '+((DB[route.packageCode]?.[route.type]?.[route.sectionIndex]?.title||'').replace(/^.*?·\s*/,''));const isWriting=route.type==='writing',sequenceWriting=isSequenceWriting(route.type,route.sectionIndex);let pct=r.total?Math.round(r.score/r.total*100):0;const summary=(isWriting&&!sequenceWriting)?`<p><b>${r.answered}/${r.total}</b> jawaban tersimpan.</p><div class="notice" style="text-align:left;margin-top:16px"><strong>Catatan Writing</strong><br>Jawaban membuat kalimat tidak dinilai benar atau salah secara otomatis. Periksa kembali penggunaan kata dan tata bahasa kalimatmu.</div>`:`<div class="score">${pct}%</div><div class="bar"><div class="fill" style="width:${pct}%"></div></div><p><b>${r.score}/${r.total}</b> benar · ${r.answered} dijawab · ${r.total-r.answered} belum dijawab</p>`;$('resultBody').innerHTML=`<div class="result"><div class="sub">${esc(DB[route.packageCode][route.type][route.sectionIndex]?.title||'Hasil')}</div>${summary}<div class="resultActions"><button class="btn soft" onclick="repeat()">↻ Ulangi</button><button class="btn" onclick="openSections('${route.packageCode}','${route.type}')">${svg('back')} Kembali</button></div></div>`}
-function repeat(){if(!route.packageCode)return;appConfirm('Ulangi bagian ini?','Semua jawaban pada bagian ini akan dihapus dan kamu akan mulai lagi dari awal.',()=>{clearSectionState(route.packageCode,route.type,route.sectionIndex);resultState=null;page=0;window.__hskResumePage=0;route.screen='exercise';loadCurrentSectionState();renderExercise();setScreen('exercise')},{icon:'↻',okText:'Ulangi',danger:true})}
+function repeat(){if(!route.packageCode)return;appConfirm('Ulangi bagian ini?','Semua jawaban pada bagian ini akan dihapus dan kamu akan mulai lagi dari awal.',()=>{clearSectionState(route.packageCode,route.type,route.sectionIndex);resultState=null;page=0;window.__hskResumePage=0;route.screen='exercise';loadCurrentSectionState();renderExercise();setScreen('exercise',false);requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'})))},{icon:'↻',okText:'Ulangi',danger:true})}
 function showPackageScore(code){const st=packageStats(code);$('packageModalTitle').textContent='Nilai Paket '+code;let rows=st.rows.map(r=>{if(!r.graded)return `<div class="scoreRow"><div class="scoreHead"><span>${esc(r.zh)} · ${esc(r.section)}</span><span>—</span></div><div class="scoreSub">Soal ${esc(r.range)} · ${r.answered}/${r.total} terjawab · Tidak dinilai otomatis</div></div>`;const pct=r.total?Math.round(r.score/r.total*100):0;return `<div class="scoreRow"><div class="scoreHead"><span>${esc(r.zh)} · ${esc(r.section)}</span><span>${r.score}/${r.total} · ${pct}%</span></div><div class="scoreSub">Soal ${esc(r.range)} · ${r.answered}/${r.total} terjawab</div><div class="scoreMini"><i style="width:${pct}%"></i></div></div>`}).join('');$('packageModalBody').innerHTML=`<div class="modalNote">Nilai otomatis dihitung untuk pilihan ganda dan susun kata yang memiliki kunci jawaban. Soal membuat kalimat tetap tercatat sebagai progres, tetapi tidak dinilai benar/salah.</div><div class="packageScore">${st.gradedTotal?st.scorePct+'%':'—'}</div><div class="scoreSub">${st.gradedTotal?st.score+'/'+st.gradedTotal+' benar · ':''}${st.answered}/${st.total} terjawab</div><div style="margin:16px 0">${progressHTML(st,'Progres paket')}</div>${rows||'<div class="notice">Belum ada bagian soal yang tersedia.</div>'}`;$('packageModal').classList.add('show')}
 function closePackageScore(){$('packageModal').classList.remove('show')}
 function toggleTheme(){applyTheme(document.body.classList.contains('dark')?'light':'dark')}
@@ -2837,7 +2842,7 @@ removeStrayEscapedNewlines();
 function finishAppBoot(){const loader=document.getElementById('appBootLoader');document.documentElement.classList.remove('app-booting');if(loader){loader.classList.add('hide');setTimeout(()=>loader.remove(),240)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>Promise.resolve(initApp()).finally(finishAppBoot),{once:true});else Promise.resolve(initApp()).finally(finishAppBoot);
 </script>
-<footer aria-label="Versi aplikasi" class="appFooter"><span>HSK Papers</span><span>v 1.28</span></footer>
+<footer aria-label="Versi aplikasi" class="appFooter"><span>HSK Papers</span><span>v 1.29</span></footer>
 <script>
 (function(){
   const originalApplyTheme=window.applyTheme;
@@ -2898,18 +2903,62 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   function cardsForVisible(){const all=currentQuestions;currentQuestions=visible();const h=originalCards();currentQuestions=all;return h;}
   function restoreVisible(){const all=currentQuestions;currentQuestions=visible();restoreQuestionUI();if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex))currentQuestions.forEach(q=>refreshWordBank(String(q[0])));currentQuestions=all;}
   function pager(){const n=pageCount();if(n<=1)return '';const prev=page>0?'<button class="btn" type="button" onclick="changeQuestionPage(-1)">‹ Sebelumnya</button>':'';const next=page<n-1?'<button class="btn" type="button" onclick="changeQuestionPage(1)">Berikutnya ›</button>':'';return '<div class="questionPager">'+prev+'<span class="pageIndicator">Halaman '+(page+1)+' / '+n+'</span>'+next+'</div>';}
-  function nextAvailableSectionIndex(){
-    const arr=DB[route.packageCode]?.[route.type]||[];
-    for(let i=Number(route.sectionIndex)+1;i<arr.length;i++){
-      if(Array.isArray(arr[i]?.questions)&&arr[i].questions.length)return i;
+  function nextSectionTarget(){
+    const code=String(route.packageCode||'');
+    const currentType=String(route.type||'');
+    const currentIndex=Number(route.sectionIndex);
+    const order=Object.keys(META);
+    const pkg=DB[code];
+    if(!pkg)return null;
+
+    // First: continue within the current paper/part.
+    const currentArr=Array.isArray(pkg[currentType])?pkg[currentType]:[];
+    for(let i=currentIndex+1;i<currentArr.length;i++){
+      if(Array.isArray(currentArr[i]?.questions)&&currentArr[i].questions.length){
+        return {type:currentType,index:i};
+      }
     }
-    return -1;
+
+    // No more sections here: continue to the next available paper.
+    const typePos=order.indexOf(currentType);
+    for(let t=Math.max(0,typePos+1);t<order.length;t++){
+      const type=order[t];
+      const arr=Array.isArray(pkg[type])?pkg[type]:[];
+      const first=arr.findIndex(sec=>Array.isArray(sec?.questions)&&sec.questions.length);
+      if(first>=0)return {type,index:first};
+    }
+    return null;
   }
-  window.nextSection=function(){
-    const next=nextAvailableSectionIndex();
-    if(next<0)return;
-    startSection(next,true);
-    requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
+
+  window.nextSection=async function(){
+    const target=nextSectionTarget();
+    if(!target)return;
+    const code=String(route.packageCode||'');
+    try{
+      if(typeof window.__hskLoadPackage==='function')await window.__hskLoadPackage(code);
+      const arr=DB[code]?.[target.type]||[];
+      const sec=arr[target.index];
+      if(!sec||!Array.isArray(sec.questions)||!sec.questions.length){
+        appNotice('Bagian belum tersedia','Data soal untuk bagian berikutnya belum berhasil dimuat.');
+        return;
+      }
+      route={
+        screen:'exercise',
+        packageCode:code,
+        type:target.type,
+        sectionIndex:Number(target.index),
+        studyPlanId:route.studyPlanId||null
+      };
+      resumeQuestionId=null;
+      page=0;
+      window.__hskResumePage=0;
+      loadCurrentSectionState();
+      renderExercise();
+      setScreen('exercise',true);
+    }catch(e){
+      console.error('nextSection failed',e);
+      appNotice('Bagian berikutnya gagal dimuat',e.message||'Silakan coba lagi.');
+    }
   };
   function finishCard(){
     if(page!==pageCount()-1)return '';
@@ -2925,9 +2974,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const resultHtml=writing
         ? '<div class="inlineResult"><div class="inlineResultLabel">Hasil bagian</div><div class="inlineResultScore">'+r.answered+'/'+r.total+'</div><div class="inlineResultMeta">jawaban tersimpan</div><div class="inlineResultNote"><b>Writing tidak dinilai otomatis.</b> Periksa kembali tata bahasa dan penggunaan kata.</div></div>'
         : '<div class="inlineResult"><div class="inlineResultLabel">Nilai bagian</div><div class="inlineResultScore">'+pct+'%</div><div class="inlineResultMeta"><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</div><div class="inlineResultBar"><i style="width:'+pct+'%"></i></div></div>';
-      const nextBtn=next>=0?'<button class="finishCardBtn" type="button" onclick="nextSection()">'+svg('arrow_forward')+' <span>Lanjut ke Bagian Selanjutnya</span></button>':'';
+      const nextBtn=next>=0?'<button class="finishCardBtn" type="button" onclick="nextSection()"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span><span>Lanjut ke Bagian Selanjutnya</span></button>':'';
       return '<div class="finishCard checked">'+resultHtml+'<div class="finishCardActions finishCardNav">'+
-        '<button class="finishCardBtn" type="button" onclick="openSections('+backCode+','+backType+')">'+svg('back')+' <span>Kembali ke Bagian</span></button>'+
+        '<button class="finishCardBtn" type="button" onclick="returnToParts()"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_back</span><span>Kembali ke Bagian</span></button>'+
         nextBtn+
         '</div><div class="finishCardActions finishCardRepeat"><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div></div>';
     }
@@ -2963,7 +3012,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 function correctText(q){const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);if(model.type==='sentence_ordering'||model.type==='sequence'){const k=sequenceKeys(q);return k.length?k.join(' / '):'Tidak tersedia'}if(model.type==='guided_writing'||model.type==='picture_writing')return String(q[2]||'Tidak tersedia');const ci=correctIndex(q,route.type);const opt=model.options[ci];return opt?`${opt.label}. ${opt.value}`:String(q[3]??'Tidak tersedia')}
 window.renderResult=function(){const rp=$('resultPkg'),rt=$('resultType'),rpart=$('resultPart');if(rp)rp.textContent=route.packageCode;if(rt)rt.textContent=META[route.type]?.label||route.type;const _resTitle=DB[route.packageCode]?.[route.type]?.[route.sectionIndex]?.title||'';if(rpart)rpart.textContent='Hasil · '+_resTitle.replace(/^.*?·\s*/, '');const r=resultState||{score:0,total:currentQuestions.length,answered:0},seq=isSequenceWriting(route.type,route.sectionIndex),pct=r.total?Math.round(r.score/r.total*100):0;const list=currentQuestions.map((q,i)=>{const id=String(q[0]),u=answers[id],has=u!==undefined&&String(u).trim()!=='';if(route.type==='writing'&&!seq)return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus empty">Tidak dinilai</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+'<br><b>Contoh jawaban:</b> '+esc(correctText(q))+'</div></article>';const ok=has&&isCorrect(q,u,route.type,route.sectionIndex);return '<article class="resultQuestion"><div class="resultQuestionHead"><span>Soal '+(i+1)+' · 第 '+esc(id)+' 题</span><span class="resultStatus '+(ok?'good':has?'bad':'empty')+'">'+(ok?'✓ Benar':has?'✗ Salah':'Belum dijawab')+'</span></div><div class="resultQuestionText">'+esc(q[1]||'')+'</div><div class="resultAnswer"><b>Jawabanmu:</b> '+esc(userText(q))+(has&&!ok?'<br><b>Jawaban benar:</b> '+esc(correctText(q)):'')+'</div></article>';}).join('');const title=DB[route.packageCode][route.type][route.sectionIndex]?.title||'Hasil';const summary=(route.type==='writing'&&!seq)?'<p><b>'+r.answered+'/'+r.total+'</b> jawaban tersimpan.</p>':'<div class="score">'+pct+'%</div><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div><p><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</p>';$('resultBody').innerHTML='<div class="result"><div class="sub">'+esc(title)+'</div>'+summary+'<div class="resultList">'+list+'</div><div class="resultActions"><button class="btn soft" onclick="returnToQuestions()">← Kembali ke Soal</button><button class="btn" onclick="returnToParts()">← Kembali ke List Bagian</button><button class="btn" onclick="repeat()">↻ Ulangi</button></div></div>';};
   window.returnToQuestions=async function(){const target={...route,screen:'exercise'};route=target;if(typeof window.__hskLoadPackage==='function'&&target.packageCode)await window.__hskLoadPackage(String(target.packageCode));loadCurrentSectionState();renderExercise();setScreen('exercise',false);};
-  window.returnToParts=function(){openSections(route.packageCode,route.type);};
+  window.returnToParts=async function(){
+    const code=String(route.packageCode||'');
+    const type=String(route.type||'');
+    if(!code||!type)return;
+    try{
+      if(typeof window.__hskLoadPackage==='function')await window.__hskLoadPackage(code);
+      route={
+        screen:'parts',
+        packageCode:code,
+        type:type,
+        sectionIndex:null,
+        studyPlanId:route.studyPlanId||null
+      };
+      if(typeof renderSections==='function')renderSections();
+      setScreen('partsScreen',true);
+      requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
+    }catch(e){
+      console.error('returnToParts failed',e);
+      appNotice('Tidak dapat kembali ke bagian',e.message||'Silakan coba lagi.');
+    }
+  };
 })();
 </script>
 <script id="workbookHSK4aIntegration">
