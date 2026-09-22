@@ -1973,6 +1973,18 @@ body::before,body::after{display:none!important;background:none!important;backgr
 .inlineResultNote{margin-top:12px;padding:11px 13px;border-radius:14px;background:color-mix(in srgb,var(--blue) 7%,var(--surface));color:var(--muted);font-size:12px;line-height:1.55}
 .finishCard.checked{border-color:color-mix(in srgb,var(--green) 24%,var(--line));}
 @media(max-width:760px){.inlineResult{padding:18px}.inlineResultScore{font-size:38px}.inlineResultHead{gap:10px}}
+
+<style id="inlineAssessmentBottomLayout">
+/* Assessment stays at the end of the exercise for an immersive flow. */
+.finishCard{box-shadow:none!important;}
+.finishCardBtn{box-shadow:none!important;filter:none!important;}
+.finishCardBtnSecondary{box-shadow:none!important;filter:none!important;}
+.finishCard.checked{box-shadow:none!important;}
+.finishCard.checked .inlineResult{margin:0 0 18px;padding:20px;border:0;border-radius:16px;background:var(--surface2);}
+.finishCardNav{margin-top:0!important;}
+.finishCardRepeat{margin-top:10px!important;}
+.finishCardRepeat .finishCardBtn{flex:1;}
+@media(max-width:760px){.finishCard.checked .inlineResult{padding:18px;}.finishCardNav{gap:10px!important;}.finishCardRepeat{margin-top:10px!important;}}
 </style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg class="bootLogoSvg bootLogoLight" viewBox="0 0 1536 581" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 581" width="1536" height="581">
@@ -2825,7 +2837,7 @@ removeStrayEscapedNewlines();
 function finishAppBoot(){const loader=document.getElementById('appBootLoader');document.documentElement.classList.remove('app-booting');if(loader){loader.classList.add('hide');setTimeout(()=>loader.remove(),240)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>Promise.resolve(initApp()).finally(finishAppBoot),{once:true});else Promise.resolve(initApp()).finally(finishAppBoot);
 </script>
-<footer aria-label="Versi aplikasi" class="appFooter"><span>HSK Papers</span><span>v 1.27</span></footer>
+<footer aria-label="Versi aplikasi" class="appFooter"><span>HSK Papers</span><span>v 1.28</span></footer>
 <script>
 (function(){
   const originalApplyTheme=window.applyTheme;
@@ -2886,19 +2898,45 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   function cardsForVisible(){const all=currentQuestions;currentQuestions=visible();const h=originalCards();currentQuestions=all;return h;}
   function restoreVisible(){const all=currentQuestions;currentQuestions=visible();restoreQuestionUI();if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex))currentQuestions.forEach(q=>refreshWordBank(String(q[0])));currentQuestions=all;}
   function pager(){const n=pageCount();if(n<=1)return '';const prev=page>0?'<button class="btn" type="button" onclick="changeQuestionPage(-1)">‹ Sebelumnya</button>':'';const next=page<n-1?'<button class="btn" type="button" onclick="changeQuestionPage(1)">Berikutnya ›</button>':'';return '<div class="questionPager">'+prev+'<span class="pageIndicator">Halaman '+(page+1)+' / '+n+'</span>'+next+'</div>';}
+  function nextAvailableSectionIndex(){
+    const arr=DB[route.packageCode]?.[route.type]||[];
+    for(let i=Number(route.sectionIndex)+1;i<arr.length;i++){
+      if(Array.isArray(arr[i]?.questions)&&arr[i].questions.length)return i;
+    }
+    return -1;
+  }
+  window.nextSection=function(){
+    const next=nextAvailableSectionIndex();
+    if(next<0)return;
+    startSection(next,true);
+    requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
+  };
   function finishCard(){
     if(page!==pageCount()-1)return '';
     const isWriting=route.type==='writing';
     const checkedNow=!!resultState;
     if(checkedNow){
-      return '<div class="finishCard checked"><div class="finishCardTitle">Bagian sudah diperiksa</div><div class="finishCardText">Nilai ditampilkan di halaman soal ini. Kamu bisa memeriksa ulang setelah mengubah jawaban atau mengulang bagian dari awal.</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade(false)">'+svg('check')+' <span>Periksa Lagi</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div></div>';
+      const r=resultState;
+      const writing=isWriting&&!isSequenceWriting(route.type,route.sectionIndex);
+      const pct=r.total?Math.round(r.score/r.total*100):0;
+      const next=nextAvailableSectionIndex();
+      const backCode=JSON.stringify(String(route.packageCode||''));
+      const backType=JSON.stringify(String(route.type||''));
+      const resultHtml=writing
+        ? '<div class="inlineResult"><div class="inlineResultLabel">Hasil bagian</div><div class="inlineResultScore">'+r.answered+'/'+r.total+'</div><div class="inlineResultMeta">jawaban tersimpan</div><div class="inlineResultNote"><b>Writing tidak dinilai otomatis.</b> Periksa kembali tata bahasa dan penggunaan kata.</div></div>'
+        : '<div class="inlineResult"><div class="inlineResultLabel">Nilai bagian</div><div class="inlineResultScore">'+pct+'%</div><div class="inlineResultMeta"><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</div><div class="inlineResultBar"><i style="width:'+pct+'%"></i></div></div>';
+      const nextBtn=next>=0?'<button class="finishCardBtn" type="button" onclick="nextSection()">'+svg('arrow_forward')+' <span>Lanjut ke Bagian Selanjutnya</span></button>':'';
+      return '<div class="finishCard checked">'+resultHtml+'<div class="finishCardActions finishCardNav">'+
+        '<button class="finishCardBtn" type="button" onclick="openSections('+backCode+','+backType+')">'+svg('back')+' <span>Kembali ke Bagian</span></button>'+
+        nextBtn+
+        '</div><div class="finishCardActions finishCardRepeat"><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div></div>';
     }
     const note=isWriting&&!isSequenceWriting(route.type,route.sectionIndex)
       ? 'Periksa semua jawabanmu lalu lihat ringkasan jawaban. Writing tidak dinilai benar/salah otomatis.'
-      : 'Periksa semua jawaban sekaligus dan lihat nilai bagian ini. Hasil akan muncul tanpa meninggalkan halaman soal.';
+      : 'Periksa semua jawaban sekaligus dan lihat nilai bagian ini. Hasil akan muncul di bawah soal tanpa meninggalkan halaman.';
     return '<div class="finishCard"><div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">'+esc(note)+'</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade()">'+svg('check')+' <span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div></div>';
   }
-  window.changeQuestionPage=function(delta){const n=pageCount(),next=Math.max(0,Math.min(n-1,page+delta));if(next===page)return;page=next;window.__hskResumePage=page;const qwrap=$('questions');if(!qwrap)return;const instruction=qwrap.querySelector('.instruction'),progress=qwrap.querySelector('.sectionProgress');const prefix=(instruction?instruction.outerHTML:'')+(progress?progress.outerHTML:'')+inlineResult();qwrap.innerHTML=prefix+cardsForVisible()+pager()+finishCard();restoreVisible();window.scrollTo({top:Math.max(0,qwrap.getBoundingClientRect().top+window.scrollY-12),behavior:'auto'});};
+  window.changeQuestionPage=function(delta){const n=pageCount(),next=Math.max(0,Math.min(n-1,page+delta));if(next===page)return;page=next;window.__hskResumePage=page;const qwrap=$('questions');if(!qwrap)return;const instruction=qwrap.querySelector('.instruction'),progress=qwrap.querySelector('.sectionProgress');const prefix=(instruction?instruction.outerHTML:'')+(progress?progress.outerHTML:'');qwrap.innerHTML=prefix+cardsForVisible()+pager()+finishCard();restoreVisible();window.scrollTo({top:Math.max(0,qwrap.getBoundingClientRect().top+window.scrollY-12),behavior:'auto'});};
   window.jumpToQuestionPage=function(target){
     const n=pageCount();const next=Math.max(0,Math.min(n-1,Number(target)||0));
     if(next===page)return;
@@ -2918,7 +2956,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     }
     return '<div class="inlineResult"><div class="inlineResultHead"><div><div class="inlineResultLabel">Nilai bagian</div><div class="inlineResultScore">'+pct+'%</div><div class="inlineResultMeta"><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</div></div><span class="inlineResultBadge">✓ Sudah diperiksa</span></div><div class="inlineResultBar"><i style="width:'+pct+'%"></i></div></div>';
   }
-  window.renderExercise=function(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return;}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML='<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+inlineResult()+cardsForVisible()+pager()+finishCard();restoreVisible();};
+  window.renderExercise=function(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return;}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;const st=sectionStats(route.packageCode,route.type,route.sectionIndex);const instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML='<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+cardsForVisible()+pager()+finishCard();restoreVisible();};
   window.startSection=(function(fn){return function(i,push=true){page=0;window.__hskResumePage=0;return fn(i,push)}})(startSection);
   window.repeat=(function(fn){return function(){page=0;return fn()}})(repeat);
   function userText(q){const id=String(q[0]),u=answers[id];if(u===undefined||String(u).trim()==='')return 'Belum dijawab';const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);if(model.type==='sentence_ordering'||model.type==='guided_writing'||model.type==='picture_writing')return String(u);const opt=model.options[Number(u)];return opt?`${opt.label}. ${opt.value}`:String(u)}
