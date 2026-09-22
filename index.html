@@ -2842,7 +2842,7 @@ removeStrayEscapedNewlines();
 function finishAppBoot(){const loader=document.getElementById('appBootLoader');document.documentElement.classList.remove('app-booting');if(loader){loader.classList.add('hide');setTimeout(()=>loader.remove(),240)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>Promise.resolve(initApp()).finally(finishAppBoot),{once:true});else Promise.resolve(initApp()).finally(finishAppBoot);
 </script>
-<footer aria-label="Versi aplikasi" class="appFooter"><span>HSK Papers</span><span>v 1.29</span></footer>
+<footer aria-label="Versi aplikasi" class="appFooter"><span>HSK Papers</span><span>v 1.30</span></footer>
 <script>
 (function(){
   const originalApplyTheme=window.applyTheme;
@@ -2968,13 +2968,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const r=resultState;
       const writing=isWriting&&!isSequenceWriting(route.type,route.sectionIndex);
       const pct=r.total?Math.round(r.score/r.total*100):0;
-      const next=nextAvailableSectionIndex();
+      const next=nextSectionTarget();
       const backCode=JSON.stringify(String(route.packageCode||''));
       const backType=JSON.stringify(String(route.type||''));
       const resultHtml=writing
         ? '<div class="inlineResult"><div class="inlineResultLabel">Hasil bagian</div><div class="inlineResultScore">'+r.answered+'/'+r.total+'</div><div class="inlineResultMeta">jawaban tersimpan</div><div class="inlineResultNote"><b>Writing tidak dinilai otomatis.</b> Periksa kembali tata bahasa dan penggunaan kata.</div></div>'
         : '<div class="inlineResult"><div class="inlineResultLabel">Nilai bagian</div><div class="inlineResultScore">'+pct+'%</div><div class="inlineResultMeta"><b>'+r.score+'/'+r.total+'</b> benar · '+r.answered+' dijawab · '+(r.total-r.answered)+' belum dijawab</div><div class="inlineResultBar"><i style="width:'+pct+'%"></i></div></div>';
-      const nextBtn=next>=0?'<button class="finishCardBtn" type="button" onclick="nextSection()"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span><span>Lanjut ke Bagian Selanjutnya</span></button>':'';
+      const nextBtn=next?'<button class="finishCardBtn" type="button" onclick="nextSection()"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_forward</span><span>Lanjut ke Bagian Selanjutnya</span></button>':'';
       return '<div class="finishCard checked">'+resultHtml+'<div class="finishCardActions finishCardNav">'+
         '<button class="finishCardBtn" type="button" onclick="returnToParts()"><span class="material-symbols-rounded ico" aria-hidden="true">arrow_back</span><span>Kembali ke Bagian</span></button>'+
         nextBtn+
@@ -4485,7 +4485,27 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     resumeQuestionId=null;window.__hskResumePage=0;loadCurrentSectionState();renderExercise();setScreen('exercise',push);
   };
 
-  window.returnToParts=function(){window.openSections(route.packageCode,route.type,true)};
+  window.returnToParts=async function(){
+    const code=String(route.packageCode||'');
+    const type=String(route.type||'');
+    if(!code||!type)return;
+    try{
+      if(typeof window.__hskLoadPackage==='function')await window.__hskLoadPackage(code);
+      route={
+        screen:'parts',
+        packageCode:code,
+        type:type,
+        sectionIndex:null,
+        studyPlanId:route.studyPlanId||null
+      };
+      if(typeof renderSections==='function')renderSections();
+      setScreen('partsScreen',true);
+      requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
+    }catch(e){
+      console.error('returnToParts failed',e);
+      appNotice('Tidak dapat kembali ke bagian',e.message||'Silakan coba lagi.');
+    }
+  };
 
   window.restore=function(s){
     const st=s||{};
