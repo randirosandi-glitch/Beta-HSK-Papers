@@ -5545,26 +5545,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 };
   window.renderLevelsScreen=renderLevels;window.renderPackagesScreen=renderPackages;
 
-  /* Canonical level-card interaction: no inline onclick and no dynamic-folder dependency. */
-  if(!window.__hskCanonicalLevelCardClickV14){
-    window.__hskCanonicalLevelCardClickV14=true;
-    document.addEventListener('click',function(e){
-      const card=e.target?.closest?.('#levelsScreen .levelCard[data-material-key]');
-      if(!card)return;
-      if(e.defaultPrevented)return;
-      const key=String(card.dataset.materialKey||'').trim();
-      if(!key)return;
-      e.preventDefault();
-      const arrow=card.querySelector('.levelCardArrow');
-      arrow?.classList.add('is-loading');
-      try{
-        if(typeof window.openLevelPackages==='function') window.openLevelPackages(key,true);
-        else if(typeof window.appNotice==='function') window.appNotice('Materi belum siap','Coba lagi sebentar.');
-      }finally{
-        window.setTimeout(()=>arrow?.classList.remove('is-loading'),360);
-      }
-    },true);
-  }
+  /* V18: level navigation is handled by the single canonical listener below. */
 window.filterPackages=v=>{const i=$('packageSearchInput');if(i)i.value=String(v??'');window.__dbPackagePage=0;renderPackages()};window.clearPackageSearch=()=>{const i=$('packageSearchInput');if(i)i.value='';window.__dbPackagePage=0;renderPackages();i?.focus()};
   window.openPackage=async function(code,push=true){
   code=String(code||''); const materialKey=materialKeyFromCode(code);
@@ -5985,14 +5966,16 @@ window.filterPackages=v=>{const i=$('packageSearchInput');if(i)i.value=String(v?
     packageCode:s?.packageCode??null,
     type:s?.type??null,
     sectionIndex:s?.sectionIndex??null,
-    studyPlanId:s?.studyPlanId??null
+    studyPlanId:s?.studyPlanId??null,
+    materialKey:s?.materialKey??null
   };}
   function snap(){return norm(window.route||{});}
   function same(a,b){a=norm(a);b=norm(b);return a.screen===b.screen &&
     String(a.packageCode??'')===String(b.packageCode??'') &&
     String(a.type??'')===String(b.type??'') &&
     String(a.sectionIndex??'')===String(b.sectionIndex??'') &&
-    String(a.studyPlanId??'')===String(b.studyPlanId??'');}
+    String(a.studyPlanId??'')===String(b.studyPlanId??'') &&
+    String(a.materialKey??'')===String(b.materialKey??'');}
   function home(){return {screen:'home',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};}
   function stateFor(r){return {...norm(r),[APP]:true};}
   async function ensurePackageForRoute(r){
@@ -6014,7 +5997,13 @@ window.filterPackages=v=>{const i=$('packageSearchInput');if(i)i.value=String(v?
       await ensurePackageForRoute(r);
       if(r.screen==='home'){if(typeof renderHome==='function')renderHome();setScreen('home',false);return true;}
       if(r.screen==='levels'){if(typeof renderLevelsScreen==='function')renderLevelsScreen();setScreen('levelsScreen',false);return true;}
-      if(r.screen==='packages'){if(typeof renderPackagesScreen==='function')renderPackagesScreen();setScreen('packagesScreen',false);return true;}
+      if(r.screen==='packages'){
+        if(r.materialKey)selectedHSKLevel=r.materialKey;
+        if(typeof renderPackagesScreen==='function')renderPackagesScreen();
+        setScreen('packagesScreen',false);
+        if(typeof window.renderNavState==='function')window.renderNavState();
+        return true;
+      }
       if(r.screen==='scores'){if(typeof renderScoresMaster==='function')renderScoresMaster();setScreen('scores',false);return true;}
       if(r.screen==='studyPlans'){if(typeof renderStudyPlans==='function')renderStudyPlans();setScreen('studyPlans',false);return true;}
       if(r.screen==='studyPlanDetail'){if(typeof renderStudyPlanDetail==='function')renderStudyPlanDetail();else if(typeof renderPlanDetailV4==='function')renderPlanDetailV4();setScreen('studyPlanDetail',false);return true;}
@@ -6035,11 +6024,11 @@ window.filterPackages=v=>{const i=$('packageSearchInput');if(i)i.value=String(v?
     r=norm(r);
     switch(r.screen){
       case 'studyPlanDetail': return {screen:'studyPlans',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-      case 'package': return r.studyPlanId?{screen:'studyPlanDetail',packageCode:null,type:null,sectionIndex:null,studyPlanId:r.studyPlanId}:{screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+      case 'package': return r.studyPlanId?{screen:'studyPlanDetail',packageCode:null,type:null,sectionIndex:null,studyPlanId:r.studyPlanId,materialKey:null}:{screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:r.materialKey||null};
       case 'parts': return {screen:'package',packageCode:r.packageCode,type:null,sectionIndex:null,studyPlanId:r.studyPlanId};
       case 'exercise': return {screen:'parts',packageCode:r.packageCode,type:r.type,sectionIndex:null,studyPlanId:r.studyPlanId};
       case 'result': return {screen:'exercise',packageCode:r.packageCode,type:r.type,sectionIndex:r.sectionIndex,studyPlanId:r.studyPlanId};
-      case 'packages': return {screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
+      case 'packages': return {screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:null};
       case 'levels': case 'scores': case 'studyPlans': return home();
       default:return home();
     }
@@ -6861,10 +6850,11 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
     }catch(_){return null}
   };
   const goScreen=(name,push=true)=>{
-    if(typeof window.setScreen==='function')return window.setScreen(name,push);
     const map={levels:'levelsScreen',packages:'packagesScreen',package:'package',parts:'partsScreen',exercise:'exercise',result:'result'};
+    const target=map[name]||name;
+    if(typeof window.setScreen==='function')return window.setScreen(target,push);
     document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-    const el=hasEl(map[name]||name);if(el)el.classList.add('active');
+    const el=hasEl(target);if(el)el.classList.add('active');
   };
 
   const waitForCatalogReady=async function(){
@@ -6887,44 +6877,50 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
   V.openLevel=async function(raw,push=true){
     const key=normalizeMaterial(raw);
     if(!key){notice('Materi tidak valid','Level latihan tidak memiliki identitas yang valid.');return false}
-    /* A visible level card is a valid navigation intent. Keep its existing
-       circular arrow loader active while catalog discovery is still running. */
-    const cards=[...document.querySelectorAll('#levelsScreen .levelCard[data-material-key]')];
-    const card=cards.find(x=>String(x.dataset.materialKey||'').trim()===key);
+
+    const card=[...document.querySelectorAll('#levelsScreen .levelCard[data-material-key]')]
+      .find(x=>String(x.dataset.materialKey||'').trim()===key);
     const arrow=card?.querySelector('.levelCardArrow');
     arrow?.classList.add('is-loading');
+
     try{
+      /* LEVEL LOAD = CATALOG ONLY. Never fetch package JSON here. */
       const ready=await waitForCatalogReady();
       if(!ready){
-        notice('Data belum dapat dimuat','Katalog materi belum berhasil dimuat. Periksa koneksi lalu coba lagi.');
+        notice('Katalog belum berhasil dimuat','Periksa koneksi lalu coba lagi.');
         return false;
       }
 
-      let material=materialFor(key);
+      const material=materialFor(key);
       if(!material){
-        const groups=window.__hskDatabase?.groups||[];
-        material=groups.map(g=>({g,key:g.kind==='hsk'?'hsk:'+Number(g.level):(g.kind==='workbook'?'wb:'+String(g.name||'').replace(/^Workbook\s*/i,'').toUpperCase():'')})).find(x=>x.key===key)?.g||null;
-      }
-      if(!material){
-        notice('Materi tidak ditemukan','Materi yang dipilih tidak tersedia di katalog saat ini.');
+        notice('Materi tidak ditemukan','Level yang dipilih tidak tersedia di katalog saat ini.');
         return false;
       }
 
-      try{window.selectedHSKLevel=key}catch(_){}
-      window.route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:key};
-      const input=hasEl('packageSearchInput');if(input)input.value='';
+      /* The route is authoritative. Do not let the old selected-level state
+         decide which package list is rendered. */
+      selectedHSKLevel=material.key;
+      window.route={
+        screen:'packages',packageCode:null,type:null,sectionIndex:null,
+        studyPlanId:null,materialKey:material.key
+      };
+
+      const input=hasEl('packageSearchInput');
+      if(input)input.value='';
       window.__masterPackagePage=0;
-      try{goScreen('packages',push)}catch(e){console.error(e)}
-      try{
-        if(typeof renderPackagesScreenMaster==='function')renderPackagesScreenMaster();
-        else if(typeof window.renderPackagesScreen==='function')window.renderPackagesScreen();
-        window.scrollTo?.({top:0,left:0,behavior:'auto'});
-        return true;
-      }catch(e){
-        console.error('V16 level navigation render failed',e);
-        notice('Paket belum dapat ditampilkan','Data level berhasil dimuat, tetapi daftar paket gagal dirender. Coba lagi.');
-        return false;
-      }
+      window.__dbPackagePage=0;
+      window.__wbPackagePage=0;
+
+      renderPackagesScreenMaster();
+      setScreen('packagesScreen',push);
+      if(typeof window.renderNavState==='function')window.renderNavState();
+      if(typeof window.__hskPersistRoute==='function')window.__hskPersistRoute();
+      window.scrollTo?.({top:0,left:0,behavior:'auto'});
+      return true;
+    }catch(e){
+      console.error('HSK Papers V18 level navigation failed',e);
+      notice('Daftar paket belum dapat ditampilkan','Katalog belum berhasil diproses. Coba lagi.');
+      return false;
     }finally{
       arrow?.classList.remove('is-loading');
     }
@@ -6933,30 +6929,49 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
   V.openPackage=async function(code,push=true){
     code=str(code);
     if(!code){notice('Paket tidak valid','Kode paket tidak ditemukan.');return false}
-    let data=window.DB?.[code];
+
+    const btn=[...document.querySelectorAll('#packagesScreen [data-package-code]')]
+      .find(x=>String(x.dataset.packageCode||'')===code);
+    const arrow=btn?.querySelector('.packageCardV16Arrow');
+    arrow?.classList.add('is-loading');
+
     try{
-      if(!data && typeof window.__hskLoadPackage==='function')data=await window.__hskLoadPackage(code);
-      if(!data && typeof loadPackage==='function')data=await loadPackage(code);
-    }catch(e){
-      console.error('V15 package load failed',e);
-      notice('Paket gagal dimuat','Periksa koneksi lalu coba lagi.');
-      return false;
-    }
-    if(!data){notice('Paket belum tersedia','Data paket belum berhasil dimuat.');return false}
-    const materialKey=(()=>{try{return typeof materialKeyFromCode==='function'?materialKeyFromCode(code):null}catch(_){return null}})();
-    const previous=window.route||{};
-    window.route={screen:'package',packageCode:code,type:null,sectionIndex:null,studyPlanId:previous.studyPlanId||null,materialKey:materialKey||previous.materialKey||null};
-    try{goScreen('package',push)}catch(e){console.error(e)}
-    try{
+      /* PACKAGE LOAD = one package JSON only. Questions from other packages
+         are never fetched when entering the package list. */
+      let data=window.DB?.[code];
+      if(!data && typeof window.__hskLoadPackage==='function'){
+        data=await window.__hskLoadPackage(code);
+      }else if(!data && typeof loadPackage==='function'){
+        data=await loadPackage(code);
+      }
+      if(!data){
+        notice('Paket belum tersedia','Data paket belum berhasil dimuat.');
+        return false;
+      }
+
+      const materialKey=(()=>{
+        try{return typeof materialKeyFromCode==='function'?materialKeyFromCode(code):null}catch(_){return null}
+      })();
+      const previous=window.route||{};
+      window.route={
+        screen:'package',packageCode:code,type:null,sectionIndex:null,
+        studyPlanId:previous.studyPlanId||null,
+        materialKey:materialKey||previous.materialKey||null
+      };
+
       if(typeof window.renderPackage==='function')window.renderPackage();
       else if(typeof renderPackage==='function')renderPackage();
+      setScreen('package',push);
+      if(typeof window.renderNavState==='function')window.renderNavState();
+      if(typeof window.__hskPersistRoute==='function')window.__hskPersistRoute();
       window.scrollTo?.({top:0,left:0,behavior:'auto'});
       return true;
     }catch(e){
-      console.error('V15 package render failed',e);
-      window.route=previous;
-      notice('Paket belum dapat dibuka','Data paket ada, tetapi halaman paket gagal dirender.');
+      console.error('HSK Papers V18 package load failed',e);
+      notice('Paket gagal dimuat','Periksa koneksi lalu coba lagi.');
       return false;
+    }finally{
+      arrow?.classList.remove('is-loading');
     }
   };
 
@@ -7026,14 +7041,23 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
     },true);
   }
 
-  /* Workbook cards created programmatically before/after this layer. */
-  document.addEventListener('click',function(e){
-    const b=e.target?.closest?.('#levelsScreen .levelCardWorkbook[data-material-key]');
-    if(!b)return;
-    e.preventDefault();e.stopImmediatePropagation();V.openLevel(b.dataset.materialKey,true);
-  },true);
+  console.info('HSK Papers V18 canonical interaction active');
+})();
+</script>
 
-  console.info('HSK Papers V16 interaction recovery active');
+<script id="hskV18RouteGuard">
+(function(){
+  'use strict';
+  /* Route is the single source of truth for the visible package list. */
+  const syncPackageRoute=()=>{
+    try{
+      if(window.route?.screen!=='packages' || !window.route?.materialKey)return;
+      window.selectedHSKLevel=window.route.materialKey;
+    }catch(_){ }
+  };
+  document.addEventListener('hsk:data-ready',syncPackageRoute);
+  document.addEventListener('hsk:dynamic-catalog-ready',syncPackageRoute);
+  window.addEventListener('popstate',syncPackageRoute);
 })();
 </script>
 </body>
