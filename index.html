@@ -6839,10 +6839,10 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
 
 
 <!-- V15 INTERACTION RECOVERY: one resilient forward-navigation layer. -->
-<script id="hskV15InteractionRecovery">
+<script id="hskV16InteractionRecovery">
 (function(){
   'use strict';
-  const V=window.__hskV15InteractionRecovery=window.__hskV15InteractionRecovery||{};
+  const V=window.__hskV16InteractionRecovery=window.__hskV16InteractionRecovery||{};
   const str=v=>String(v==null?'':v).trim();
   const hasEl=id=>document.getElementById(id);
   const notice=(title,msg)=>{try{if(typeof window.appNotice==='function')window.appNotice(title,msg,{icon:'!'});else console.warn(title,msg)}catch(_){}};
@@ -6867,30 +6867,66 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
     const el=hasEl(map[name]||name);if(el)el.classList.add('active');
   };
 
+  const waitForCatalogReady=async function(){
+    const db=window.__hskDatabase;
+    if(db?.loaded)return !db.error;
+    const ready=window.__hskDynamicReadyPromise;
+    if(ready){
+      try{await ready;return !window.__hskDatabase?.error}catch(_){return false}
+    }
+    return await new Promise(resolve=>{
+      let done=false;
+      const onReady=()=>finish(!window.__hskDatabase?.error);
+      const finish=ok=>{if(done)return;done=true;document.removeEventListener('hsk:data-ready',onReady);document.removeEventListener('hsk:dynamic-catalog-ready',onReady);resolve(ok)};
+      document.addEventListener('hsk:data-ready',onReady,{once:true});
+      document.addEventListener('hsk:dynamic-catalog-ready',onReady,{once:true});
+      window.setTimeout(()=>finish(!!window.__hskDatabase?.loaded&&!window.__hskDatabase?.error),15000);
+    });
+  };
+
   V.openLevel=async function(raw,push=true){
     const key=normalizeMaterial(raw);
     if(!key){notice('Materi tidak valid','Level latihan tidak memiliki identitas yang valid.');return false}
-    /* The card itself is evidence that this material exists. Never fall back to HSK 4. */
-    const material=materialFor(key);
-    if(!material){
-      notice('Materi belum siap','Data level belum siap. Coba lagi sebentar.');
-      return false;
-    }
-    try{window.selectedHSKLevel=key}catch(_){ }
-    window.route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:key};
-    /* Change screen first: a renderer failure must never make the tap look dead. */
-    try{goScreen('packages',push)}catch(e){console.error(e)}
+    /* A visible level card is a valid navigation intent. Keep its existing
+       circular arrow loader active while catalog discovery is still running. */
+    const cards=[...document.querySelectorAll('#levelsScreen .levelCard[data-material-key]')];
+    const card=cards.find(x=>String(x.dataset.materialKey||'').trim()===key);
+    const arrow=card?.querySelector('.levelCardArrow');
+    arrow?.classList.add('is-loading');
     try{
+      const ready=await waitForCatalogReady();
+      if(!ready){
+        notice('Data belum dapat dimuat','Katalog materi belum berhasil dimuat. Periksa koneksi lalu coba lagi.');
+        return false;
+      }
+
+      let material=materialFor(key);
+      if(!material){
+        const groups=window.__hskDatabase?.groups||[];
+        material=groups.map(g=>({g,key:g.kind==='hsk'?'hsk:'+Number(g.level):(g.kind==='workbook'?'wb:'+String(g.name||'').replace(/^Workbook\s*/i,'').toUpperCase():'')})).find(x=>x.key===key)?.g||null;
+      }
+      if(!material){
+        notice('Materi tidak ditemukan','Materi yang dipilih tidak tersedia di katalog saat ini.');
+        return false;
+      }
+
+      try{window.selectedHSKLevel=key}catch(_){}
+      window.route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:key};
       const input=hasEl('packageSearchInput');if(input)input.value='';
       window.__masterPackagePage=0;
-      if(typeof renderPackagesScreenMaster==='function')renderPackagesScreenMaster();
-      else if(typeof window.renderPackagesScreen==='function')window.renderPackagesScreen();
-      window.scrollTo?.({top:0,left:0,behavior:'auto'});
-      return true;
-    }catch(e){
-      console.error('V15 level navigation render failed',e);
-      notice('Paket belum dapat ditampilkan','Data level berhasil dipilih, tetapi daftar paket gagal dirender. Coba lagi.');
-      return false;
+      try{goScreen('packages',push)}catch(e){console.error(e)}
+      try{
+        if(typeof renderPackagesScreenMaster==='function')renderPackagesScreenMaster();
+        else if(typeof window.renderPackagesScreen==='function')window.renderPackagesScreen();
+        window.scrollTo?.({top:0,left:0,behavior:'auto'});
+        return true;
+      }catch(e){
+        console.error('V16 level navigation render failed',e);
+        notice('Paket belum dapat ditampilkan','Data level berhasil dimuat, tetapi daftar paket gagal dirender. Coba lagi.');
+        return false;
+      }
+    }finally{
+      arrow?.classList.remove('is-loading');
     }
   };
 
@@ -6997,7 +7033,7 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
     e.preventDefault();e.stopImmediatePropagation();V.openLevel(b.dataset.materialKey,true);
   },true);
 
-  console.info('HSK Papers V15 interaction recovery active');
+  console.info('HSK Papers V16 interaction recovery active');
 })();
 </script>
 </body>
