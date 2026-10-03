@@ -6837,6 +6837,169 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
 @media(max-width:760px){#appBootLoader{padding:20px!important;}#appBootLoader .bootMark{width:260px!important;height:98px!important;min-width:260px!important;min-height:98px!important;margin-bottom:20px!important;}}
 </style>
 
+
+<!-- V15 INTERACTION RECOVERY: one resilient forward-navigation layer. -->
+<script id="hskV15InteractionRecovery">
+(function(){
+  'use strict';
+  const V=window.__hskV15InteractionRecovery=window.__hskV15InteractionRecovery||{};
+  const str=v=>String(v==null?'':v).trim();
+  const hasEl=id=>document.getElementById(id);
+  const notice=(title,msg)=>{try{if(typeof window.appNotice==='function')window.appNotice(title,msg,{icon:'!'});else console.warn(title,msg)}catch(_){}};
+  const normalizeMaterial=k=>{
+    k=str(k); if(!k)return '';
+    if(/^\d+$/.test(k))return 'hsk:'+Number(k);
+    if(/^wb4a$/i.test(k))return 'wb:WB4A';
+    if(/^wb4b$/i.test(k))return 'wb:WB4B';
+    return k;
+  };
+  const materialFor=k=>{
+    try{if(typeof materialForKey==='function')return materialForKey(k)||null}catch(_){ }
+    try{
+      const groups=window.state?.groups||[];
+      return groups.find(g=>String(g.key||'').toLowerCase()===String(k).toLowerCase())||null;
+    }catch(_){return null}
+  };
+  const goScreen=(name,push=true)=>{
+    if(typeof window.setScreen==='function')return window.setScreen(name,push);
+    const map={levels:'levelsScreen',packages:'packagesScreen',package:'package',parts:'partsScreen',exercise:'exercise',result:'result'};
+    document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+    const el=hasEl(map[name]||name);if(el)el.classList.add('active');
+  };
+
+  V.openLevel=async function(raw,push=true){
+    const key=normalizeMaterial(raw);
+    if(!key){notice('Materi tidak valid','Level latihan tidak memiliki identitas yang valid.');return false}
+    /* The card itself is evidence that this material exists. Never fall back to HSK 4. */
+    const material=materialFor(key);
+    if(!material){
+      notice('Materi belum siap','Data level belum siap. Coba lagi sebentar.');
+      return false;
+    }
+    try{window.selectedHSKLevel=key}catch(_){ }
+    window.route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:key};
+    /* Change screen first: a renderer failure must never make the tap look dead. */
+    try{goScreen('packages',push)}catch(e){console.error(e)}
+    try{
+      const input=hasEl('packageSearchInput');if(input)input.value='';
+      window.__masterPackagePage=0;
+      if(typeof renderPackagesScreenMaster==='function')renderPackagesScreenMaster();
+      else if(typeof window.renderPackagesScreen==='function')window.renderPackagesScreen();
+      window.scrollTo?.({top:0,left:0,behavior:'auto'});
+      return true;
+    }catch(e){
+      console.error('V15 level navigation render failed',e);
+      notice('Paket belum dapat ditampilkan','Data level berhasil dipilih, tetapi daftar paket gagal dirender. Coba lagi.');
+      return false;
+    }
+  };
+
+  V.openPackage=async function(code,push=true){
+    code=str(code);
+    if(!code){notice('Paket tidak valid','Kode paket tidak ditemukan.');return false}
+    let data=window.DB?.[code];
+    try{
+      if(!data && typeof window.__hskLoadPackage==='function')data=await window.__hskLoadPackage(code);
+      if(!data && typeof loadPackage==='function')data=await loadPackage(code);
+    }catch(e){
+      console.error('V15 package load failed',e);
+      notice('Paket gagal dimuat','Periksa koneksi lalu coba lagi.');
+      return false;
+    }
+    if(!data){notice('Paket belum tersedia','Data paket belum berhasil dimuat.');return false}
+    const materialKey=(()=>{try{return typeof materialKeyFromCode==='function'?materialKeyFromCode(code):null}catch(_){return null}})();
+    const previous=window.route||{};
+    window.route={screen:'package',packageCode:code,type:null,sectionIndex:null,studyPlanId:previous.studyPlanId||null,materialKey:materialKey||previous.materialKey||null};
+    try{goScreen('package',push)}catch(e){console.error(e)}
+    try{
+      if(typeof window.renderPackage==='function')window.renderPackage();
+      else if(typeof renderPackage==='function')renderPackage();
+      window.scrollTo?.({top:0,left:0,behavior:'auto'});
+      return true;
+    }catch(e){
+      console.error('V15 package render failed',e);
+      window.route=previous;
+      notice('Paket belum dapat dibuka','Data paket ada, tetapi halaman paket gagal dirender.');
+      return false;
+    }
+  };
+
+  V.openParts=async function(code,type,push=true){
+    code=str(code);type=str(type).toLowerCase();
+    if(!code||!type){notice('Bagian tidak valid','Bagian soal tidak dikenali.');return false}
+    let data=window.DB?.[code];
+    try{if(!data&&typeof window.__hskLoadPackage==='function')data=await window.__hskLoadPackage(code)}catch(e){notice('Paket gagal dimuat','Periksa koneksi lalu coba lagi.');return false}
+    if(!data||!window.META?.[type]&&typeof META==='undefined'){notice('Bagian belum tersedia','Data bagian soal belum siap.');return false}
+    const previous=window.route||{};
+    window.route={screen:'parts',packageCode:code,type,sectionIndex:null,studyPlanId:previous.studyPlanId||null,materialKey:(()=>{try{return typeof materialKeyFromCode==='function'?materialKeyFromCode(code):previous.materialKey||null}catch(_){return previous.materialKey||null}})()};
+    try{goScreen('parts',push)}catch(e){console.error(e)}
+    try{if(typeof window.renderSections==='function')window.renderSections();else if(typeof renderSections==='function')renderSections();window.scrollTo?.({top:0,left:0,behavior:'auto'});return true}catch(e){console.error(e);notice('Bagian belum dapat dibuka','Halaman bagian gagal dirender.');return false}
+  };
+
+  V.startSection=async function(i,push=true){
+    const r=window.route||{};const code=str(r.packageCode),type=str(r.type).toLowerCase(),idx=Number(i);
+    const data=window.DB?.[code];const arr=data?.[type];
+    if(!code||!type||!Array.isArray(arr)||!arr[idx]){notice('Soal belum tersedia','Bagian soal belum berhasil dimuat.');return false}
+    window.route={screen:'exercise',packageCode:code,type,sectionIndex:idx,studyPlanId:r.studyPlanId||null,materialKey:r.materialKey||((()=>{try{return typeof materialKeyFromCode==='function'?materialKeyFromCode(code):null}catch(_){return null}})())};
+    try{goScreen('exercise',push)}catch(e){console.error(e)}
+    try{
+      window.resumeQuestionId=null;window.__hskResumePage=0;
+      if(typeof window.loadCurrentSectionState==='function')window.loadCurrentSectionState();else if(typeof loadCurrentSectionState==='function')loadCurrentSectionState();
+      if(typeof window.renderExercise==='function')window.renderExercise();else if(typeof renderExercise==='function')renderExercise();
+      window.scrollTo?.({top:0,left:0,behavior:'auto'});return true;
+    }catch(e){console.error('V15 section render failed',e);notice('Soal belum dapat dibuka','Halaman soal gagal dirender.');return false}
+  };
+
+  /* Canonical public functions. Existing callers now all converge here. */
+  window.openLevelPackages=V.openLevel;
+  window.openPackage=V.openPackage;
+  window.openPackageFromTile=V.openPackage;
+  window.openSections=V.openParts;
+  window.startSection=V.startSection;
+
+  /* One delegated click route for cards. It also neutralizes stale inline handlers. */
+  if(!V.listener){
+    V.listener=true;
+    document.addEventListener('click',function(e){
+      const t=e.target?.closest?.('button,a'); if(!t)return;
+      const level=t.closest?.('#levelsScreen .levelCard[data-material-key]');
+      if(level){
+        const key=level.dataset.materialKey;
+        if(key){e.preventDefault();e.stopImmediatePropagation();V.openLevel(key,true)}
+        return;
+      }
+      const pkg=t.closest?.('#packagesScreen [data-package-code],#packagesScreen .packageCardV16Main[data-package-code]');
+      if(pkg){
+        const code=pkg.dataset.packageCode;
+        if(code){e.preventDefault();e.stopImmediatePropagation();V.openPackage(code,true)}
+        return;
+      }
+      const part=t.closest?.('#package .partCard:not(.partDisabled)');
+      if(part){
+        const raw=part.getAttribute('onclick')||'';
+        const m=raw.match(/openSections\(\s*['\"]([^'\"]+)['\"]\s*,\s*['\"]([^'\"]+)['\"]/i);
+        if(m){e.preventDefault();e.stopImmediatePropagation();V.openParts(m[1],m[2],true)}
+        return;
+      }
+      const sec=t.closest?.('#partsScreen .sectionPartTile');
+      if(sec){
+        const raw=sec.getAttribute('onclick')||'';const m=raw.match(/startSection\(\s*(\d+)/i);
+        if(m){e.preventDefault();e.stopImmediatePropagation();V.startSection(Number(m[1]),true)}
+        return;
+      }
+    },true);
+  }
+
+  /* Workbook cards created programmatically before/after this layer. */
+  document.addEventListener('click',function(e){
+    const b=e.target?.closest?.('#levelsScreen .levelCardWorkbook[data-material-key]');
+    if(!b)return;
+    e.preventDefault();e.stopImmediatePropagation();V.openLevel(b.dataset.materialKey,true);
+  },true);
+
+  console.info('HSK Papers V15 interaction recovery active');
+})();
+</script>
 </body>
 
 
