@@ -3285,41 +3285,56 @@ async function continueLastActivity(){
   }catch(e){console.warn('HSK continue last activity failed:',e);openPackage(a.code)}
 }
 
-function continueLastPackage(code){
-  if(!DB[code])return;
-  const store=readStore(),r=store._resume;
-  let target=null;
-  if(r&&r.code===code&&META[r.type]&&DB[code]?.[r.type]?.[Number(r.sectionIndex)]){
-    const idx=Number(r.sectionIndex),st=sectionStats(code,r.type,idx);
-    if(st.answered<st.total)target={type:r.type,sectionIndex:idx,page:Number(r.page)||0,questionId:r.questionId||null};
-  }
-  if(!target){
-    let best=null;
-    Object.entries(META).forEach(([type])=>{
-      (DB[code]?.[type]||[]).forEach((sec,idx)=>{
-        const st=sectionStats(code,type,idx),raw=store[stateKey(code,type,idx)];
-        if(st.answered<st.total){
-          const candidate={type,sectionIndex:idx,page:0,questionId:null,updatedAt:Number(raw?.updatedAt)||0};
-          if(!best||candidate.updatedAt>best.updatedAt)best=candidate;
-        }
-      });
-    });
-    target=best;
-  }
-  if(target){
-    route={screen:'exercise',packageCode:code,type:target.type,sectionIndex:Number(target.sectionIndex)};
-    resumeQuestionId=target.questionId?String(target.questionId):null;
-    window.__hskResumePage=Math.max(0,Number(target.page)||0);
-    loadCurrentSectionState();
-    renderExercise();
-    setScreen('exercise');
-    if(resumeQuestionId){
-      const qi=currentQuestions.findIndex(q=>String(q[0])===resumeQuestionId);
-      if(qi>=0)window.jumpToQuestionPage?.(Math.floor(qi/10));
+async function continueLastPackage(code){
+  code=String(code||'');
+  if(!code)return;
+  try{
+    /* Home continuation is a real package navigation. Load exactly this package
+       before reading its sections; catalog stubs are not question data. */
+    if((!DB[code]||DB[code].__lazy)&&window.__hskLoadPackage){
+      await window.__hskLoadPackage(code);
     }
-    return;
+    if(!DB[code]||DB[code].__lazy){
+      appNotice?.('Paket belum berhasil dimuat','Periksa koneksi lalu coba lagi.',{icon:'!'});
+      return;
+    }
+    const store=readStore(),r=store._resume;
+    let target=null;
+    if(r&&r.code===code&&META[r.type]&&DB[code]?.[r.type]?.[Number(r.sectionIndex)]){
+      const idx=Number(r.sectionIndex),st=sectionStats(code,r.type,idx);
+      if(st.answered<st.total)target={type:r.type,sectionIndex:idx,page:Number(r.page)||0,questionId:r.questionId||null};
+    }
+    if(!target){
+      let best=null;
+      Object.entries(META).forEach(([type])=>{
+        (DB[code]?.[type]||[]).forEach((sec,idx)=>{
+          const st=sectionStats(code,type,idx),raw=store[stateKey(code,type,idx)];
+          if(st.answered<st.total){
+            const candidate={type,sectionIndex:idx,page:0,questionId:null,updatedAt:Number(raw?.updatedAt)||0};
+            if(!best||candidate.updatedAt>best.updatedAt)best=candidate;
+          }
+        });
+      });
+      target=best;
+    }
+    if(target){
+      route={screen:'exercise',packageCode:code,type:target.type,sectionIndex:Number(target.sectionIndex),materialKey:materialKeyFromCode(code)};
+      resumeQuestionId=target.questionId?String(target.questionId):null;
+      window.__hskResumePage=Math.max(0,Number(target.page)||0);
+      loadCurrentSectionState();
+      renderExercise();
+      setScreen('exercise');
+      if(resumeQuestionId){
+        const qi=currentQuestions.findIndex(q=>String(q[0])===resumeQuestionId);
+        if(qi>=0)window.jumpToQuestionPage?.(Math.floor(qi/10));
+      }
+      return;
+    }
+    await window.openPackage?.(code);
+  }catch(e){
+    console.warn('HSK continue last package failed:',e);
+    appNotice?.('Soal belum berhasil dimuat','Periksa koneksi lalu coba lagi.',{icon:'!'});
   }
-  openPackage(code);
 }
 
 let authMode='';
@@ -5567,7 +5582,9 @@ window.filterPackages=v=>{const i=$('packageSearchInput');if(i)i.value=String(v?
     try{ materialKey=materialKeyFromCode(code); }catch(e){}
   }
   if(code){
-    try{await loadPackage(code);}catch(e){
+    try{
+      if(!DB[code]||DB[code].__lazy) await loadPackage(code);
+    }catch(e){
       if(typeof window.appNotice==='function') window.appNotice('Paket belum berhasil dimuat','Periksa koneksi lalu coba lagi.',{icon:'!'});
       return;
     }
@@ -6843,11 +6860,31 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
     return k;
   };
   const materialFor=k=>{
-    try{if(typeof materialForKey==='function')return materialForKey(k)||null}catch(_){ }
+    const key=String(k||'').trim().toLowerCase();
+    if(!key)return null;
+    /* The dynamic catalog is the authoritative source for level/package names.
+       Do not depend on DB contents here: DB entries may only be lazy stubs. */
     try{
-      const groups=window.state?.groups||[];
-      return groups.find(g=>String(g.key||'').toLowerCase()===String(k).toLowerCase())||null;
-    }catch(_){return null}
+      const groups=window.__hskDatabase?.groups||window.__HSK_DYNAMIC_GROUPS||[];
+      for(const g of groups){
+        const gKey=g?.kind==='hsk'
+          ? 'hsk:'+Number(g.level)
+          : g?.kind==='workbook'
+            ? 'wb:'+String(g.name||'').replace(/^Workbook\s*/i,'').trim().toUpperCase()
+            : '';
+        if(gKey.toLowerCase()===key){
+          return {key:gKey,kind:g.kind,level:g.level,label:g.name,codes:Array.isArray(g.codes)?g.codes.slice():[]};
+        }
+      }
+    }catch(_){}
+    /* Fallback for the embedded database used by older deployments. */
+    try{
+      if(typeof materialForKey==='function'){
+        const m=materialForKey(k);
+        if(m)return m;
+      }
+    }catch(_){}
+    return null;
   };
   const goScreen=(name,push=true)=>{
     const map={levels:'levelsScreen',packages:'packagesScreen',package:'package',parts:'partsScreen',exercise:'exercise',result:'result'};
@@ -6939,9 +6976,9 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
       /* PACKAGE LOAD = one package JSON only. Questions from other packages
          are never fetched when entering the package list. */
       let data=window.DB?.[code];
-      if(!data && typeof window.__hskLoadPackage==='function'){
+      if((!data || data.__lazy) && typeof window.__hskLoadPackage==='function'){
         data=await window.__hskLoadPackage(code);
-      }else if(!data && typeof loadPackage==='function'){
+      }else if((!data || data.__lazy) && typeof loadPackage==='function'){
         data=await loadPackage(code);
       }
       if(!data){
@@ -6979,7 +7016,7 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
     code=str(code);type=str(type).toLowerCase();
     if(!code||!type){notice('Bagian tidak valid','Bagian soal tidak dikenali.');return false}
     let data=window.DB?.[code];
-    try{if(!data&&typeof window.__hskLoadPackage==='function')data=await window.__hskLoadPackage(code)}catch(e){notice('Paket gagal dimuat','Periksa koneksi lalu coba lagi.');return false}
+    try{if((!data||data.__lazy)&&typeof window.__hskLoadPackage==='function')data=await window.__hskLoadPackage(code)}catch(e){notice('Paket gagal dimuat','Periksa koneksi lalu coba lagi.');return false}
     if(!data||!window.META?.[type]&&typeof META==='undefined'){notice('Bagian belum tersedia','Data bagian soal belum siap.');return false}
     const previous=window.route||{};
     window.route={screen:'parts',packageCode:code,type,sectionIndex:null,studyPlanId:previous.studyPlanId||null,materialKey:(()=>{try{return typeof materialKeyFromCode==='function'?materialKeyFromCode(code):previous.materialKey||null}catch(_){return previous.materialKey||null}})()};
@@ -6989,7 +7026,9 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
 
   V.startSection=async function(i,push=true){
     const r=window.route||{};const code=str(r.packageCode),type=str(r.type).toLowerCase(),idx=Number(i);
-    const data=window.DB?.[code];const arr=data?.[type];
+    let data=window.DB?.[code];
+    try{if((!data||data.__lazy)&&typeof window.__hskLoadPackage==='function')data=await window.__hskLoadPackage(code)}catch(e){notice('Soal belum berhasil dimuat','Periksa koneksi lalu coba lagi.');return false}
+    const arr=data?.[type];
     if(!code||!type||!Array.isArray(arr)||!arr[idx]){notice('Soal belum tersedia','Bagian soal belum berhasil dimuat.');return false}
     window.route={screen:'exercise',packageCode:code,type,sectionIndex:idx,studyPlanId:r.studyPlanId||null,materialKey:r.materialKey||((()=>{try{return typeof materialKeyFromCode==='function'?materialKeyFromCode(code):null}catch(_){return null}})())};
     try{goScreen('exercise',push)}catch(e){console.error(e)}
