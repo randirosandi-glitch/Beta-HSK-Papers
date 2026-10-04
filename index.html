@@ -2217,89 +2217,6 @@ body.dark #exercise .hsk5Part3Question{border-bottom-color:#2d3138!important;}
 }
 </style>
 
-<style id="packageArrowLoadingV1">
-/* Package loading feedback — visual only, no pointer interception or layout change. */
-#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow{
-  position:relative!important;
-  overflow:visible!important;
-}
-/* Loading ring is hidden at rest and appears only while the package is opening. */
-#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow::before{
-  content:"";
-  position:absolute;
-  inset:-5px;
-  border:2.5px solid color-mix(in srgb,var(--package-accent) 18%,transparent);
-  border-top-color:var(--package-accent);
-  border-right-color:var(--package-accent);
-  border-radius:50%;
-  opacity:0;
-  pointer-events:none;
-}
-#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow.is-loading::before{
-  opacity:1;
-  animation:hskPackageArrowSpin .72s linear infinite;
-}
-#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow.is-loading::after{
-  content:"";
-  position:absolute;
-  inset:-5px;
-  border-radius:50%;
-  border:1px solid transparent;
-  pointer-events:none;
-}
-@keyframes hskPackageArrowSpin{
-  to{transform:rotate(360deg)}
-}
-@media(prefers-reduced-motion:reduce){
-  #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow.is-loading::before{
-    animation:none!important;
-    opacity:1!important;
-    border-top-color:var(--package-accent);
-    border-right-color:color-mix(in srgb,var(--package-accent) 45%,transparent);
-  }
-}
-</style>
-
-
-
-<style id="levelCardArrowLoadingV1">
-/* Level-card loading feedback — visual only, no pointer interception or layout shift. */
-#levelsScreen .levelCardArrow{
-  position:relative!important;
-  overflow:visible!important;
-}
-/* Loading ring is hidden at rest and appears only while the level is opening. */
-#levelsScreen .levelCardArrow::before{
-  content:"";
-  position:absolute;
-  inset:-5px;
-  border:2.5px solid color-mix(in srgb,var(--level-accent,#ff6548) 18%,transparent);
-  border-top-color:var(--level-accent,#ff6548);
-  border-right-color:var(--level-accent,#ff6548);
-  border-radius:50%;
-  opacity:0;
-  pointer-events:none;
-}
-#levelsScreen .levelCardArrow.is-loading::before{
-  opacity:1;
-  animation:hskLevelArrowSpin .72s linear infinite;
-}
-@keyframes hskLevelArrowSpin{to{transform:rotate(360deg)}}
-#levelsScreen .levelCard4 .levelCardArrow{--level-accent:#ff6548}
-#levelsScreen .levelCard5 .levelCardArrow{--level-accent:#8b86df}
-#levelsScreen .levelCardWorkbook .levelCardArrow{--level-accent:#2aa876}
-@media(prefers-reduced-motion:reduce){
-  #levelsScreen .levelCardArrow.is-loading::before{
-    animation:none!important;
-    opacity:1!important;
-    border-top-color:var(--level-accent,#ff6548);
-    border-right-color:color-mix(in srgb,var(--level-accent,#ff6548) 45%,transparent);
-  }
-}
-</style>
-
-
-
 <style id="hskBackFocusFix">
 /* Back buttons: prevent persistent browser focus/tap highlight on touch devices. */
 button.backTextOnly,
@@ -7188,3 +7105,88 @@ body.dark #partsScreen #sections .sectionPartTile .progressBar .fill{
   #package .flatPartCard .partArrow{width:40px!important;height:40px!important;}
 }
 </style>
+<!-- HSK PAPERS v1.32 — FINAL UI + NAVIGATION STABILITY LAYER
+     Source: stable/live index supplied by user.
+     Scope: presentation, loading feedback and navigation safety only.
+     Question data, answer keys, scoring and renderer data are untouched. -->
+<style id="hskPapersFinalUI132">
+:root{--hsk-card-line:rgba(112,126,142,.24);--hsk-card-line-dark:rgba(205,216,230,.16)}
+
+/* Flat editorial cards: no full borders, no card shadows. */
+#home .hero,#home .weekTargetCard,#home .weeklySummaryCard,#home .weeklyTargetItem,#home .performanceItem,#home .periodItem,
+#levelsScreen .levelCard,#packagesScreen #packagesGrid.packageGridV16 .packageCardV16,#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Main,
+#package .flatPartCard,#partsScreen #sections .sectionPartTile,#partsScreen .tile,#exercise .instruction,#exercise .sectionProgress,#exercise .question,
+#exercise .finishCard,#result .resultCard,#studyPlansGrid .studyPlanCard,.tile{border:0!important;box-shadow:none!important}
+
+#levelsScreen .levelCard,#packagesScreen #packagesGrid.packageGridV16 .packageCardV16,#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Main,
+#package .flatPartCard,#partsScreen #sections .sectionPartTile,#partsScreen .tile,#exercise .instruction,#exercise .sectionProgress,#exercise .question,
+#exercise .finishCard,#result .resultCard,#studyPlansGrid .studyPlanCard{position:relative!important;background:#fbfcfd!important}
+body.dark #levelsScreen .levelCard,body.dark #packagesScreen #packagesGrid.packageGridV16 .packageCardV16,body.dark #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Main,
+body.dark #package .flatPartCard,body.dark #partsScreen #sections .sectionPartTile,body.dark #partsScreen .tile,body.dark #exercise .instruction,
+body.dark #exercise .sectionProgress,body.dark #exercise .question,body.dark #exercise .finishCard,body.dark #result .resultCard,body.dark #studyPlansGrid .studyPlanCard{background:#111214!important}
+#exercise .question{background:#fff!important;margin:18px 0!important;border-radius:22px!important;overflow:hidden!important}
+
+/* Paper-like top/bottom rules, exactly 70% of the card width. */
+#levelsScreen .levelCard::before,#packagesScreen #packagesGrid.packageGridV16 .packageCardV16::before,#package .flatPartCard::before,#partsScreen #sections .sectionPartTile::before,
+#exercise .instruction::before,#exercise .sectionProgress::before,#exercise .question::before,#exercise .finishCard::before,#result .resultCard::before,#studyPlansGrid .studyPlanCard::before,
+#levelsScreen .levelCard::after,#packagesScreen #packagesGrid.packageGridV16 .packageCardV16::after,#package .flatPartCard::after,#partsScreen #sections .sectionPartTile::after,
+#exercise .instruction::after,#exercise .sectionProgress::after,#exercise .question::after,#exercise .finishCard::after,#result .resultCard::after,#studyPlansGrid .studyPlanCard::after{
+ content:""!important;position:absolute!important;left:15%!important;right:15%!important;width:auto!important;height:1px!important;background:var(--hsk-card-line)!important;pointer-events:none!important;z-index:2!important
+}
+#levelsScreen .levelCard::before,#packagesScreen #packagesGrid.packageGridV16 .packageCardV16::before,#package .flatPartCard::before,#partsScreen #sections .sectionPartTile::before,
+#exercise .instruction::before,#exercise .sectionProgress::before,#exercise .question::before,#exercise .finishCard::before,#result .resultCard::before,#studyPlansGrid .studyPlanCard::before{top:0!important}
+#levelsScreen .levelCard::after,#packagesScreen #packagesGrid.packageGridV16 .packageCardV16::after,#package .flatPartCard::after,#partsScreen #sections .sectionPartTile::after,
+#exercise .instruction::after,#exercise .sectionProgress::after,#exercise .question::after,#exercise .finishCard::after,#result .resultCard::after,#studyPlansGrid .studyPlanCard::after{bottom:0!important}
+body.dark #levelsScreen .levelCard::before,body.dark #packagesScreen #packagesGrid.packageGridV16 .packageCardV16::before,body.dark #package .flatPartCard::before,
+body.dark #partsScreen #sections .sectionPartTile::before,body.dark #exercise .instruction::before,body.dark #exercise .sectionProgress::before,body.dark #exercise .question::before,
+body.dark #exercise .finishCard::before,body.dark #result .resultCard::before,body.dark #studyPlansGrid .studyPlanCard::before,
+body.dark #levelsScreen .levelCard::after,body.dark #packagesScreen #packagesGrid.packageGridV16 .packageCardV16::after,body.dark #package .flatPartCard::after,
+body.dark #partsScreen #sections .sectionPartTile::after,body.dark #exercise .instruction::after,body.dark #exercise .sectionProgress::after,body.dark #exercise .question::after,
+body.dark #exercise .finishCard::after,body.dark #result .resultCard::after,body.dark #studyPlansGrid .studyPlanCard::after{background:var(--hsk-card-line-dark)!important}
+
+#levelsScreen .levelCard:hover,#packagesScreen #packagesGrid.packageGridV16 .packageCardV16:hover,#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Main:hover,
+#package .flatPartCard:hover,#partsScreen #sections .sectionPartTile:hover,#studyPlansGrid .studyPlanCard:hover{border:0!important;box-shadow:none!important;transform:translateY(-1px)!important}
+#exercise .opt,#exercise .write,#exercise .wordChip,#exercise .sequenceSource,#exercise .wordBank,#exercise .guidedWords{box-shadow:none!important}
+.mainNav{box-shadow:none!important}
+html,body,button,input,textarea,select{font-family:"Roboto","Noto Sans SC",Arial,sans-serif!important}
+.kaiti-ui-hanzi,.partHanzi,.sectionPartTitle,.partsTitleHanzi,#package .partHanzi,#partsScreen .sectionPartTitle{font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-synthesis:none!important}
+
+/* One loading system for catalog → package → section → questions. */
+#hskRouteLoader132{position:fixed!important;inset:0!important;z-index:2147483000!important;display:none!important;align-items:center!important;justify-content:center!important;padding:24px!important;background:rgba(0,0,0,.18)!important;backdrop-filter:blur(2px)!important;-webkit-backdrop-filter:blur(2px)!important}
+#hskRouteLoader132.show{display:flex!important}
+#hskRouteLoader132 .hskRouteLoaderBox{min-width:168px!important;max-width:280px!important;padding:18px 20px!important;border:0!important;border-radius:18px!important;background:rgba(255,255,255,.96)!important;color:#17181b!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:12px!important;font:600 14px/1.35 "Roboto",sans-serif!important;box-shadow:none!important}
+#hskRouteLoader132 .hskRouteSpinner{width:22px!important;height:22px!important;border:2.5px solid rgba(255,101,72,.18)!important;border-top-color:#ff6548!important;border-right-color:#ff6548!important;border-radius:50%!important;animation:hskRouteSpin132 .72s linear infinite!important;flex:0 0 auto!important}
+body.dark #hskRouteLoader132{background:rgba(0,0,0,.34)!important}body.dark #hskRouteLoader132 .hskRouteLoaderBox{background:#151618!important;color:#f3f6fa!important}
+@keyframes hskRouteSpin132{to{transform:rotate(360deg)}}
+#levelsScreen .levelCardArrow,#packagesScreen .packageCardV16Arrow,#package .partArrow,#partsScreen .partArrow{position:relative!important;overflow:visible!important}
+#levelsScreen .levelCardArrow.is-loading::after,#packagesScreen .packageCardV16Arrow.is-loading::after,#package .partArrow.is-loading::after,#partsScreen .partArrow.is-loading::after{content:""!important;position:absolute!important;inset:-5px!important;border:2.5px solid color-mix(in srgb,currentColor 18%,transparent)!important;border-top-color:currentColor!important;border-right-color:currentColor!important;border-radius:50%!important;pointer-events:none!important;animation:hskRouteSpin132 .72s linear infinite!important}
+@media(prefers-reduced-motion:reduce){#hskRouteLoader132 .hskRouteSpinner,#levelsScreen .levelCardArrow.is-loading::after,#packagesScreen .packageCardV16Arrow.is-loading::after,#package .partArrow.is-loading::after,#partsScreen .partArrow.is-loading::after{animation:none!important}}
+#packagesScreen .packageSearchBox,#home input,#home select{box-shadow:none!important}
+</style>
+
+<script id="hskPapersFinalNavigation132">
+(function(){
+ 'use strict';
+ if(window.__hskPapersFinalNavigation132)return;window.__hskPapersFinalNavigation132=true;
+ const db=()=>window.__hskDatabase||null;let busy=false;
+ function loader(){let e=document.getElementById('hskRouteLoader132');if(e)return e;e=document.createElement('div');e.id='hskRouteLoader132';e.setAttribute('role','status');e.setAttribute('aria-live','polite');e.innerHTML='<div class="hskRouteLoaderBox"><span class="hskRouteSpinner" aria-hidden="true"></span><span class="hskRouteLoaderText">Memuat…</span></div>';document.body.appendChild(e);return e}
+ function show(text){const e=loader();const t=e.querySelector('.hskRouteLoaderText');if(t)t.textContent=text||'Memuat…';e.classList.add('show')}
+ function hide(){document.getElementById('hskRouteLoader132')?.classList.remove('show')}
+ function spin(el,on){el?.classList.toggle('is-loading',!!on)}
+ function key(g){if(!g)return '';if(g.kind==='hsk')return 'hsk:'+g.level;if(g.kind==='workbook')return 'wb:'+g.name;return 'custom:'+g.name}
+ async function catalog(){const st=db();if(!st)throw new Error('Loader katalog belum siap.');if(!st.loaded&&window.__hskDynamicReadyPromise)await window.__hskDynamicReadyPromise;if(st.error)throw st.error;return st}
+ async function openGroup(i,push=true){if(busy)return;const arrow=document.querySelectorAll('#levelsScreen .levelCard')[Number(i)]?.querySelector('.levelCardArrow');busy=true;spin(arrow,true);try{const st=await catalog(),g=st.groups?.[Number(i)];if(!g)throw new Error('Level tidak ditemukan di katalog.');st.selected=g;window.__dbPackagePage=0;window.__masterPackagePage=0;window.__wbPackagePage=0;const k=key(g);if(typeof selectedHSKLevel!=='undefined')selectedHSKLevel=k;window.route={screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null,materialKey:k};window.renderPackagesScreen?.();setScreen('packagesScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'})}catch(e){console.error(e);window.appNotice?.('Katalog gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'})}finally{spin(arrow,false);busy=false;hide()}}
+ window.openDynamicFolder=openGroup;
+ window.openLevelPackages=async function(value,push=true){if(busy)return;const raw=String(value??'').trim().toLowerCase();const cards=Array.from(document.querySelectorAll('#levelsScreen .levelCard'));const card=cards.find(el=>{const txt=el.querySelector('.levelCardBody strong')?.textContent?.trim().toLowerCase()||'';const mk=String(el.getAttribute('data-material-key')||'').toLowerCase();return txt===raw||txt===('hsk '+raw)||mk===raw||mk===('hsk:'+raw)});const arrow=card?.querySelector('.levelCardArrow');busy=true;spin(arrow,true);try{const st=await catalog();const g=st.groups.find(x=>key(x).toLowerCase()===raw)||st.groups.find(x=>x.kind==='hsk'&&String(x.level)===raw.replace(/^hsk:/,''));if(!g)throw new Error('Level yang dipilih tidak tersedia di katalog.');busy=false;await openGroup(st.groups.indexOf(g),push)}catch(e){console.error(e);window.appNotice?.('Katalog gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'});busy=false;spin(arrow,false);hide()}};
+ const load=window.__hskLoadPackage;
+ function packageArrow(code){return Array.from(document.querySelectorAll('#packagesScreen [data-package-code]')).find(x=>String(x.dataset.packageCode)===String(code))?.querySelector('.packageCardV16Arrow')||null}
+ async function openPackage(code,push=true){if(busy)return;const target=String(code||'').trim();if(!target)return;const arrow=packageArrow(target);busy=true;spin(arrow,true);try{if(typeof load!=='function')throw new Error('Loader paket belum siap.');const keep=window.__functionalRepairV4?.returnPlanId||window.route?.studyPlanId||null;if(window.__functionalRepairV4)window.__functionalRepairV4.returnPlanId=null;await load(target);window.route={screen:'package',packageCode:target,type:null,sectionIndex:null,studyPlanId:keep};if(typeof window.renderPackage!=='function')throw new Error('Renderer paket belum siap.');window.renderPackage();setScreen('package',push);window.scrollTo({top:0,left:0,behavior:'auto'})}catch(e){console.error(e);window.appNotice?.('Paket gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'})}finally{spin(arrow,false);busy=false;hide()}}
+ window.openPackage=openPackage;window.openPackageFromTile=openPackage;
+ async function openSections(code,type,push=true){if(busy)return;busy=true;show('Memuat bagian…');try{if(type==='reading')await window.__hskEnsureReadingPassages?.();if(typeof load!=='function')throw new Error('Loader paket belum siap.');await load(String(code));if(typeof META!=='undefined'&&!META[type])throw new Error('Bagian paket tidak tersedia.');window.route={screen:'parts',packageCode:String(code),type:String(type),sectionIndex:null,studyPlanId:window.route?.studyPlanId||null};if(typeof window.renderSections!=='function')throw new Error('Renderer bagian belum siap.');window.renderSections();setScreen('partsScreen',push);window.scrollTo({top:0,left:0,behavior:'auto'})}catch(e){console.error(e);window.appNotice?.('Bagian gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'})}finally{busy=false;hide()}}
+ window.openSections=openSections;
+ async function startSection(i,push=true){if(busy)return;const code=String(window.route?.packageCode||'');const type=String(window.route?.type||'');if(!code||!type)return;const arrow=document.querySelectorAll('#partsScreen .sectionPartTile')[Number(i)]?.querySelector('.partArrow');busy=true;spin(arrow,true);show('Memuat soal…');try{if(type==='reading')await window.__hskEnsureReadingPassages?.();if(typeof load!=='function')throw new Error('Loader paket belum siap.');await load(code);const arr=window.DB?.[code]?.[type]||[];if(!arr[Number(i)])throw new Error('Bagian soal tidak tersedia.');window.route={screen:'exercise',packageCode:code,type,sectionIndex:Number(i),studyPlanId:window.route?.studyPlanId||null};window.__hskResumePage=0;window.loadCurrentSectionState?.();if(typeof window.renderExercise!=='function')throw new Error('Renderer soal belum siap.');window.renderExercise();setScreen('exercise',push);window.scrollTo({top:0,left:0,behavior:'auto'})}catch(e){console.error(e);window.appNotice?.('Soal gagal dimuat',e.message||'Silakan coba lagi.',{icon:'!'})}finally{spin(arrow,false);busy=false;hide()}}
+ window.startSection=startSection;
+ const oldContinue=window.continueStudyPlan;window.continueStudyPlan=async function(id){if(busy)return;const p=typeof window.getPlanMaster==='function'?window.getPlanMaster(id):null;if(!p?.packageCodes?.length){if(typeof oldContinue==='function')return oldContinue(id);return}const target=p.packageCodes.find(c=>{const st=typeof window.packageStats==='function'?window.packageStats(c):{total:0,answered:0};return !st.total||st.answered<st.total})||p.packageCodes[0];show('Memuat pelajaran…');await openPackage(target,true)};
+})();
+</script>
+
