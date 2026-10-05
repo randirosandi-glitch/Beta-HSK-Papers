@@ -3634,28 +3634,52 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 }
 </style>
 
-<style id="hsk5-part3-wide-final-c7">
-/* C7: HSK 5 Reading Part 3 keeps the PDF's wide question composition at every viewport.
-   The app chrome/navbar is untouched. */
-#exercise .hsk5PaperPart3 .hsk5PaperPassageText{font-size:18px!important;line-height:1.9!important;}
-#exercise .hsk5PaperPart3Media{float:right!important;width:min(36%,300px)!important;max-width:300px!important;margin:0 0 9px 18px!important;}
-#exercise .hsk5PaperPart3Media img{display:block!important;width:100%!important;height:auto!important;max-height:320px!important;object-fit:contain!important;margin:0!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:1px 16px!important;align-items:start!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsFourAcross{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1px 18px!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions .hsk5PaperOption{width:100%!important;min-width:0!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions .hsk5PaperOption .optText{white-space:normal!important;}
-/* Override the old <=720px Part 3 mobile collapse: Part 3 remains wide. */
-@media(max-width:720px){
-  #exercise .hsk5PaperPart3 .hsk5PaperOptions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:1px 8px!important;}
-  #exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1px 10px!important;}
-  #exercise .hsk5PaperPart3Media{float:right!important;width:36%!important;max-width:140px!important;margin:0 0 8px 12px!important;}
-  #exercise .hsk5PaperPart3Media img{max-width:100%!important;max-height:180px!important;margin:0!important;}
-  #exercise .hsk5PaperPart3 .hsk5PaperPassageText{font-size:16px!important;line-height:1.8!important;}
-  #exercise .hsk5PaperPart3 .hsk5PaperQText{font-size:15px!important;line-height:1.6!important;}
-  #exercise .hsk5PaperPart3 .hsk5PaperOption.opt{font-size:14px!important;line-height:1.5!important;padding:1px 0!important;}
+<style id="hsk5PaperPart3WideC7">
+/* C7: Part 3 uses the paper's wide geometry on every viewport. */
+#exercise .hsk5PaperPart3{
+  min-width:680px!important;
+  width:100%!important;
+  max-width:none!important;
+}
+#exercise .hsk5PaperPart3 .hsk5PaperPassageText{
+  overflow:visible!important;
+}
+#exercise .hsk5PaperPart3Media{
+  float:right!important;
+  width:min(36%,300px)!important;
+  max-width:300px!important;
+  margin:0 0 9px 18px!important;
+}
+#exercise .hsk5PaperPart3Media img{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:auto!important;
+  max-height:320px!important;
+  object-fit:contain!important;
+  margin:0!important;
+}
+#exercise .hsk5PaperPart3 .hsk5PaperOptions{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:1px 20px!important;
+  align-items:flex-start!important;
+}
+#exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:1px 20px!important;
+}
+#exercise .hsk5PaperPart3 .hsk5PaperOptions:not(.paperOptionsTwoRows) .hsk5PaperOption{
+  width:auto!important;
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+}
+#exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows .hsk5PaperOption{
+  width:100%!important;
 }
 </style>
+
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -4169,32 +4193,12 @@ function renderSections(){const d=DB[route.packageCode]?.[route.type]||[];const 
 function loadCurrentSectionState(){const st=getSectionState(route.packageCode,route.type,route.sectionIndex);answers={...st.answers};checked={...st.checked};answerEvents={...st.answerEvents};resultState=null}
 function instructionFor(type,idx){const code=String(route?.packageCode||'');const pkg=getActivePackageData();const id=Number(currentQuestions?.[0]?.[0]?.[0]||currentQuestions?.[0]?.[0]||0);const parts=pkg?.engineRules?.sections?.[type]?.parts||[];const part=parts.find(p=>ruleRangeContains(p.range,id));if(part?.instruction)return part.instruction;if(code==='HSK4-SUSUN-KATA')return 'Susun kata-kata berikut menjadi kalimat Mandarin yang benar. Jawaban dinilai berdasarkan kunci jawaban.';if(code==='HSK4-SUSUN-KALIMAT')return 'Susun kalimat-kalimat berikut menjadi paragraf yang benar dengan memilih urutan yang tepat.';if(type==='listening')return idx===0?'Dengarkan pernyataan lalu pilih apakah kalimat tersebut benar atau salah.':idx===1?'Dengarkan percakapan dengan saksama lalu pilih jawaban yang paling sesuai.':'Dengarkan percakapan lalu tentukan jawaban yang paling tepat berdasarkan informasi yang kamu dengar.';if(type==='reading')return idx===0?'Baca kalimat dan pilihan jawaban, lalu pilih kata atau ungkapan yang paling tepat.':idx===1?'Baca setiap kalimat dan pilih jawaban yang paling sesuai dengan maknanya.':idx===2?'Susun bagian-bagian kalimat menjadi urutan yang benar dengan memilih kombinasi yang tepat.':'Baca teks dengan saksama lalu pilih jawaban yang paling sesuai dengan informasi dalam bacaan.';return idx===0?'Susun kata-kata menjadi kalimat Mandarin yang benar. Kamu bisa klik kata untuk memasukkannya otomatis, atau mengetik langsung di kolom jawaban. Jawaban dinilai berdasarkan kunci jawaban.':'Gunakan kata yang diberikan untuk membuat kalimat Mandarin yang benar, lalu ketik jawabanmu. Jawaban ini tidak dinilai benar atau salah secara otomatis.'}
 function hsk5AutoPaperOptionLayout(){
-  const pkg=getActivePackageData();
-  if(!isHsk5Model(pkg) || route.type!=='reading') return;
-  const part=hsk5ReadingPart(currentQuestions);
+  if(!isHsk5Model(getActivePackageData()) || route.type!=='reading') return;
   document.querySelectorAll('#exercise .hsk5PaperOptions').forEach(container=>{
-    if(container.closest('.hsk5PaperPart2')) return;
+    /* Part 3 is deterministic from the paper layout, not viewport fitting. */
+    if(container.closest('.hsk5PaperPart2,.hsk5PaperPart3')) return;
     const items=[...container.querySelectorAll(':scope > .hsk5PaperOption')];
     if(items.length!==4) return;
-
-    /* Part 3 follows the PDF composition, not viewport width:
-       <=3 Hanzi => A B C D; >=4 Hanzi in any option => A B / C D. */
-    if(part==='part3' && container.closest('.hsk5PaperPart3')){
-      const hasLongOption=items.some(el=>{
-        const text=el.querySelector('.optText')?.textContent||el.textContent||'';
-        const hanzi=(String(text).match(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g)||[]).length;
-        return hanzi>=4;
-      });
-      container.classList.toggle('paperOptionsTwoRows',hasLongOption);
-      container.classList.toggle('paperOptionsFourAcross',!hasLongOption);
-      items.forEach(el=>{
-        el.style.removeProperty('width');
-        el.style.removeProperty('flex');
-        el.style.removeProperty('white-space');
-      });
-      return;
-    }
-
     const containerCss=container.getAttribute('style')||'';
     const itemCss=items.map(el=>el.getAttribute('style')||'');
     container.classList.remove('paperOptionsTwoRows');
@@ -4339,6 +4343,14 @@ function renderHsk5PaperPart2(pkg,qs){
     return '<div class="hsk5PaperQuestion"><div class="hsk5PaperQNo">'+esc(id)+'.</div><div class="hsk5PaperQBody"><div class="hsk5PaperQText">'+esc(q[1])+'</div><div class="hsk5PaperOptions">'+hsk5PaperOptionButtons(pkg,q)+'</div>'+hsk5PaperActions(id)+'</div></div>';
   }).join('')+'</section>';
 }
+function hsk5Part3UsesTwoRows(q){
+  const pkg=getActivePackageData();
+  const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
+  return model.options.some(o=>{
+    const m=String(o?.value??'').match(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/gu);
+    return (m?m.length:0)>=4;
+  });
+}
 function renderHsk5PaperPart3(pkg,qs){
   const root=pkg?.reading_passages?.[pkg.code]||pkg?.reading_passages?.[String(pkg.code)]||{};
   const groups=[];let current=null;
@@ -4355,7 +4367,8 @@ function renderHsk5PaperPart3(pkg,qs){
     const passage='<div class="hsk5PaperGroupHeader">'+esc(g.id)+'．</div><div class="hsk5PaperPassage hsk5PaperPart3PassageText">'+mediaHtml+'<div class="hsk5PaperPassageText">'+esc(text)+'</div></div>';
     const body=g.qs.map(q=>{
       const id=String(q[0]);
-      return '<div class="hsk5PaperQuestion"><div class="hsk5PaperQText"><span class="paperQNo">'+esc(id)+'.</span> '+esc(q[1])+'</div><div class="hsk5PaperOptions">'+hsk5PaperOptionButtons(pkg,q)+'</div>'+hsk5PaperActions(id)+'</div>';
+      const optionMode=hsk5Part3UsesTwoRows(q)?' paperOptionsTwoRows':'';
+      return '<div class="hsk5PaperQuestion"><div class="hsk5PaperQText"><span class="paperQNo">'+esc(id)+'.</span> '+esc(q[1])+'</div><div class="hsk5PaperOptions'+optionMode+'">'+hsk5PaperOptionButtons(pkg,q)+'</div>'+hsk5PaperActions(id)+'</div>';
     }).join('');
     return '<section class="hsk5PaperGroup hsk5PaperPart3">'+passage+body+'</section>';
   }).join('');
