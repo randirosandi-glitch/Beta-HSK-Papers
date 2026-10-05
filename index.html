@@ -2066,80 +2066,6 @@ body:not(.dark) #exercise .hsk5ClozeQuestion{border-bottom-color:#e3e8ef!importa
 
 /* === end: hsk5-reading-bagian1-final-ui === */
 
-/* === consolidated CSS: hsk5-reading-bagian3-flat-ui === */
-
-/* HSK 5 Reading Part 3 — one passage container, flat questions */
-#exercise .hsk5Part3Group{
-  margin:0 0 18px!important;
-  padding:16px!important;
-  border:1px solid #d9e3f0!important;
-  border-radius:20px!important;
-  background:#fff!important;
-
-  overflow:hidden!important;
-}
-body.dark #exercise .hsk5Part3Group{
-  border-color:#2d3138!important;
-  background:#151618!important;
-}
-#exercise .hsk5Part3Passage{padding:0 0 14px!important;}
-#exercise .hsk5Part3Head{
-  display:flex!important;align-items:center!important;gap:8px!important;
-  margin:0 0 9px!important;color:#ff7658!important;
-  font-size:11px!important;font-weight:800!important;letter-spacing:.08em!important;
-}
-#exercise .hsk5Part3Head strong{color:var(--muted)!important;font-size:11px!important;font-weight:700!important;}
-#exercise .hsk5Part3Text{
-  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
-  font-size:19px!important;line-height:1.95!important;color:var(--text)!important;
-  white-space:pre-wrap!important;
-}
-#exercise .hsk5Part3Media{
-  float:right!important;width:min(42%,320px)!important;margin:0 0 12px 18px!important;
-}
-#exercise .hsk5Part3Media img{
-  display:block!important;width:100%!important;height:auto!important;max-height:360px!important;
-  object-fit:contain!important;border-radius:14px!important;
-  border:1px solid #e2e7ee!important;box-shadow:none!important;background:#f7f8fa!important;
-}
-body.dark #exercise .hsk5Part3Media img{border-color:#30343b!important;background:#111214!important;}
-#exercise .hsk5Part3Text:after{content:"";display:block;clear:both;}
-#exercise .hsk5Part3Questions{
-  border-top:1px solid #e0e6ee!important;padding-top:4px!important;
-}
-body.dark #exercise .hsk5Part3Questions{border-top-color:#2d3138!important;}
-#exercise .hsk5Part3Question{
-  margin:0!important;padding:15px 0 17px!important;
-  border-bottom:1px solid #e3e8ef!important;background:transparent!important;
-  box-shadow:none!important;border-radius:0!important;
-}
-body.dark #exercise .hsk5Part3Question{border-bottom-color:#2d3138!important;}
-#exercise .hsk5Part3Question:last-child{padding-bottom:2px!important;border-bottom:0!important;}
-#exercise .hsk5Part3Qtop{margin:0 0 8px!important;}
-#exercise .hsk5Part3Qtop strong{font-size:16px!important;line-height:1.2!important;color:var(--text)!important;font-weight:800!important;}
-#exercise .hsk5Part3Qtext{margin:0 0 10px!important;font-size:16px!important;line-height:1.6!important;color:var(--text)!important;font-weight:650!important;}
-#exercise .hsk5Part3Opts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;}
-#exercise .hsk5Part3Opt{
-  min-height:48px!important;padding:10px 12px!important;border-radius:12px!important;
-  font-size:15px!important;line-height:1.35!important;text-align:left!important;box-shadow:none!important;
-}
-#exercise .hsk5Part3Opt .optText{display:block!important;white-space:normal!important;overflow-wrap:anywhere!important;}
-#exercise .hsk5Part3Row{margin-top:9px!important;}
-#exercise .hsk5Part3Row .btn{min-height:40px!important;padding:8px 13px!important;border-radius:12px!important;font-size:13px!important;box-shadow:none!important;}
-#exercise .hsk5Part3Feedback{margin-top:8px!important;padding:9px 11px!important;border-radius:11px!important;font-size:12px!important;line-height:1.4!important;}
-@media(max-width:599px){
-  #exercise .hsk5Part3Group{margin-bottom:16px!important;padding:15px!important;border-radius:18px!important;}
-  #exercise .hsk5Part3Text{font-size:18px!important;line-height:1.9!important;}
-  #exercise .hsk5Part3Media{float:none!important;width:100%!important;margin:0 0 13px!important;}
-  #exercise .hsk5Part3Media img{max-height:none!important;max-width:100%!important;margin:0 auto!important;}
-  #exercise .hsk5Part3Question{padding:14px 0 16px!important;}
-  #exercise .hsk5Part3Qtext{font-size:15px!important;}
-  #exercise .hsk5Part3Opts{grid-template-columns:1fr!important;gap:7px!important;}
-  #exercise .hsk5Part3Opt{min-height:46px!important;border-radius:11px!important;}
-}
-
-/* === end: hsk5-reading-bagian3-flat-ui === */
-
 /* === consolidated CSS: hskMotionSafeV3 === */
 
 /* HSK Papers — SAFE MOTION V3
@@ -2642,22 +2568,6 @@ body.home-route main{padding-top:18px!important;}
   #exercise .opts{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
   #exercise .hsk5Part3Opts{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;}
   #exercise .sequence{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;}
-
-  /* Reading HSK 5: image stays beside the passage and is bounded in both axes. */
-  #exercise .hsk5Part3Media{
-    float:right!important;
-    width:min(38%,340px)!important;
-    max-width:340px!important;
-    margin:0 0 12px 20px!important;
-  }
-  #exercise .hsk5Part3Media img{
-    width:100%!important;
-    height:auto!important;
-    max-width:100%!important;
-    max-height:360px!important;
-    object-fit:contain!important;
-    margin:0!important;
-  }
 
   /* Home uses horizontal space instead of scaling everything up. */
   #home .homeEditorial{padding-top:30px!important;}
@@ -3503,26 +3413,72 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 #exercise .hsk5PaperPart2 .hsk5PaperQText{font-size:16px!important;line-height:1.7!important;margin-bottom:5px!important;}
 #exercise .hsk5PaperPart2 .hsk5PaperOptions{display:grid!important;grid-template-columns:1fr!important;gap:0!important;}
 #exercise .hsk5PaperPart2 .hsk5PaperOption{width:100%!important;}
-/* Part 3: passage + optional right-side image, then two-column A/B/C/D choices. */
+/* HSK 5 Reading Part 3 — single source of truth.
+   PDF-led composition: passage text flows around an optional right-side image.
+   No mobile collapse; only dimensions scale with available width.
+   First-paint rule: the renderer emits paperOptionsTwoRows when needed. */
 #exercise .hsk5PaperPart3PassageText{overflow:visible!important;}
-#exercise .hsk5PaperPart3Media{float:right!important;width:min(36%,300px)!important;max-width:300px!important;margin:0 0 9px 18px!important;}
-#exercise .hsk5PaperPart3Media img{display:block!important;width:100%!important;height:auto!important;max-height:320px!important;object-fit:contain!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;}
-#exercise .hsk5PaperPart3PassageText:after{content:"";display:block!important;clear:both!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions{display:flex!important;flex-wrap:nowrap!important;gap:1px 20px!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1px 20px!important;}
+#exercise .hsk5PaperPart3Media{
+  float:right!important;
+  width:min(36%,300px)!important;
+  max-width:300px!important;
+  margin:0 0 9px 18px!important;
+}
+#exercise .hsk5PaperPart3Media img{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  max-height:320px!important;
+  object-fit:contain!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#exercise .hsk5PaperPart3PassageText:after{
+  content:""!important;
+  display:block!important;
+  clear:both!important;
+}
+#exercise .hsk5PaperPart3 .hsk5PaperOptions{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:1px 20px!important;
+  align-items:flex-start!important;
+}
+#exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:1px 20px!important;
+}
 #exercise .hsk5PaperPart3 .hsk5PaperOptions:not(.paperOptionsTwoRows) .hsk5PaperOption{width:auto!important;}
 #exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows .hsk5PaperOption{width:100%!important;}
 @media(max-width:720px){
-  #exercise .hsk5PaperGroupHeader{font-size:16px!important;}
-  #exercise .hsk5PaperPassageText{font-size:17px!important;line-height:1.85!important;}
-  #exercise .hsk5PaperQText{font-size:15px!important;line-height:1.65!important;}
-  #exercise .hsk5PaperOption.opt{font-size:14px!important;line-height:1.5!important;}
-  #exercise .hsk5PaperPart3 .hsk5PaperOptions{display:flex!important;flex-wrap:nowrap!important;gap:1px 12px!important;}
-  #exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0 12px!important;}
+  #exercise .hsk5PaperPart3 .hsk5PaperPassageText{font-size:16px!important;line-height:1.8!important;}
+  #exercise .hsk5PaperPart3Media{
+    float:right!important;
+    width:36%!important;
+    max-width:140px!important;
+    margin:0 0 8px 12px!important;
+  }
+  #exercise .hsk5PaperPart3Media img{
+    max-width:100%!important;
+    max-height:180px!important;
+    margin:0!important;
+  }
+  #exercise .hsk5PaperPart3 .hsk5PaperOptions{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:1px 12px!important;
+  }
+  #exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:1px 10px!important;
+  }
   #exercise .hsk5PaperPart3 .hsk5PaperOptions:not(.paperOptionsTwoRows) .hsk5PaperOption{width:auto!important;}
   #exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows .hsk5PaperOption{width:100%!important;}
-  #exercise .hsk5PaperPart3Media{float:none!important;width:100%!important;max-width:none!important;margin:0 0 9px!important;}
-  #exercise .hsk5PaperPart3Media img{max-height:none!important;max-width:100%!important;margin:0 auto!important;}
 }
 </style>
 
@@ -3634,28 +3590,8 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 }
 </style>
 
-<style id="hsk5-part3-wide-final-c7">
-/* C7: HSK 5 Reading Part 3 keeps the PDF's wide question composition at every viewport.
-   The app chrome/navbar is untouched. */
-#exercise .hsk5PaperPart3 .hsk5PaperPassageText{font-size:18px!important;line-height:1.9!important;}
-#exercise .hsk5PaperPart3Media{float:right!important;width:min(36%,300px)!important;max-width:300px!important;margin:0 0 9px 18px!important;}
-#exercise .hsk5PaperPart3Media img{display:block!important;width:100%!important;height:auto!important;max-height:320px!important;object-fit:contain!important;margin:0!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:1px 16px!important;align-items:start!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsFourAcross{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1px 18px!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions .hsk5PaperOption{width:100%!important;min-width:0!important;}
-#exercise .hsk5PaperPart3 .hsk5PaperOptions .hsk5PaperOption .optText{white-space:normal!important;}
-/* Override the old <=720px Part 3 mobile collapse: Part 3 remains wide. */
-@media(max-width:720px){
-  #exercise .hsk5PaperPart3 .hsk5PaperOptions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:1px 8px!important;}
-  #exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1px 10px!important;}
-  #exercise .hsk5PaperPart3Media{float:right!important;width:36%!important;max-width:140px!important;margin:0 0 8px 12px!important;}
-  #exercise .hsk5PaperPart3Media img{max-width:100%!important;max-height:180px!important;margin:0!important;}
-  #exercise .hsk5PaperPart3 .hsk5PaperPassageText{font-size:16px!important;line-height:1.8!important;}
-  #exercise .hsk5PaperPart3 .hsk5PaperQText{font-size:15px!important;line-height:1.6!important;}
-  #exercise .hsk5PaperPart3 .hsk5PaperOption.opt{font-size:14px!important;line-height:1.5!important;padding:1px 0!important;}
-}
-</style>
+
+<!-- HSK Papers: cleaned Paper Part 3 CSS — one authoritative rule set -->
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -4270,25 +4206,6 @@ function getHsk5PassageMedia(pkg,gid){
   const images=Array.isArray(item?.images)?item.images:[];
   return images.filter(src=>typeof src==='string'&&src.trim()).map((src,i)=>({source:src,alt:'Gambar teks bacaan '+String(gid)+(images.length>1?' '+(i+1):'')}));
 }
-function renderPassageChoiceGroup(pkg,gid,qs){
-  const root=pkg?.reading_passages?.[pkg.code]||pkg?.reading_passages?.[String(pkg.code)]||{};
-  const text=String(root?.[String(gid)]||'');
-  if(!text)return '';
-  const media=getHsk5PassageMedia(pkg,gid);
-  const mediaHtml=media.length?'<div class="hsk5Part3Media">'+media.map(m=>'<img src="'+esc(m.source)+'" alt="'+esc(m.alt)+'" loading="lazy" decoding="async">').join('')+'</div>':'';
-  const passage='<div class="hsk5Part3Passage"><div class="hsk5Part3Head"><span>TEKS BACAAN</span><strong>'+esc(gid)+'</strong></div><div class="hsk5Part3Text">'+mediaHtml+esc(text)+'</div></div>';
-  const body=qs.map(q=>{
-    const id=String(q[0]);
-    const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
-    const labels=model.options.map((o,oi)=>{
-      const selected=Number(answers[id])===oi;
-      const state=checked[id]?(isCorrect(q,answers[id],route.type,route.sectionIndex)?'correct':'wrong'):'';
-      return '<button type="button" class="opt hsk5Part3Opt '+(selected?'selected ':'')+state+'" data-q="'+esc(id)+'" data-i="'+oi+'" onclick="choose(this)"><span class="optText">'+o.label+'. '+esc(o.value)+'</span></button>';
-    }).join('');
-    return '<div class="hsk5Part3Question"><div class="hsk5Part3Qtop"><strong>'+esc(id)+'.</strong></div><div class="hsk5Part3Qtext">'+esc(q[1])+'</div><div class="hsk5Part3Opts">'+labels+'</div><div class="row hsk5Part3Row"><button class="btn soft" onclick="checkOne(\''+esc(id)+'\')">'+svg('check')+' Periksa</button></div><div class="feedback hsk5Part3Feedback" id="f'+esc(id)+'"></div></div>';
-  }).join('');
-  return '<section class="hsk5PassageGroup hsk5Part3Group">'+passage+'<div class="hsk5Part3Questions">'+body+'</div></section>';
-}
 function hsk5ReadingPart(qs){
   const ids=qs.map(q=>Number(q?.[0])).filter(Number.isFinite);
   if(!ids.length)return null;
@@ -4355,7 +4272,14 @@ function renderHsk5PaperPart3(pkg,qs){
     const passage='<div class="hsk5PaperGroupHeader">'+esc(g.id)+'．</div><div class="hsk5PaperPassage hsk5PaperPart3PassageText">'+mediaHtml+'<div class="hsk5PaperPassageText">'+esc(text)+'</div></div>';
     const body=g.qs.map(q=>{
       const id=String(q[0]);
-      return '<div class="hsk5PaperQuestion"><div class="hsk5PaperQText"><span class="paperQNo">'+esc(id)+'.</span> '+esc(q[1])+'</div><div class="hsk5PaperOptions">'+hsk5PaperOptionButtons(pkg,q)+'</div>'+hsk5PaperActions(id)+'</div>';
+      const model=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
+      const needsTwoRows=model.options.some(o=>{
+        const text=String(o.label||'')+' '+String(o.value||'');
+        const hanzi=(text.match(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g)||[]).length;
+        return hanzi>=4;
+      });
+      const optionClass=needsTwoRows?' paperOptionsTwoRows':'';
+      return '<div class="hsk5PaperQuestion"><div class="hsk5PaperQText"><span class="paperQNo">'+esc(id)+'.</span> '+esc(q[1])+'</div><div class="hsk5PaperOptions'+optionClass+'">'+hsk5PaperOptionButtons(pkg,q)+'</div>'+hsk5PaperActions(id)+'</div>';
     }).join('');
     return '<section class="hsk5PaperGroup hsk5PaperPart3">'+passage+body+'</section>';
   }).join('');
