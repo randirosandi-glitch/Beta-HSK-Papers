@@ -7132,15 +7132,15 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 </script>
 
 
-<!-- HSK Papers Liquid Glass Navbar v11
+<!-- HSK Papers Liquid Glass Navbar v12
      Meapri-inspired bar material, with a critical Chromium fix:
      the SVG filter URL is attached ONLY AFTER the displacement/specular maps
      are ready. This avoids Chromium caching the filter before feImage is loaded.
      Scope: NAVBAR ONLY. -->
-<style id="hsk-liquid-glass-navbar-v11">
+<style id="hsk-liquid-glass-navbar-v12">
 .mainNav{
   --lg-radius:28px;
-  --lg-fallback-blur:2px;
+  --lg-fallback-blur:1px;
   position:fixed!important;
   z-index:100!important;
   left:12px!important;
@@ -7157,9 +7157,9 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   justify-content:center!important;
   gap:1px!important;
   overflow:hidden!important;
-  border:1px solid rgba(255,255,255,.22)!important;
+  border:1px solid rgba(255,255,255,.18)!important;
   border-radius:var(--lg-radius)!important;
-  background:rgba(255,255,255,.035)!important;
+  background:rgba(255,255,255,.022)!important;
   -webkit-backdrop-filter:blur(var(--lg-fallback-blur)) saturate(145%)!important;
   backdrop-filter:blur(var(--lg-fallback-blur)) saturate(145%)!important;
   box-shadow:
@@ -7174,7 +7174,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   z-index:2;
   pointer-events:none;
   border-radius:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.055),transparent 58%);
+  background:linear-gradient(180deg,rgba(255,255,255,.042),rgba(255,255,255,.012) 42%,transparent 68%);
 }
 .mainNav:after{
   content:"";
@@ -7225,7 +7225,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 .mainNav .navItem:hover{background:rgba(255,255,255,.055)!important;color:#253342!important}
 .mainNav .navItem:active{transform:scale(.965)}
 .mainNav .navItem.active{
-  background:rgba(255,101,72,.075)!important;
+  background:rgba(255,101,72,.065)!important;
   color:var(--blue)!important;
 }
 .mainNav .navItem.active .ico{
@@ -7235,8 +7235,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
 body.dark .mainNav{
   border-color:rgba(255,255,255,.16)!important;
-  background:rgba(18,20,24,.08)!important;
-  -webkit-backdrop-filter:blur(var(--lg-fallback-blur)) saturate(120%)!important;
+  background:rgba(18,20,24,.055)!important;
+  -webkit-backdrop-filter:blur(var(--lg-fallback-blur)) saturate(118%)!important;
   backdrop-filter:blur(var(--lg-fallback-blur)) saturate(120%)!important;
   box-shadow:
     0 6px 20px rgba(0,0,0,.22),
@@ -7275,31 +7275,29 @@ body.dark .mainNav .navItem.active{
   }
 }
 @media(max-width:900px) and (pointer:coarse){
-  .mainNav{--lg-fallback-blur:1.5px}
+  .mainNav{--lg-fallback-blur:.8px}
 }
 @media(prefers-reduced-motion:reduce){
   .mainNav,.mainNav .navItem{transition:none!important}
 }
 </style>
 
-<svg id="hsk-liquid-glass-svg-v11" aria-hidden="true" width="0" height="0"
+<svg id="hsk-liquid-glass-svg-v12" aria-hidden="true" width="0" height="0"
      style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
   <defs>
-    <filter id="hsk-liquid-glass-filter-v11"
-            x="-24%" y="-55%" width="148%" height="210%"
+    <filter id="hsk-liquid-glass-filter-v12"
+            x="-28%" y="-60%" width="156%" height="220%"
             filterUnits="objectBoundingBox"
             primitiveUnits="userSpaceOnUse"
             color-interpolation-filters="sRGB">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="1.15"
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.72"
                       edgeMode="duplicate" result="lgBlurred"/>
-
-      <!-- Three RGB refraction passes: the only intentional color separation
-           is at the curved edge. The centre stays optically neutral. -->
-      <feImage id="hsk-liquid-glass-map-v11"
+      <feImage id="hsk-liquid-glass-map-v12"
                x="0" y="0" width="1" height="1"
                preserveAspectRatio="none" result="lgMap"/>
 
-      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="58"
+      <!-- The map is a continuous lens: center = gentle bend, edge = strong bend. -->
+      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="82"
                          xChannelSelector="R" yChannelSelector="G"
                          result="lgRWarp"/>
       <feColorMatrix in="lgRWarp"
@@ -7308,8 +7306,7 @@ body.dark .mainNav .navItem.active{
                              0 0 0 0 0
                              0 0 0 1 0"
                      result="lgR"/>
-
-      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="61"
+      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="86"
                          xChannelSelector="R" yChannelSelector="G"
                          result="lgGWarp"/>
       <feColorMatrix in="lgGWarp"
@@ -7318,29 +7315,25 @@ body.dark .mainNav .navItem.active{
                              0 0 0 0 0
                              0 0 0 1 0"
                      result="lgG"/>
-
-      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="64"
+      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="90"
                          xChannelSelector="R" yChannelSelector="G"
                          result="lgBWarp"/>
       <feColorMatrix in="lgBWarp"
                      values="0 0 0 0 0
                              0 0 0 0 0
+                             0 0 0 0 0
                              0 0 1 0 0
                              0 0 0 1 0"
                      result="lgB"/>
-
       <feBlend in="lgR" in2="lgG" mode="screen" result="lgRG"/>
       <feBlend in="lgRG" in2="lgB" mode="screen" result="lgRGB"/>
-
-      <feColorMatrix in="lgRGB" type="saturate" values="1.10"
-                     result="lgSaturated"/>
+      <feColorMatrix in="lgRGB" type="saturate" values="1.06" result="lgSaturated"/>
       <feComponentTransfer in="lgSaturated" result="lgBright">
-        <feFuncR type="linear" slope="1.018"/>
-        <feFuncG type="linear" slope="1.018"/>
-        <feFuncB type="linear" slope="1.018"/>
+        <feFuncR type="linear" slope="1.012"/>
+        <feFuncG type="linear" slope="1.012"/>
+        <feFuncB type="linear" slope="1.012"/>
       </feComponentTransfer>
-
-      <feImage id="hsk-liquid-glass-spec-v11"
+      <feImage id="hsk-liquid-glass-spec-v12"
                x="0" y="0" width="1" height="1"
                preserveAspectRatio="none" result="lgSpec"/>
       <feBlend in="lgBright" in2="lgSpec" mode="screen" result="lgFinal"/>
@@ -7348,7 +7341,7 @@ body.dark .mainNav .navItem.active{
   </defs>
 </svg>
 
-<script id="hsk-liquid-glass-navbar-v11-js">
+<script id="hsk-liquid-glass-navbar-v12-js">
 (function(){
   'use strict';
 
@@ -7362,42 +7355,40 @@ body.dark .mainNav .navItem.active{
   }
 
   function makeSurface(cx,cy,halfW,halfH,r,depth){
-    var innerW=Math.max(0,halfW-r),innerH=Math.max(0,halfH-r);
-    var K=1.15,CLAMP=8.5;
-    function sdf(px,py){
+    function roundedDistance(px,py){
       var adx=Math.abs(px-cx),ady=Math.abs(py-cy);
-      var dx=halfW-adx,dy=halfH-ady;
-      if(dx<=0||dy<=0)return 0;
-      var qx=adx-innerW,qy=ady-innerH;
-      if(qx>0&&qy>0){
-        var d=Math.sqrt(qx*qx+qy*qy);
-        return d>r?0:r-d;
-      }
-      return Math.min(dx,dy);
-    }
-    function height(px,py){
-      var u=Math.max(-1,Math.min(1,(px-cx)/halfW));
-      var v=Math.max(-1,Math.min(1,(py-cy)/halfH));
-      var base=(1-u*u)*(1-v*v);
-      return depth*(1-Math.pow(1-base,K));
+      var qx=Math.max(adx-(halfW-r),0);
+      var qy=Math.max(ady-(halfH-r),0);
+      var outside=Math.sqrt(qx*qx+qy*qy)-r;
+      var inside=Math.min(halfW-adx,halfH-ady);
+      return outside>0?outside:inside;
     }
     function normal(px,py){
-      var e=.5;
-      var gx=(height(px+e,py)-height(px-e,py))/(2*e);
-      var gy=(height(px,py+e)-height(px,py-e))/(2*e);
+      var e=.7;
+      var u=Math.max(-1,Math.min(1,(px-cx)/halfW));
+      var v=Math.max(-1,Math.min(1,(py-cy)/halfH));
+      var rr=Math.sqrt(u*u+v*v)||1;
+      var edge=Math.max(0,Math.min(1,rr));
+      /* Smooth radial barrel profile: small in the centre, strong at the rim. */
+      var bend=Math.pow(edge,1.55);
+      var gx=(u/halfW)*bend;
+      var gy=(v/halfH)*bend;
+      /* Rounded corners receive additional curvature. */
+      var rd=roundedDistance(px,py);
+      var edgeBoost=rd>0?Math.min(1,rd/Math.max(1,r))*0.34:0;
+      gx*=1+edgeBoost; gy*=1+edgeBoost;
       var gl=Math.sqrt(gx*gx+gy*gy);
-      if(gl>CLAMP){var s=CLAMP/gl;gx*=s;gy*=s}
+      if(gl>depth){var s=depth/gl;gx*=s;gy*=s}
       var len=Math.sqrt(gx*gx+gy*gy+1);
-      return {nx:-gx/len,ny:-gy/len,nz:1/len};
+      return {nx:-gx/len,ny:-gy/len,nz:1/len,edge:edge};
     }
-    return {sdf:sdf,normal:normal};
+    return {normal:normal};
   }
-
   function buildMaps(w,h,r){
     var mobile=window.matchMedia&&window.matchMedia('(max-width:900px) and (pointer:coarse)').matches;
-    var dpr=mobile?.30:.40;
-    var specDpr=mobile?.55:.70;
-    var refraction=58,thickness=16.72,padding=Math.max(8,Math.ceil(refraction));
+    var dpr=mobile?.38:.52;
+    var specDpr=mobile?.62:.78;
+    var refraction=82,thickness=16.72,padding=Math.max(8,Math.ceil(refraction));
     var token=++buildToken;
 
     var mw=Math.max(1,Math.round(w*dpr));
@@ -7412,23 +7403,34 @@ body.dark .mainNav .navItem.active{
     var img=ctx.createImageData(tw,th),data=img.data;
     var cx=mp+mw/2,cy=mp+mh/2;
     var rr=Math.min(Math.min(mw,mh)/2,r*dpr);
-    var depth=Math.min(mw,mh)/2*1.95*Math.max(.3,Math.min(1.6,thickness/30));
+    var depth=Math.min(mw,mh)/2*1.72;
     var surf=makeSurface(cx,cy,mw/2,mh/2,rr,depth);
-    var eta=1/1.5,RIM=1.32;
+    var eta=1/1.5,RIM=1.75;
 
     for(var y=0;y<th;y++){
       for(var x=0;x<tw;x++){
         var i=(y*tw+x)*4,px=x+.5,py=y+.5;
-        if(surf.sdf(px,py)<=0){
+        var u=(px-cx)/(mw/2),v=(py-cy)/(mh/2);
+        var radial=Math.sqrt(u*u+v*v);
+        /* Outside the capsule, keep the map neutral. Inside it, preserve
+           a continuous gradient: gentle displacement through the centre,
+           accelerating toward the rounded rim. */
+        var inside=Math.max(0,Math.min(1,1-Math.max(0,radial-0.72)/0.28));
+        if(inside<=0){
           data[i]=128;data[i+1]=128;data[i+2]=128;data[i+3]=255;
           continue;
         }
-        var n=surf.normal(px,py),dot=-n.nz,k=1-eta*eta*(1-dot*dot);
+        var n=surf.normal(px,py);
+        var dot=-n.nz;
+        var k=1-eta*eta*(1-dot*dot);
         var fx=0,fy=0;
         if(k>=0){
           var q=eta*dot+Math.sqrt(k);
-          fx=-q*n.nx*RIM;fy=-q*n.ny*RIM;
+          fx=-q*n.nx*RIM;
+          fy=-q*n.ny*RIM;
         }
+        var gain=.30+.70*Math.pow(Math.min(1,radial),1.18);
+        fx*=gain;fy*=gain;
         data[i]=Math.max(1,Math.min(255,Math.round(128+fx*127)));
         data[i+1]=Math.max(1,Math.min(255,Math.round(128+fy*127)));
         data[i+2]=128;data[i+3]=255;
@@ -7494,12 +7496,12 @@ body.dark .mainNav .navItem.active{
 
     /* Critical: generate a fresh filter id and attach the URL only after
        feImage has its final map. This is the part v9 did too early. */
-    var freshId='hsk-liquid-glass-filter-v11-'+token;
+    var freshId='hsk-liquid-glass-filter-v12-'+token;
     filterEl.setAttribute('id',freshId);
     nav.style.webkitBackdropFilter='url("#'+freshId+'")';
     nav.style.backdropFilter='url("#'+freshId+'")';
 
-    nav.dataset.liquidGlass='rgb-lens-bar-v11';
+    nav.dataset.liquidGlass='continuous-rgb-lens-bar-v12';
     nav.dataset.liquidGlassReady='true';
   }
 
@@ -7517,10 +7519,10 @@ body.dark .mainNav .navItem.active{
 
   function init(){
     nav=document.querySelector('.mainNav');
-    mapEl=document.getElementById('hsk-liquid-glass-map-v11');
-    specEl=document.getElementById('hsk-liquid-glass-spec-v11');
-    dispEl=document.getElementById('hsk-liquid-glass-disp-v11');
-    filterEl=document.getElementById('hsk-liquid-glass-filter-v11');
+    mapEl=document.getElementById('hsk-liquid-glass-map-v12');
+    specEl=document.getElementById('hsk-liquid-glass-spec-v12');
+    dispEl=document.getElementById('hsk-liquid-glass-disp-v12');
+    filterEl=document.getElementById('hsk-liquid-glass-filter-v12');
     if(!nav||!mapEl||!specEl||!dispEl||!filterEl)return;
     scheduleBuild();
     if(window.ResizeObserver){
