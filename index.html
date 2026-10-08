@@ -7132,15 +7132,15 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 </script>
 
 
-<!-- HSK Papers Liquid Glass Navbar v7
-     Visual target: compact iOS-style translucent bar from the approved
-     reference image. One glass material, soft optical color bloom, restrained
-     refraction, and a warm active-tab capsule. -->
-<style id="hsk-liquid-glass-navbar-v7">
+<!-- HSK Papers Liquid Glass Navbar v8
+     Lightweight Apple-inspired Liquid Glass:
+     one translucent material, subtle refraction, adaptive light/dark tint,
+     soft specular edge, and no pointer-loop animation. -->
+<style id="hsk-liquid-glass-navbar-v8">
 .mainNav{
-  --lg-radius:29px;
-  --lg-blur:22px;
-  --lg-saturate:145%;
+  --lg-radius:28px;
+  --lg-blur:18px;
+  --lg-saturate:128%;
   position:fixed!important;
   z-index:100!important;
   left:12px!important;
@@ -7155,65 +7155,61 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   display:flex!important;
   align-items:stretch!important;
   justify-content:center!important;
-  gap:2px!important;
+  gap:1px!important;
   overflow:hidden!important;
   isolation:isolate;
-  border:1px solid rgba(255,255,255,.78)!important;
+  border:1px solid rgba(255,255,255,.68)!important;
   border-radius:var(--lg-radius)!important;
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.68),rgba(246,248,251,.48))!important;
-  backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(var(--lg-saturate)) contrast(1.02)!important;
-  -webkit-backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(var(--lg-saturate)) contrast(1.02)!important;
+  background:rgba(255,255,255,.24)!important;
+  backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-saturate))!important;
+  -webkit-backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-saturate))!important;
+  /* SVG lensing enhances the backdrop when the browser supports it. */
+  backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(var(--lg-saturate))!important;
+  -webkit-backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(var(--lg-saturate))!important;
   box-shadow:
-    0 8px 24px rgba(31,41,55,.13),
-    0 1px 0 rgba(255,255,255,.92) inset,
-    0 -1px 0 rgba(255,255,255,.45) inset!important;
+    inset 0 1px 0 rgba(255,255,255,.82),
+    inset 0 -1px 0 rgba(255,255,255,.20),
+    0 7px 20px rgba(31,41,55,.11)!important;
+  contain:paint;
 }
-
-/* Soft optical bloom. It is part of the single material, not another glass. */
 .mainNav:before{
   content:"";
   position:absolute;
-  inset:-28px;
+  inset:0;
   z-index:2;
-  pointer-events:none;
   border-radius:inherit;
-  background:
-    radial-gradient(90px 70px at 3% 100%,rgba(255,101,72,.20),transparent 72%),
-    radial-gradient(90px 70px at 25% 100%,rgba(139,92,246,.13),transparent 72%),
-    radial-gradient(95px 72px at 50% 100%,rgba(245,158,11,.12),transparent 72%),
-    radial-gradient(95px 72px at 75% 100%,rgba(16,185,129,.14),transparent 72%),
-    radial-gradient(90px 70px at 98% 100%,rgba(59,130,246,.13),transparent 72%);
-  filter:blur(12px);
-  opacity:.82;
+  pointer-events:none;
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.18) 0%,
+    rgba(255,255,255,.06) 26%,
+    transparent 55%
+  );
 }
-
-/* Clean specular rim. */
 .mainNav:after{
   content:"";
   position:absolute;
-  left:16px;
-  right:16px;
+  left:14px;
+  right:14px;
   top:0;
   height:1px;
   z-index:4;
   border-radius:99px;
   pointer-events:none;
-  background:rgba(255,255,255,.96);
-  opacity:.92;
+  background:rgba(255,255,255,.90);
+  opacity:.72;
 }
-
 .mainNav .navItem{
   position:relative;
   z-index:5;
   flex:1 1 0;
   min-width:0;
-  min-height:66px;
-  padding:5px 6px!important;
+  min-height:64px;
+  padding:4px 6px!important;
   border:0!important;
-  border-radius:22px!important;
+  border-radius:20px!important;
   background:transparent!important;
-  color:#425466!important;
+  color:rgba(42,57,73,.82)!important;
   display:flex!important;
   flex-direction:column!important;
   align-items:center!important;
@@ -7223,11 +7219,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   transition:background-color .18s ease,color .18s ease,transform .18s ease;
 }
 .mainNav .navItem .ico{
-  width:25px!important;
-  height:25px!important;
-  font-size:25px!important;
+  width:24px!important;
+  height:24px!important;
+  font-size:24px!important;
   line-height:1!important;
-  font-variation-settings:'FILL' 0,'wght' 430,'GRAD' 0,'opsz' 24;
+  font-variation-settings:'FILL' 0,'wght' 420,'GRAD' 0,'opsz' 24;
 }
 .mainNav .navLabel{
   font-size:11.5px!important;
@@ -7237,45 +7233,48 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   letter-spacing:-.12px;
 }
 .mainNav .navItem:hover{
-  background:rgba(255,255,255,.18)!important;
-  color:#24384a!important;
+  background:rgba(255,255,255,.10)!important;
+  color:#253647!important;
 }
 .mainNav .navItem:active{
   transform:scale(.965);
 }
 
-/* Active state from the reference: warm, soft capsule — not glass-on-glass. */
+/* Active tab: a soft color wash, not a second glass layer. */
 .mainNav .navItem.active{
   background:rgba(255,101,72,.13)!important;
   color:var(--blue)!important;
-  border:0!important;
 }
 .mainNav .navItem.active .ico{
-  font-variation-settings:'FILL' 0,'wght' 480,'GRAD' 0,'opsz' 24;
+  font-variation-settings:'FILL' 0,'wght' 470,'GRAD' 0,'opsz' 24;
 }
 .mainNav .navItem.active:before{display:none!important}
 
 body.dark .mainNav{
-  border-color:rgba(255,255,255,.28)!important;
-  background:linear-gradient(180deg,rgba(36,38,43,.68),rgba(24,26,30,.55))!important;
+  border-color:rgba(255,255,255,.20)!important;
+  background:rgba(24,25,28,.30)!important;
+  -webkit-backdrop-filter:blur(var(--lg-blur)) saturate(118%)!important;
+  backdrop-filter:blur(var(--lg-blur)) saturate(118%)!important;
+  backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(118%)!important;
+  -webkit-backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(118%)!important;
   box-shadow:
-    0 8px 26px rgba(0,0,0,.34),
-    0 1px 0 rgba(255,255,255,.20) inset,
-    0 -1px 0 rgba(255,255,255,.08) inset!important;
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(255,255,255,.06),
+    0 8px 22px rgba(0,0,0,.30)!important;
 }
 body.dark .mainNav:before{
-  background:
-    radial-gradient(90px 70px at 5% 100%,rgba(255,118,88,.15),transparent 72%),
-    radial-gradient(90px 70px at 28% 100%,rgba(177,151,255,.10),transparent 72%),
-    radial-gradient(95px 72px at 52% 100%,rgba(255,199,102,.08),transparent 72%),
-    radial-gradient(95px 72px at 76% 100%,rgba(102,217,176,.10),transparent 72%),
-    radial-gradient(90px 70px at 98% 100%,rgba(120,160,255,.09),transparent 72%);
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.08) 0%,
+    rgba(255,255,255,.025) 28%,
+    transparent 58%
+  );
 }
-body.dark .mainNav:after{background:rgba(255,255,255,.35)}
-body.dark .mainNav .navItem{color:rgba(235,240,247,.78)!important}
-body.dark .mainNav .navItem:hover{background:rgba(255,255,255,.07)!important}
+body.dark .mainNav:after{background:rgba(255,255,255,.28)}
+body.dark .mainNav .navItem{color:rgba(240,244,249,.78)!important}
+body.dark .mainNav .navItem:hover{background:rgba(255,255,255,.055)!important}
 body.dark .mainNav .navItem.active{
-  background:rgba(255,118,88,.15)!important;
+  background:rgba(255,118,88,.14)!important;
   color:var(--blue)!important;
 }
 
@@ -7290,27 +7289,19 @@ body.dark .mainNav .navItem.active{
     padding:8px 6px!important;
     flex-direction:column!important;
     border-radius:0 24px 24px 0!important;
-    gap:5px!important;
+    gap:4px!important;
   }
   .mainNav .navItem{
     flex:0 0 auto;
     width:70px!important;
-    min-height:60px!important;
-    border-radius:20px!important;
-  }
-  .mainNav:before{
-    inset:-20px -30px;
-    background:
-      radial-gradient(65px 110px at 50% 8%,rgba(255,101,72,.14),transparent 72%),
-      radial-gradient(65px 110px at 50% 30%,rgba(139,92,246,.10),transparent 72%),
-      radial-gradient(65px 110px at 50% 54%,rgba(16,185,129,.09),transparent 72%),
-      radial-gradient(65px 110px at 50% 78%,rgba(59,130,246,.09),transparent 72%);
+    min-height:58px!important;
+    border-radius:19px!important;
   }
 }
 @media(max-width:900px) and (pointer:coarse){
   .mainNav{
-    --lg-blur:22px;
-    --lg-saturate:145%;
+    --lg-blur:18px;
+    --lg-saturate:126%;
   }
 }
 @media(prefers-reduced-motion:reduce){
@@ -7330,10 +7321,10 @@ body.dark .mainNav .navItem.active{
                x="0" y="0" width="1" height="1"
                preserveAspectRatio="none"
                result="lgMap"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation=".8" result="lgBlurred"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation=".45" result="lgBlurred"/>
       <feDisplacementMap in="lgBlurred"
                          in2="lgMap"
-                         scale="22"
+                         scale="14"
                          xChannelSelector="R"
                          yChannelSelector="G"
                          result="lgRefracted"/>
@@ -7341,22 +7332,25 @@ body.dark .mainNav .navItem.active{
   </defs>
 </svg>
 
-<script id="hsk-liquid-glass-navbar-v7-js">
+<script id="hsk-liquid-glass-navbar-v8-js">
 (function(){
   'use strict';
 
+  /* One tiny static lens map built once; no pointer loop or animation. */
   function buildLensMap(){
     var map=document.getElementById('hsk-liquid-glass-map');
     if(!map || !window.HTMLCanvasElement)return;
+
     try{
       var c=document.createElement('canvas');
-      c.width=192;c.height=64;
+      c.width=96;c.height=32;
       var ctx=c.getContext('2d');
       if(!ctx)return;
+
       var img=ctx.createImageData(c.width,c.height);
       var d=img.data,W=c.width,H=c.height;
       var cx=W/2,cy=H/2;
-      var radius=18,rx=cx-radius,ry=cy-radius;
+      var radius=9,rx=cx-radius,ry=cy-radius;
 
       for(var y=0;y<H;y++){
         for(var x=0;x<W;x++){
@@ -7368,7 +7362,7 @@ body.dark .mainNav .navItem.active{
           var sdf=outside+inside-radius;
 
           var nx=0,ny=0;
-          if(ox>0||oy>0){
+          if(ox||oy){
             var len=Math.hypot(ox,oy)||1;
             nx=(px<0?-1:1)*(ox/len);
             ny=(py<0?-1:1)*(oy/len);
@@ -7378,10 +7372,11 @@ body.dark .mainNav .navItem.active{
             ny=py<0?-1:1;
           }
 
-          var t=Math.max(0,Math.min(1,(radius+sdf)/radius));
-          t=t*t*(3-2*t);
-          var dx=.5+nx*.26*t;
-          var dy=.5+ny*.26*t;
+          var edge=Math.max(0,Math.min(1,(radius+sdf)/(radius*.95)));
+          edge=edge*edge*(3-2*edge);
+
+          var dx=.5+nx*.20*edge;
+          var dy=.5+ny*.20*edge;
           var i=(y*W+x)*4;
           d[i]=Math.round(dx*255);
           d[i+1]=Math.round(dy*255);
@@ -7389,6 +7384,7 @@ body.dark .mainNav .navItem.active{
           d[i+3]=255;
         }
       }
+
       ctx.putImageData(img,0,0);
       var url=c.toDataURL('image/png');
       map.setAttribute('href',url);
@@ -7400,18 +7396,14 @@ body.dark .mainNav .navItem.active{
   }
 
   function init(){
-    var nav=document.querySelector('.mainNav');
-    if(!nav)return;
     buildLensMap();
-    nav.dataset.liquidGlass='apple-inspired-reference-v7';
+    var nav=document.querySelector('.mainNav');
+    if(nav)nav.dataset.liquidGlass='apple-inspired-lightweight-v8';
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
 })();
 </script>
-</script>
-</script>
 </body>
 </html>
-
