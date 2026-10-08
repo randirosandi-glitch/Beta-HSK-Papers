@@ -7132,15 +7132,15 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 </script>
 
 
-<!-- HSK Papers Liquid Glass Navbar v5
-     Tuned against Apple's Regular navigation material and the open-source
-     "bar" optical profile: neutral adaptive platter, restrained lensing,
-     single material layer, thin selection overlay. -->
-<style id="hsk-liquid-glass-navbar-v5">
+<!-- HSK Papers Liquid Glass Navbar v6
+     Screenshot-driven refinement: compact iOS-style navigation material,
+     stronger adaptive neutralization over saturated cards, corrected convex
+     lens geometry, and no glass-on-glass selection surface. -->
+<style id="hsk-liquid-glass-navbar-v6">
 .mainNav{
-  --lg-radius:27px;
-  --lg-blur:8px;
-  --lg-saturate:122%;
+  --lg-radius:28px;
+  --lg-blur:14px;
+  --lg-saturate:112%;
   --lg-x:50%;
   --lg-y:0%;
   position:fixed!important;
@@ -7153,21 +7153,21 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   height:auto!important;
   min-height:0!important;
   margin:0!important;
-  padding:4px!important;
+  padding:3px!important;
   display:flex!important;
   align-items:stretch!important;
   justify-content:center!important;
-  gap:2px!important;
+  gap:0!important;
   overflow:hidden!important;
   isolation:isolate;
-  border:1px solid rgba(105,115,130,.20)!important;
+  border:1px solid rgba(105,115,130,.24)!important;
   border-radius:var(--lg-radius)!important;
-  background:rgba(248,249,251,.40)!important;
-  backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(var(--lg-saturate)) contrast(1.025)!important;
-  -webkit-backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(var(--lg-saturate)) contrast(1.025)!important;
+  background:rgba(250,251,253,.58)!important;
+  backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(var(--lg-saturate)) contrast(1.035)!important;
+  -webkit-backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(var(--lg-saturate)) contrast(1.035)!important;
   box-shadow:
-    0 7px 22px rgba(20,28,40,.12),
-    inset 0 1px 0 rgba(255,255,255,.72)!important;
+    0 5px 18px rgba(20,28,40,.10),
+    inset 0 1px 0 rgba(255,255,255,.82)!important;
 }
 .mainNav:before{
   content:"";
@@ -7176,40 +7176,33 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   z-index:2;
   border-radius:inherit;
   pointer-events:none;
-  background:
-    radial-gradient(150px 62px at var(--lg-x) var(--lg-y),
-      rgba(255,255,255,.13), transparent 74%);
+  background:rgba(255,255,255,.10);
   opacity:.70;
 }
 .mainNav:after{
   content:"";
   position:absolute;
-  left:10px;
-  right:10px;
+  left:12px;
+  right:12px;
   top:0;
   height:1px;
   z-index:4;
   border-radius:99px;
   pointer-events:none;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(255,255,255,.76) 18%,
-    rgba(255,255,255,.92) 50%,
-    rgba(255,255,255,.76) 82%,
-    transparent 100%);
-  opacity:.62;
+  background:rgba(255,255,255,.90);
+  opacity:.72;
 }
 .mainNav .navItem{
   position:relative;
   z-index:5;
   flex:1 1 0;
   min-width:0;
-  min-height:62px;
-  padding:4px 7px 4px!important;
+  min-height:58px;
+  padding:3px 6px 3px!important;
   border:0!important;
   border-radius:20px!important;
   background:transparent!important;
-  color:color-mix(in srgb,var(--text) 72%,transparent)!important;
+  color:color-mix(in srgb,var(--text) 68%,transparent)!important;
   display:flex!important;
   flex-direction:column!important;
   align-items:center!important;
@@ -7219,17 +7212,17 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   transition:background-color .18s ease,color .18s ease,transform .18s ease;
 }
 .mainNav .navItem .ico{
-  width:24px!important;
-  height:24px!important;
-  font-size:24px!important;
+  width:23px!important;
+  height:23px!important;
+  font-size:23px!important;
   line-height:1!important;
 }
 .mainNav .navLabel{
-  font-size:11.5px!important;
-  line-height:1.06!important;
+  font-size:11px!important;
+  line-height:1.04!important;
   font-weight:600!important;
   white-space:nowrap;
-  letter-spacing:-.15px;
+  letter-spacing:-.12px;
 }
 .mainNav .navItem:hover{
   background:rgba(255,255,255,.08)!important;
@@ -7238,32 +7231,27 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 .mainNav .navItem:active{
   transform:scale(.965);
 }
-/* Selection is only a translucent overlay — never another glass surface. */
+/* iOS-style selection: a restrained color wash, not another glass surface. */
 .mainNav .navItem.active{
-  background:rgba(255,255,255,.20)!important;
+  background:color-mix(in srgb,var(--blue) 10%,transparent)!important;
   color:var(--blue)!important;
   border:0!important;
 }
 .mainNav .navItem.active:before{display:none!important}
 
 body.dark .mainNav{
-  border-color:rgba(255,255,255,.13)!important;
-  background:rgba(28,30,34,.48)!important;
+  border-color:rgba(255,255,255,.15)!important;
+  background:rgba(30,32,36,.60)!important;
   box-shadow:
-    0 8px 24px rgba(0,0,0,.34),
-    inset 0 1px 0 rgba(255,255,255,.15)!important;
+    0 6px 20px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.17)!important;
 }
-body.dark .mainNav:before{
-  background:radial-gradient(150px 62px at var(--lg-x) var(--lg-y),
-    rgba(255,255,255,.08),transparent 74%);
-}
-body.dark .mainNav:after{
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.20),transparent);
-}
-body.dark .mainNav .navItem{color:rgba(238,242,248,.76)!important}
+body.dark .mainNav:before{background:rgba(255,255,255,.045)}
+body.dark .mainNav:after{background:rgba(255,255,255,.24)}
+body.dark .mainNav .navItem{color:rgba(238,242,248,.74)!important}
 body.dark .mainNav .navItem:hover{background:rgba(255,255,255,.055)!important}
 body.dark .mainNav .navItem.active{
-  background:rgba(255,255,255,.10)!important;
+  background:color-mix(in srgb,var(--blue) 13%,transparent)!important;
   color:var(--blue)!important;
 }
 
@@ -7275,22 +7263,22 @@ body.dark .mainNav .navItem.active{
     bottom:0!important;
     width:84px!important;
     height:100dvh!important;
-    padding:8px 6px!important;
+    padding:7px 6px!important;
     flex-direction:column!important;
     border-radius:0 22px 22px 0!important;
-    gap:5px!important;
+    gap:4px!important;
   }
   .mainNav .navItem{
     flex:0 0 auto;
     width:70px!important;
-    min-height:58px!important;
-    border-radius:19px!important;
+    min-height:56px!important;
+    border-radius:18px!important;
   }
 }
 @media(max-width:900px) and (pointer:coarse){
   .mainNav{
-    --lg-blur:8px;
-    --lg-saturate:120%;
+    --lg-blur:14px;
+    --lg-saturate:110%;
   }
 }
 @media(prefers-reduced-motion:reduce){
@@ -7310,12 +7298,10 @@ body.dark .mainNav .navItem.active{
                x="0" y="0" width="1" height="1"
                preserveAspectRatio="none"
                result="lgMap"/>
-      <!-- Blur first, then bend the backdrop, matching the optical order
-           used by the reference implementation. -->
-      <feGaussianBlur in="SourceGraphic" stdDeviation=".55" result="lgBlurred"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation=".65" result="lgBlurred"/>
       <feDisplacementMap in="lgBlurred"
                          in2="lgMap"
-                         scale="20"
+                         scale="18"
                          xChannelSelector="R"
                          yChannelSelector="G"
                          result="lgRefracted"/>
@@ -7323,36 +7309,36 @@ body.dark .mainNav .navItem.active{
   </defs>
 </svg>
 
-<script id="hsk-liquid-glass-navbar-v5-js">
+<script id="hsk-liquid-glass-navbar-v6-js">
 (function(){
   'use strict';
 
   function buildLensMap(){
     var map=document.getElementById('hsk-liquid-glass-map');
     if(!map || !window.HTMLCanvasElement)return;
-
     try{
       var c=document.createElement('canvas');
-      c.width=160;c.height=40;
+      c.width=192;c.height=64;
       var ctx=c.getContext('2d');
       if(!ctx)return;
 
       var img=ctx.createImageData(c.width,c.height);
       var d=img.data,W=c.width,H=c.height;
       var cx=W/2,cy=H/2;
-      var radius=12, bx=cx-radius, by=cy-radius;
+      var radius=18;
+      var rx=cx-radius, ry=cy-radius;
 
       for(var y=0;y<H;y++){
         for(var x=0;x<W;x++){
-          var px=x+.5-cx,py=y+.5-cy;
-          var qx=Math.abs(px)-bx,qy=Math.abs(py)-by;
-          var ox=Math.max(qx,0),oy=Math.max(qy,0);
+          var px=x+.5-cx, py=y+.5-cy;
+          var qx=Math.abs(px)-rx, qy=Math.abs(py)-ry;
+          var ox=Math.max(qx,0), oy=Math.max(qy,0);
           var outside=Math.hypot(ox,oy);
           var inside=Math.min(Math.max(qx,qy),0);
           var sdf=outside+inside-radius;
 
           var nx=0,ny=0;
-          if(ox>0||oy>0){
+          if(ox>0 || oy>0){
             var len=Math.hypot(ox,oy)||1;
             nx=(px<0?-1:1)*(ox/len);
             ny=(py<0?-1:1)*(oy/len);
@@ -7362,12 +7348,12 @@ body.dark .mainNav .navItem.active{
             ny=py<0?-1:1;
           }
 
-          /* Soft optical shoulder: centre stays neutral, rim bends. */
-          var t=Math.max(0,Math.min(1,(8+sdf)/8));
+          /* Neutral centre, convex optical shoulder near the edge. */
+          var t=Math.max(0,Math.min(1,(radius+sdf)/radius));
           t=t*t*(3-2*t);
 
-          var dx=.5+nx*.30*t;
-          var dy=.5+ny*.30*t;
+          var dx=.5+nx*.22*t;
+          var dy=.5+ny*.22*t;
           var i=(y*W+x)*4;
           d[i]=Math.round(dx*255);
           d[i+1]=Math.round(dy*255);
@@ -7375,6 +7361,7 @@ body.dark .mainNav .navItem.active{
           d[i+3]=255;
         }
       }
+
       ctx.putImageData(img,0,0);
       var url=c.toDataURL('image/png');
       map.setAttribute('href',url);
@@ -7408,12 +7395,13 @@ body.dark .mainNav .navItem.active{
       nav.style.setProperty('--lg-x','50%');
       nav.style.setProperty('--lg-y','0%');
     },{passive:true});
-    nav.dataset.liquidGlass='apple-inspired-regular-bar-v5';
+    nav.dataset.liquidGlass='apple-inspired-regular-bar-v6';
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
 })();
+</script>
 </script>
 </body>
 </html>
