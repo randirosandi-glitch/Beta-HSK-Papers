@@ -7132,18 +7132,15 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 </script>
 
 
-<!-- HSK Papers Liquid Glass Navbar v4
-     iOS 26-inspired Liquid Glass navigation.
-     Uses a generated convex rounded-rect displacement map for real
-     Chromium backdrop refraction instead of turbulence/noise distortion.
-     The active tab is a thin overlay, not a second glass surface. -->
-<style id="hsk-liquid-glass-navbar-v4">
+<!-- HSK Papers Liquid Glass Navbar v5
+     Tuned against Apple's Regular navigation material and the open-source
+     "bar" optical profile: neutral adaptive platter, restrained lensing,
+     single material layer, thin selection overlay. -->
+<style id="hsk-liquid-glass-navbar-v5">
 .mainNav{
-  --lg-radius:28px;
-  --lg-blur:10px;
-  --lg-saturate:138%;
-  --lg-tint:255,255,255;
-  --lg-alpha:.20;
+  --lg-radius:27px;
+  --lg-blur:8px;
+  --lg-saturate:122%;
   --lg-x:50%;
   --lg-y:0%;
   position:fixed!important;
@@ -7163,54 +7160,61 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   gap:2px!important;
   overflow:hidden!important;
   isolation:isolate;
-  border:1px solid rgba(105,115,130,.22)!important;
+  border:1px solid rgba(105,115,130,.20)!important;
   border-radius:var(--lg-radius)!important;
-  background:rgba(var(--lg-tint),var(--lg-alpha))!important;
-  backdrop-filter:url(#hsk-liquid-glass-filter)!important;
-  -webkit-backdrop-filter:url(#hsk-liquid-glass-filter)!important;
+  background:rgba(248,249,251,.40)!important;
+  backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(var(--lg-saturate)) contrast(1.025)!important;
+  -webkit-backdrop-filter:url(#hsk-liquid-glass-filter) blur(var(--lg-blur)) saturate(var(--lg-saturate)) contrast(1.025)!important;
   box-shadow:
-    0 8px 24px rgba(20,28,40,.13),
-    inset 0 1px 0 rgba(255,255,255,.62)!important;
+    0 7px 22px rgba(20,28,40,.12),
+    inset 0 1px 0 rgba(255,255,255,.72)!important;
 }
 .mainNav:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:-1;
-  border-radius:inherit;
-  pointer-events:none;
-  background:
-    radial-gradient(120px 70px at var(--lg-x) var(--lg-y),
-      rgba(255,255,255,.22), transparent 72%);
-  opacity:.72;
-  mix-blend-mode:screen;
-}
-.mainNav:after{
   content:"";
   position:absolute;
   inset:0;
   z-index:2;
   border-radius:inherit;
   pointer-events:none;
-  border:1px solid rgba(255,255,255,.34);
-  opacity:.72;
+  background:
+    radial-gradient(150px 62px at var(--lg-x) var(--lg-y),
+      rgba(255,255,255,.13), transparent 74%);
+  opacity:.70;
+}
+.mainNav:after{
+  content:"";
+  position:absolute;
+  left:10px;
+  right:10px;
+  top:0;
+  height:1px;
+  z-index:4;
+  border-radius:99px;
+  pointer-events:none;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,.76) 18%,
+    rgba(255,255,255,.92) 50%,
+    rgba(255,255,255,.76) 82%,
+    transparent 100%);
+  opacity:.62;
 }
 .mainNav .navItem{
   position:relative;
-  z-index:3;
+  z-index:5;
   flex:1 1 0;
   min-width:0;
-  min-height:68px;
-  padding:5px 8px 4px!important;
+  min-height:62px;
+  padding:4px 7px 4px!important;
   border:0!important;
-  border-radius:22px!important;
+  border-radius:20px!important;
   background:transparent!important;
-  color:color-mix(in srgb,var(--text) 70%,transparent)!important;
+  color:color-mix(in srgb,var(--text) 72%,transparent)!important;
   display:flex!important;
   flex-direction:column!important;
   align-items:center!important;
   justify-content:center!important;
-  gap:3px!important;
+  gap:2px!important;
   cursor:pointer;
   transition:background-color .18s ease,color .18s ease,transform .18s ease;
 }
@@ -7222,54 +7226,47 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 }
 .mainNav .navLabel{
   font-size:11.5px!important;
-  line-height:1.08!important;
+  line-height:1.06!important;
   font-weight:600!important;
   white-space:nowrap;
-  letter-spacing:-.1px;
+  letter-spacing:-.15px;
 }
 .mainNav .navItem:hover{
-  background:rgba(255,255,255,.10)!important;
+  background:rgba(255,255,255,.08)!important;
   color:var(--text)!important;
 }
 .mainNav .navItem:active{
   transform:scale(.965);
 }
+/* Selection is only a translucent overlay — never another glass surface. */
 .mainNav .navItem.active{
-  background:rgba(255,255,255,.25)!important;
+  background:rgba(255,255,255,.20)!important;
   color:var(--blue)!important;
-  border:1px solid rgba(255,255,255,.28)!important;
+  border:0!important;
 }
-.mainNav .navItem.active:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:-1;
-  border-radius:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
-  pointer-events:none;
-}
+.mainNav .navItem.active:before{display:none!important}
+
 body.dark .mainNav{
-  --lg-tint:18,20,24;
-  --lg-alpha:.42;
-  border-color:rgba(255,255,255,.14)!important;
+  border-color:rgba(255,255,255,.13)!important;
+  background:rgba(28,30,34,.48)!important;
   box-shadow:
-    0 8px 26px rgba(0,0,0,.34),
-    inset 0 1px 0 rgba(255,255,255,.13)!important;
+    0 8px 24px rgba(0,0,0,.34),
+    inset 0 1px 0 rgba(255,255,255,.15)!important;
 }
 body.dark .mainNav:before{
-  background:radial-gradient(120px 70px at var(--lg-x) var(--lg-y),
-    rgba(255,255,255,.10),transparent 72%);
+  background:radial-gradient(150px 62px at var(--lg-x) var(--lg-y),
+    rgba(255,255,255,.08),transparent 74%);
 }
-body.dark .mainNav:after{border-color:rgba(255,255,255,.14)}
-body.dark .mainNav .navItem{color:rgba(238,242,248,.74)!important}
-body.dark .mainNav .navItem:hover{background:rgba(255,255,255,.06)!important}
+body.dark .mainNav:after{
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.20),transparent);
+}
+body.dark .mainNav .navItem{color:rgba(238,242,248,.76)!important}
+body.dark .mainNav .navItem:hover{background:rgba(255,255,255,.055)!important}
 body.dark .mainNav .navItem.active{
   background:rgba(255,255,255,.10)!important;
-  border-color:rgba(255,255,255,.16)!important;
+  color:var(--blue)!important;
 }
-body.dark .mainNav .navItem.active:before{
-  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
-}
+
 @media(min-width:600px) and (orientation:landscape){
   .mainNav{
     left:0!important;
@@ -7292,8 +7289,8 @@ body.dark .mainNav .navItem.active:before{
 }
 @media(max-width:900px) and (pointer:coarse){
   .mainNav{
-    --lg-blur:9px;
-    --lg-saturate:134%;
+    --lg-blur:8px;
+    --lg-saturate:120%;
   }
 }
 @media(prefers-reduced-motion:reduce){
@@ -7305,7 +7302,7 @@ body.dark .mainNav .navItem.active:before{
      style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
   <defs>
     <filter id="hsk-liquid-glass-filter"
-            x="-18%" y="-35%" width="136%" height="170%"
+            x="-20%" y="-40%" width="140%" height="180%"
             color-interpolation-filters="sRGB"
             filterUnits="objectBoundingBox"
             primitiveUnits="objectBoundingBox">
@@ -7313,10 +7310,12 @@ body.dark .mainNav .navItem.active:before{
                x="0" y="0" width="1" height="1"
                preserveAspectRatio="none"
                result="lgMap"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation=".75" result="lgBlurred"/>
+      <!-- Blur first, then bend the backdrop, matching the optical order
+           used by the reference implementation. -->
+      <feGaussianBlur in="SourceGraphic" stdDeviation=".55" result="lgBlurred"/>
       <feDisplacementMap in="lgBlurred"
                          in2="lgMap"
-                         scale="15"
+                         scale="20"
                          xChannelSelector="R"
                          yChannelSelector="G"
                          result="lgRefracted"/>
@@ -7324,16 +7323,10 @@ body.dark .mainNav .navItem.active:before{
   </defs>
 </svg>
 
-<script id="hsk-liquid-glass-navbar-v4-js">
+<script id="hsk-liquid-glass-navbar-v5-js">
 (function(){
   'use strict';
 
-  /*
-   * Build a small convex rounded-rectangle displacement map once.
-   * Unlike fractalNoise, this is a geometry-driven lens: the centre is
-   * nearly flat and the displacement ramps smoothly toward the silhouette.
-   * 160x40 keeps the mobile GPU cost tiny; SVG bilinear filtering enlarges it.
-   */
   function buildLensMap(){
     var map=document.getElementById('hsk-liquid-glass-map');
     if(!map || !window.HTMLCanvasElement)return;
@@ -7341,49 +7334,47 @@ body.dark .mainNav .navItem.active:before{
     try{
       var c=document.createElement('canvas');
       c.width=160;c.height=40;
-      var ctx=c.getContext('2d',{willReadFrequently:true});
+      var ctx=c.getContext('2d');
       if(!ctx)return;
 
       var img=ctx.createImageData(c.width,c.height);
-      var d=img.data;
-      var W=c.width,H=c.height;
-      var radius=13, halfW=W/2, halfH=H/2;
-      var bx=halfW-radius, by=halfH-radius;
+      var d=img.data,W=c.width,H=c.height;
+      var cx=W/2,cy=H/2;
+      var radius=12, bx=cx-radius, by=cy-radius;
 
       for(var y=0;y<H;y++){
         for(var x=0;x<W;x++){
-          var px=x+.5-halfW, py=y+.5-halfH;
-          var qx=Math.abs(px)-bx, qy=Math.abs(py)-by;
-          var ox=Math.max(qx,0), oy=Math.max(qy,0);
-          var sdf=Math.hypot(ox,oy)+Math.min(Math.max(qx,qy),0)-radius;
+          var px=x+.5-cx,py=y+.5-cy;
+          var qx=Math.abs(px)-bx,qy=Math.abs(py)-by;
+          var ox=Math.max(qx,0),oy=Math.max(qy,0);
+          var outside=Math.hypot(ox,oy);
+          var inside=Math.min(Math.max(qx,qy),0);
+          var sdf=outside+inside-radius;
 
           var nx=0,ny=0;
-          if(ox>0 && oy>0){
+          if(ox>0||oy>0){
             var len=Math.hypot(ox,oy)||1;
-            nx=(px<0?-1:1)*ox/len;
-            ny=(py<0?-1:1)*oy/len;
+            nx=(px<0?-1:1)*(ox/len);
+            ny=(py<0?-1:1)*(oy/len);
           }else if(qx>qy){
             nx=px<0?-1:1;
           }else{
             ny=py<0?-1:1;
           }
 
-          /* 9px optical round-over: flat centre, active only near edge. */
-          var edge=Math.max(0,Math.min(1,(9-(-sdf))/9));
-          var smooth=edge*edge*(3-2*edge);
+          /* Soft optical shoulder: centre stays neutral, rim bends. */
+          var t=Math.max(0,Math.min(1,(8+sdf)/8));
+          t=t*t*(3-2*t);
 
-          /* Mild convex lensing. Neutral map value is 128. */
-          var dx=0.5+nx*0.34*smooth;
-          var dy=0.5+ny*0.34*smooth;
-
+          var dx=.5+nx*.30*t;
+          var dy=.5+ny*.30*t;
           var i=(y*W+x)*4;
-          d[i]=Math.max(0,Math.min(255,Math.round(dx*255)));
-          d[i+1]=Math.max(0,Math.min(255,Math.round(dy*255)));
+          d[i]=Math.round(dx*255);
+          d[i+1]=Math.round(dy*255);
           d[i+2]=128;
           d[i+3]=255;
         }
       }
-
       ctx.putImageData(img,0,0);
       var url=c.toDataURL('image/png');
       map.setAttribute('href',url);
@@ -7397,11 +7388,9 @@ body.dark .mainNav .navItem.active:before{
   function init(){
     var nav=document.querySelector('.mainNav');
     if(!nav)return;
-
     buildLensMap();
 
-    var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(reduced)return;
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 
     var raf=0;
     function move(e){
@@ -7419,7 +7408,7 @@ body.dark .mainNav .navItem.active:before{
       nav.style.setProperty('--lg-x','50%');
       nav.style.setProperty('--lg-y','0%');
     },{passive:true});
-    nav.dataset.liquidGlass='apple-inspired-convex-refraction-v4';
+    nav.dataset.liquidGlass='apple-inspired-regular-bar-v5';
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
