@@ -7248,6 +7248,60 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   window.addEventListener('hsk:dynamic-catalog-ready',install,{once:true});
 })();
 </script>
+
+<!-- HSK Papers Lightweight Liquid Glass Navbar v1 -->
+<style id="hsk-lightweight-liquid-glass-navbar-v1">
+/* Lightweight iOS-style glass: native CSS only, no shader, no shadow, no glow. */
+.mainNav{
+  background:rgba(255,255,255,.62)!important;
+  border:1px solid rgba(120,135,155,.20)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(12px) saturate(140%)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(140%)!important;
+  overflow:hidden!important;
+}
+.mainNav:before,.mainNav:after{content:none!important;display:none!important;}
+.mainNav .navItem{
+  background:transparent!important;
+  box-shadow:none!important;
+  border:0!important;
+  color:rgba(80,91,106,.88)!important;
+}
+.mainNav .navItem:hover{background:rgba(255,255,255,.28)!important;color:var(--text)!important;}
+.mainNav .navItem.active{
+  background:rgba(255,255,255,.48)!important;
+  color:var(--blue)!important;
+  box-shadow:none!important;
+}
+.mainNav .navItem.active .ico{filter:none!important;}
+body.dark .mainNav{
+  background:rgba(20,22,27,.58)!important;
+  border-color:rgba(220,230,242,.13)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(12px) saturate(135%)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(135%)!important;
+}
+body.dark .mainNav .navItem{color:rgba(205,213,224,.72)!important;}
+body.dark .mainNav .navItem:hover{background:rgba(255,255,255,.07)!important;color:var(--text)!important;}
+body.dark .mainNav .navItem.active{background:rgba(255,255,255,.10)!important;color:var(--blue)!important;box-shadow:none!important;}
+@media(max-width:599px),(min-width:600px) and (orientation:portrait){
+  .mainNav{
+    bottom:calc(10px + env(safe-area-inset-bottom))!important;
+    border-radius:22px!important;
+    padding:6px!important;
+  }
+}
+@media(min-width:600px) and (orientation:landscape){
+  .mainNav{
+    border-radius:0 18px 18px 0!important;
+    padding:10px 7px!important;
+    gap:7px!important;
+  }
+}
+@media(max-width:900px) and (pointer:coarse){
+  .mainNav{backdrop-filter:blur(10px) saturate(135%)!important;-webkit-backdrop-filter:blur(10px) saturate(135%)!important;}
+}
+</style>
 </body>
 </html>
 
