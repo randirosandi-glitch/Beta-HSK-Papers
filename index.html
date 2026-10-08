@@ -7132,15 +7132,15 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 </script>
 
 
-<!-- HSK Papers Liquid Glass Navbar v10
+<!-- HSK Papers Liquid Glass Navbar v11
      Meapri-inspired bar material, with a critical Chromium fix:
      the SVG filter URL is attached ONLY AFTER the displacement/specular maps
      are ready. This avoids Chromium caching the filter before feImage is loaded.
      Scope: NAVBAR ONLY. -->
-<style id="hsk-liquid-glass-navbar-v10">
+<style id="hsk-liquid-glass-navbar-v11">
 .mainNav{
   --lg-radius:28px;
-  --lg-fallback-blur:6px;
+  --lg-fallback-blur:2px;
   position:fixed!important;
   z-index:100!important;
   left:12px!important;
@@ -7157,9 +7157,9 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   justify-content:center!important;
   gap:1px!important;
   overflow:hidden!important;
-  border:1px solid rgba(255,255,255,.34)!important;
+  border:1px solid rgba(255,255,255,.22)!important;
   border-radius:var(--lg-radius)!important;
-  background:rgba(255,255,255,.075)!important;
+  background:rgba(255,255,255,.035)!important;
   -webkit-backdrop-filter:blur(var(--lg-fallback-blur)) saturate(145%)!important;
   backdrop-filter:blur(var(--lg-fallback-blur)) saturate(145%)!important;
   box-shadow:
@@ -7174,7 +7174,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   z-index:2;
   pointer-events:none;
   border-radius:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.025) 38%,transparent 65%);
+  background:linear-gradient(180deg,rgba(255,255,255,.055),transparent 58%);
 }
 .mainNav:after{
   content:"";
@@ -7225,7 +7225,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 .mainNav .navItem:hover{background:rgba(255,255,255,.055)!important;color:#253342!important}
 .mainNav .navItem:active{transform:scale(.965)}
 .mainNav .navItem.active{
-  background:rgba(255,101,72,.085)!important;
+  background:rgba(255,101,72,.075)!important;
   color:var(--blue)!important;
 }
 .mainNav .navItem.active .ico{
@@ -7235,16 +7235,16 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
 body.dark .mainNav{
   border-color:rgba(255,255,255,.16)!important;
-  background:rgba(18,20,24,.12)!important;
-  -webkit-backdrop-filter:blur(var(--lg-fallback-blur)) saturate(125%)!important;
-  backdrop-filter:blur(var(--lg-fallback-blur)) saturate(125%)!important;
+  background:rgba(18,20,24,.08)!important;
+  -webkit-backdrop-filter:blur(var(--lg-fallback-blur)) saturate(120%)!important;
+  backdrop-filter:blur(var(--lg-fallback-blur)) saturate(120%)!important;
   box-shadow:
-    0 7px 22px rgba(0,0,0,.25),
-    inset 0 1px 0 rgba(255,255,255,.18),
-    inset 0 -1px 0 rgba(255,255,255,.04)!important;
+    0 6px 20px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.15),
+    inset 0 -1px 0 rgba(255,255,255,.035)!important;
 }
 body.dark .mainNav:before{
-  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.012) 38%,transparent 65%);
+  background:linear-gradient(180deg,rgba(255,255,255,.028),transparent 58%);
 }
 body.dark .mainNav:after{background:rgba(255,255,255,.26)}
 body.dark .mainNav .navItem{color:rgba(240,244,249,.82)!important}
@@ -7275,39 +7275,72 @@ body.dark .mainNav .navItem.active{
   }
 }
 @media(max-width:900px) and (pointer:coarse){
-  .mainNav{--lg-fallback-blur:5px}
+  .mainNav{--lg-fallback-blur:1.5px}
 }
 @media(prefers-reduced-motion:reduce){
   .mainNav,.mainNav .navItem{transition:none!important}
 }
 </style>
 
-<svg id="hsk-liquid-glass-svg-v10" aria-hidden="true" width="0" height="0"
+<svg id="hsk-liquid-glass-svg-v11" aria-hidden="true" width="0" height="0"
      style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
   <defs>
-    <filter id="hsk-liquid-glass-filter-v10"
-            x="-20%" y="-45%" width="140%" height="190%"
+    <filter id="hsk-liquid-glass-filter-v11"
+            x="-24%" y="-55%" width="148%" height="210%"
             filterUnits="objectBoundingBox"
             primitiveUnits="userSpaceOnUse"
             color-interpolation-filters="sRGB">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="2.8"
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.15"
                       edgeMode="duplicate" result="lgBlurred"/>
-      <feImage id="hsk-liquid-glass-map-v10"
+
+      <!-- Three RGB refraction passes: the only intentional color separation
+           is at the curved edge. The centre stays optically neutral. -->
+      <feImage id="hsk-liquid-glass-map-v11"
                x="0" y="0" width="1" height="1"
                preserveAspectRatio="none" result="lgMap"/>
-      <feDisplacementMap id="hsk-liquid-glass-disp-v10"
-                         in="lgBlurred" in2="lgMap"
-                         scale="42"
+
+      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="58"
                          xChannelSelector="R" yChannelSelector="G"
-                         result="lgRefracted"/>
-      <feColorMatrix in="lgRefracted" type="saturate" values="1.42"
+                         result="lgRWarp"/>
+      <feColorMatrix in="lgRWarp"
+                     values="1 0 0 0 0
+                             0 0 0 0 0
+                             0 0 0 0 0
+                             0 0 0 1 0"
+                     result="lgR"/>
+
+      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="61"
+                         xChannelSelector="R" yChannelSelector="G"
+                         result="lgGWarp"/>
+      <feColorMatrix in="lgGWarp"
+                     values="0 0 0 0 0
+                             0 1 0 0 0
+                             0 0 0 0 0
+                             0 0 0 1 0"
+                     result="lgG"/>
+
+      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="64"
+                         xChannelSelector="R" yChannelSelector="G"
+                         result="lgBWarp"/>
+      <feColorMatrix in="lgBWarp"
+                     values="0 0 0 0 0
+                             0 0 0 0 0
+                             0 0 1 0 0
+                             0 0 0 1 0"
+                     result="lgB"/>
+
+      <feBlend in="lgR" in2="lgG" mode="screen" result="lgRG"/>
+      <feBlend in="lgRG" in2="lgB" mode="screen" result="lgRGB"/>
+
+      <feColorMatrix in="lgRGB" type="saturate" values="1.10"
                      result="lgSaturated"/>
       <feComponentTransfer in="lgSaturated" result="lgBright">
-        <feFuncR type="linear" slope="1.035"/>
-        <feFuncG type="linear" slope="1.035"/>
-        <feFuncB type="linear" slope="1.035"/>
+        <feFuncR type="linear" slope="1.018"/>
+        <feFuncG type="linear" slope="1.018"/>
+        <feFuncB type="linear" slope="1.018"/>
       </feComponentTransfer>
-      <feImage id="hsk-liquid-glass-spec-v10"
+
+      <feImage id="hsk-liquid-glass-spec-v11"
                x="0" y="0" width="1" height="1"
                preserveAspectRatio="none" result="lgSpec"/>
       <feBlend in="lgBright" in2="lgSpec" mode="screen" result="lgFinal"/>
@@ -7315,7 +7348,7 @@ body.dark .mainNav .navItem.active{
   </defs>
 </svg>
 
-<script id="hsk-liquid-glass-navbar-v10-js">
+<script id="hsk-liquid-glass-navbar-v11-js">
 (function(){
   'use strict';
 
@@ -7364,7 +7397,7 @@ body.dark .mainNav .navItem.active{
     var mobile=window.matchMedia&&window.matchMedia('(max-width:900px) and (pointer:coarse)').matches;
     var dpr=mobile?.30:.40;
     var specDpr=mobile?.55:.70;
-    var refraction=42,thickness=16.72,padding=Math.max(8,Math.ceil(refraction));
+    var refraction=58,thickness=16.72,padding=Math.max(8,Math.ceil(refraction));
     var token=++buildToken;
 
     var mw=Math.max(1,Math.round(w*dpr));
@@ -7381,7 +7414,7 @@ body.dark .mainNav .navItem.active{
     var rr=Math.min(Math.min(mw,mh)/2,r*dpr);
     var depth=Math.min(mw,mh)/2*1.95*Math.max(.3,Math.min(1.6,thickness/30));
     var surf=makeSurface(cx,cy,mw/2,mh/2,rr,depth);
-    var eta=1/1.5,RIM=1.7;
+    var eta=1/1.5,RIM=1.32;
 
     for(var y=0;y<th;y++){
       for(var x=0;x<tw;x++){
@@ -7461,12 +7494,12 @@ body.dark .mainNav .navItem.active{
 
     /* Critical: generate a fresh filter id and attach the URL only after
        feImage has its final map. This is the part v9 did too early. */
-    var freshId='hsk-liquid-glass-filter-v10-'+token;
+    var freshId='hsk-liquid-glass-filter-v11-'+token;
     filterEl.setAttribute('id',freshId);
     nav.style.webkitBackdropFilter='url("#'+freshId+'")';
     nav.style.backdropFilter='url("#'+freshId+'")';
 
-    nav.dataset.liquidGlass='meapri-bar-v10';
+    nav.dataset.liquidGlass='rgb-lens-bar-v11';
     nav.dataset.liquidGlassReady='true';
   }
 
@@ -7484,10 +7517,10 @@ body.dark .mainNav .navItem.active{
 
   function init(){
     nav=document.querySelector('.mainNav');
-    mapEl=document.getElementById('hsk-liquid-glass-map-v10');
-    specEl=document.getElementById('hsk-liquid-glass-spec-v10');
-    dispEl=document.getElementById('hsk-liquid-glass-disp-v10');
-    filterEl=document.getElementById('hsk-liquid-glass-filter-v10');
+    mapEl=document.getElementById('hsk-liquid-glass-map-v11');
+    specEl=document.getElementById('hsk-liquid-glass-spec-v11');
+    dispEl=document.getElementById('hsk-liquid-glass-disp-v11');
+    filterEl=document.getElementById('hsk-liquid-glass-filter-v11');
     if(!nav||!mapEl||!specEl||!dispEl||!filterEl)return;
     scheduleBuild();
     if(window.ResizeObserver){
