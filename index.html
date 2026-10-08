@@ -7132,15 +7132,15 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 </script>
 
 
-<!-- HSK Papers Liquid Glass Navbar v12
+<!-- HSK Papers Liquid Glass Navbar v13
      Meapri-inspired bar material, with a critical Chromium fix:
      the SVG filter URL is attached ONLY AFTER the displacement/specular maps
      are ready. This avoids Chromium caching the filter before feImage is loaded.
      Scope: NAVBAR ONLY. -->
-<style id="hsk-liquid-glass-navbar-v12">
+<style id="hsk-liquid-glass-navbar-v13">
 .mainNav{
   --lg-radius:28px;
-  --lg-fallback-blur:1px;
+  --lg-fallback-blur:.5px;
   position:fixed!important;
   z-index:100!important;
   left:12px!important;
@@ -7157,10 +7157,10 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   justify-content:center!important;
   gap:1px!important;
   overflow:hidden!important;
-  border:1px solid rgba(255,255,255,.18)!important;
+  border:1px solid rgba(255,255,255,.16)!important;
   border-radius:var(--lg-radius)!important;
-  background:rgba(255,255,255,.022)!important;
-  -webkit-backdrop-filter:blur(var(--lg-fallback-blur)) saturate(145%)!important;
+  background:rgba(255,255,255,.014)!important;
+  -webkit-backdrop-filter:blur(var(--lg-fallback-blur)) saturate(112%)!important;
   backdrop-filter:blur(var(--lg-fallback-blur)) saturate(145%)!important;
   box-shadow:
     0 6px 20px rgba(24,32,45,.10),
@@ -7236,7 +7236,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 body.dark .mainNav{
   border-color:rgba(255,255,255,.16)!important;
   background:rgba(18,20,24,.055)!important;
-  -webkit-backdrop-filter:blur(var(--lg-fallback-blur)) saturate(118%)!important;
+  -webkit-backdrop-filter:blur(var(--lg-fallback-blur)) saturate(112%)!important;
   backdrop-filter:blur(var(--lg-fallback-blur)) saturate(120%)!important;
   box-shadow:
     0 6px 20px rgba(0,0,0,.22),
@@ -7275,73 +7275,70 @@ body.dark .mainNav .navItem.active{
   }
 }
 @media(max-width:900px) and (pointer:coarse){
-  .mainNav{--lg-fallback-blur:.8px}
+  .mainNav{--lg-fallback-blur:.45px}
 }
 @media(prefers-reduced-motion:reduce){
   .mainNav,.mainNav .navItem{transition:none!important}
 }
 </style>
 
-<svg id="hsk-liquid-glass-svg-v12" aria-hidden="true" width="0" height="0"
+<svg id="hsk-liquid-glass-svg-v13" aria-hidden="true" width="0" height="0"
      style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none">
   <defs>
-    <filter id="hsk-liquid-glass-filter-v12"
-            x="-28%" y="-60%" width="156%" height="220%"
+    <filter id="hsk-liquid-glass-filter-v13"
+            x="-18%" y="-38%" width="136%" height="176%"
             filterUnits="objectBoundingBox"
             primitiveUnits="userSpaceOnUse"
             color-interpolation-filters="sRGB">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="0.72"
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.34"
                       edgeMode="duplicate" result="lgBlurred"/>
-      <feImage id="hsk-liquid-glass-map-v12"
+      <feImage id="hsk-liquid-glass-map-v13"
                x="0" y="0" width="1" height="1"
                preserveAspectRatio="none" result="lgMap"/>
 
-      <!-- The map is a continuous lens: center = gentle bend, edge = strong bend. -->
-      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="82"
+      <!-- Physical RGB passes. The map is normalized so the strongest
+           bending is confined to the rounded bezel; the body has only a
+           gentle residual lens bend. -->
+      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="48"
                          xChannelSelector="R" yChannelSelector="G"
                          result="lgRWarp"/>
       <feColorMatrix in="lgRWarp"
                      values="1 0 0 0 0
                              0 0 0 0 0
                              0 0 0 0 0
-                             0 0 0 1 0"
-                     result="lgR"/>
-      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="86"
+                             0 0 0 1 0" result="lgR"/>
+
+      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="52"
                          xChannelSelector="R" yChannelSelector="G"
                          result="lgGWarp"/>
       <feColorMatrix in="lgGWarp"
                      values="0 0 0 0 0
                              0 1 0 0 0
                              0 0 0 0 0
-                             0 0 0 1 0"
-                     result="lgG"/>
-      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="90"
+                             0 0 0 1 0" result="lgG"/>
+
+      <feDisplacementMap in="lgBlurred" in2="lgMap" scale="56"
                          xChannelSelector="R" yChannelSelector="G"
                          result="lgBWarp"/>
       <feColorMatrix in="lgBWarp"
                      values="0 0 0 0 0
                              0 0 0 0 0
-                             0 0 0 0 0
                              0 0 1 0 0
-                             0 0 0 1 0"
-                     result="lgB"/>
+                             0 0 0 1 0" result="lgB"/>
+
       <feBlend in="lgR" in2="lgG" mode="screen" result="lgRG"/>
       <feBlend in="lgRG" in2="lgB" mode="screen" result="lgRGB"/>
-      <feColorMatrix in="lgRGB" type="saturate" values="1.06" result="lgSaturated"/>
-      <feComponentTransfer in="lgSaturated" result="lgBright">
-        <feFuncR type="linear" slope="1.012"/>
-        <feFuncG type="linear" slope="1.012"/>
-        <feFuncB type="linear" slope="1.012"/>
-      </feComponentTransfer>
-      <feImage id="hsk-liquid-glass-spec-v12"
+      <feColorMatrix in="lgRGB" type="saturate" values="1.03" result="lgSaturated"/>
+
+      <feImage id="hsk-liquid-glass-spec-v13"
                x="0" y="0" width="1" height="1"
                preserveAspectRatio="none" result="lgSpec"/>
-      <feBlend in="lgBright" in2="lgSpec" mode="screen" result="lgFinal"/>
+      <feBlend in="lgSaturated" in2="lgSpec" mode="screen" result="lgFinal"/>
     </filter>
   </defs>
 </svg>
 
-<script id="hsk-liquid-glass-navbar-v12-js">
+<script id="hsk-liquid-glass-navbar-v13-js">
 (function(){
   'use strict';
 
@@ -7355,40 +7352,27 @@ body.dark .mainNav .navItem.active{
   }
 
   function makeSurface(cx,cy,halfW,halfH,r,depth){
-    function roundedDistance(px,py){
-      var adx=Math.abs(px-cx),ady=Math.abs(py-cy);
-      var qx=Math.max(adx-(halfW-r),0);
-      var qy=Math.max(ady-(halfH-r),0);
-      var outside=Math.sqrt(qx*qx+qy*qy)-r;
-      var inside=Math.min(halfW-adx,halfH-ady);
-      return outside>0?outside:inside;
+    function sdRoundedRect(px,py){
+      var qx=Math.abs(px-cx)-(halfW-r);
+      var qy=Math.abs(py-cy)-(halfH-r);
+      var outside=Math.hypot(Math.max(qx,0),Math.max(qy,0));
+      var inside=Math.min(Math.max(qx,qy),0);
+      return outside+inside-r;
     }
-    function normal(px,py){
-      var e=.7;
-      var u=Math.max(-1,Math.min(1,(px-cx)/halfW));
-      var v=Math.max(-1,Math.min(1,(py-cy)/halfH));
-      var rr=Math.sqrt(u*u+v*v)||1;
-      var edge=Math.max(0,Math.min(1,rr));
-      /* Smooth radial barrel profile: small in the centre, strong at the rim. */
-      var bend=Math.pow(edge,1.55);
-      var gx=(u/halfW)*bend;
-      var gy=(v/halfH)*bend;
-      /* Rounded corners receive additional curvature. */
-      var rd=roundedDistance(px,py);
-      var edgeBoost=rd>0?Math.min(1,rd/Math.max(1,r))*0.34:0;
-      gx*=1+edgeBoost; gy*=1+edgeBoost;
-      var gl=Math.sqrt(gx*gx+gy*gy);
-      if(gl>depth){var s=depth/gl;gx*=s;gy*=s}
-      var len=Math.sqrt(gx*gx+gy*gy+1);
-      return {nx:-gx/len,ny:-gy/len,nz:1/len,edge:edge};
+    function gradient(px,py){
+      var e=.8;
+      var gx=sdRoundedRect(px+e,py)-sdRoundedRect(px-e,py);
+      var gy=sdRoundedRect(px,py+e)-sdRoundedRect(px,py-e);
+      var gl=Math.hypot(gx,gy)||1;
+      return {x:gx/gl,y:gy/gl};
     }
-    return {normal:normal};
+    return {sd:sdRoundedRect,gradient:gradient};
   }
   function buildMaps(w,h,r){
     var mobile=window.matchMedia&&window.matchMedia('(max-width:900px) and (pointer:coarse)').matches;
-    var dpr=mobile?.38:.52;
-    var specDpr=mobile?.62:.78;
-    var refraction=82,thickness=16.72,padding=Math.max(8,Math.ceil(refraction));
+    var dpr=mobile?.42:.58;
+    var specDpr=mobile?.68:.82;
+    var refraction=56,thickness=16.72,padding=Math.max(8,Math.ceil(refraction));
     var token=++buildToken;
 
     var mw=Math.max(1,Math.round(w*dpr));
@@ -7401,40 +7385,74 @@ body.dark .mainNav .navItem.active{
     var ctx=c.getContext('2d');
     if(!ctx)return;
     var img=ctx.createImageData(tw,th),data=img.data;
+
     var cx=mp+mw/2,cy=mp+mh/2;
+    var halfW=mw/2,halfH=mh/2;
     var rr=Math.min(Math.min(mw,mh)/2,r*dpr);
-    var depth=Math.min(mw,mh)/2*1.72;
-    var surf=makeSurface(cx,cy,mw/2,mh/2,rr,depth);
-    var eta=1/1.5,RIM=1.75;
+    var surf=makeSurface(cx,cy,halfW,halfH,rr,1);
+    var IOR=1.50;
+    var bevelPx=Math.max(12,Math.min(24,Math.min(w,h)*.18));
+    var bevel=bevelPx*dpr;
+    var maxMag=0;
+    var dxs=new Float32Array(tw*th),dys=new Float32Array(tw*th);
 
     for(var y=0;y<th;y++){
       for(var x=0;x<tw;x++){
-        var i=(y*tw+x)*4,px=x+.5,py=y+.5;
-        var u=(px-cx)/(mw/2),v=(py-cy)/(mh/2);
-        var radial=Math.sqrt(u*u+v*v);
-        /* Outside the capsule, keep the map neutral. Inside it, preserve
-           a continuous gradient: gentle displacement through the centre,
-           accelerating toward the rounded rim. */
-        var inside=Math.max(0,Math.min(1,1-Math.max(0,radial-0.72)/0.28));
-        if(inside<=0){
-          data[i]=128;data[i+1]=128;data[i+2]=128;data[i+3]=255;
-          continue;
+        var px=x+.5,py=y+.5;
+        var d=surf.sd(px,py);
+        if(d>0)continue;
+
+        var edgeDist=-d;
+        var nxg=surf.gradient(px,py);
+        var nx=nxg.x,ny=nxg.y;
+
+        var dx=0,dy=0;
+
+        /* Strong physical bezel: zero at the outer rim, strongest inside
+           the curved band, then fades smoothly into the flat body. */
+        if(edgeDist<bevel){
+          var t=Math.max(.02,Math.min(1,edgeDist/bevel));
+          var u=1-t;
+          var u4=u*u*u*u;
+          var denom=Math.pow(Math.max(.0001,1-u4),.75);
+          var slope=(u*u*u)/denom;
+          var theta1=Math.atan(slope);
+          var sinT=Math.sin(theta1);
+          var sinT2=Math.min(1,Math.max(-1,sinT/IOR));
+          var theta2=Math.asin(sinT2);
+          var magnitude=Math.tan(theta1-theta2)*bevelPx;
+
+          var innerFade=t;
+          innerFade=innerFade*innerFade*(3-2*innerFade);
+          var outerFade=Math.max(0,Math.min(1,edgeDist/2.0));
+          outerFade=outerFade*outerFade*(3-2*outerFade);
+          magnitude*=innerFade*outerFade;
+
+          dx=-nx*magnitude;
+          dy=-ny*magnitude;
+        }else{
+          /* Gentle interior lens: not flat, but much weaker than the rim. */
+          var ux=(px-cx)/halfW,uy=(py-cy)/halfH;
+          var radial=Math.min(1,Math.hypot(ux,uy));
+          var centerBend=3.2*Math.pow(radial,2.15);
+          dx=-ux*centerBend;
+          dy=-uy*centerBend;
         }
-        var n=surf.normal(px,py);
-        var dot=-n.nz;
-        var k=1-eta*eta*(1-dot*dot);
-        var fx=0,fy=0;
-        if(k>=0){
-          var q=eta*dot+Math.sqrt(k);
-          fx=-q*n.nx*RIM;
-          fy=-q*n.ny*RIM;
-        }
-        var gain=.30+.70*Math.pow(Math.min(1,radial),1.18);
-        fx*=gain;fy*=gain;
-        data[i]=Math.max(1,Math.min(255,Math.round(128+fx*127)));
-        data[i+1]=Math.max(1,Math.min(255,Math.round(128+fy*127)));
-        data[i+2]=128;data[i+3]=255;
+
+        var idx=y*tw+x;
+        dxs[idx]=dx;dys[idx]=dy;
+        var mag=Math.hypot(dx,dy);
+        if(mag>maxMag)maxMag=mag;
       }
+    }
+
+    var norm=maxMag>0?1/maxMag:1;
+    for(var j=0;j<tw*th;j++){
+      var o=j*4;
+      data[o]=Math.max(1,Math.min(255,Math.round(128+dxs[j]*norm*127)));
+      data[o+1]=Math.max(1,Math.min(255,Math.round(128+dys[j]*norm*127)));
+      data[o+2]=128;
+      data[o+3]=255;
     }
     ctx.putImageData(img,0,0);
 
@@ -7446,7 +7464,7 @@ body.dark .mainNav .navItem.active{
     if(!sctx)return;
     var simg=sctx.createImageData(sw,sh),sd=simg.data;
     var sr=Math.min(Math.min(sw,sh)/2,r*specDpr);
-    var ss=makeSurface(sw/2,sh/2,sw/2,sh/2,sr,0);
+    var ss=makeSurface(sw/2,sh/2,sw/2,sh/2,sr,1);
     var lineW=Math.min(3.2*specDpr,Math.max(2,sr*.64));
 
     for(var sy=0;sy<sh;sy++){
@@ -7458,8 +7476,8 @@ body.dark .mainNav .navItem.active{
         var a=Math.pow(gloss,1.95)*.10;
         if(d<lineW){
           var ep=.75;
-          var gx=(ss.sdf(pX+ep,pY)-ss.sdf(pX-ep,pY))/(2*ep);
-          var gy=(ss.sdf(pX,pY+ep)-ss.sdf(pX,pY-ep))/(2*ep);
+          var gx=(ss.sd(pX+ep,pY)-ss.sd(pX-ep,pY))/(2*ep);
+          var gy=(ss.sd(pX,pY+ep)-ss.sd(pX,pY-ep))/(2*ep);
           var gl=Math.sqrt(gx*gx+gy*gy)||1;
           var facing=gy/gl,t=1-d/lineW;
           var primary=facing>0?Math.pow(facing,3):0;
@@ -7496,12 +7514,12 @@ body.dark .mainNav .navItem.active{
 
     /* Critical: generate a fresh filter id and attach the URL only after
        feImage has its final map. This is the part v9 did too early. */
-    var freshId='hsk-liquid-glass-filter-v12-'+token;
+    var freshId='hsk-liquid-glass-filter-v13-'+token;
     filterEl.setAttribute('id',freshId);
     nav.style.webkitBackdropFilter='url("#'+freshId+'")';
     nav.style.backdropFilter='url("#'+freshId+'")';
 
-    nav.dataset.liquidGlass='continuous-rgb-lens-bar-v12';
+    nav.dataset.liquidGlass='continuous-rgb-lens-bar-v13';
     nav.dataset.liquidGlassReady='true';
   }
 
@@ -7519,10 +7537,10 @@ body.dark .mainNav .navItem.active{
 
   function init(){
     nav=document.querySelector('.mainNav');
-    mapEl=document.getElementById('hsk-liquid-glass-map-v12');
-    specEl=document.getElementById('hsk-liquid-glass-spec-v12');
-    dispEl=document.getElementById('hsk-liquid-glass-disp-v12');
-    filterEl=document.getElementById('hsk-liquid-glass-filter-v12');
+    mapEl=document.getElementById('hsk-liquid-glass-map-v13');
+    specEl=document.getElementById('hsk-liquid-glass-spec-v13');
+    dispEl=document.getElementById('hsk-liquid-glass-disp-v13');
+    filterEl=document.getElementById('hsk-liquid-glass-filter-v13');
     if(!nav||!mapEl||!specEl||!dispEl||!filterEl)return;
     scheduleBuild();
     if(window.ResizeObserver){
