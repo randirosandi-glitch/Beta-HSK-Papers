@@ -4436,16 +4436,16 @@ function grade(push=true){
   route={...route,screen:'exercise'};
   loadCurrentSectionState();
   resultState={score,total:currentQuestions.length,answered,checkedAt:Date.now()};
-  const preserveScrollY=window.scrollY||window.pageYOffset||0;
   renderExercise();
   setScreen('exercise',false);
-  // setScreen() has a legacy scroll-to-top hook. Assessment must not move the user.
-  // Restore the exact pre-check position after every pending navigation frame has run.
+  // After checking the section, bring the assessment card into view.
+  // Keep the sticky top bar clear so the score is immediately visible.
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
-      requestAnimationFrame(()=>{
-        window.scrollTo({top:preserveScrollY,left:0,behavior:'auto'});
-      });
+      const assessment=document.querySelector('#exercise .finishCard.checked');
+      if(!assessment)return;
+      const top=assessment.getBoundingClientRect().top+window.scrollY-78;
+      window.scrollTo({top:Math.max(0,top),left:0,behavior:'auto'});
     });
   });
 }
