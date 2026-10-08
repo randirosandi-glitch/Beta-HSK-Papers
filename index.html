@@ -3204,6 +3204,9 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 #exercise .hsk5PaperPassage{margin:0 0 8px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;}
 #exercise .hsk5PaperPassageText{font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:18px!important;line-height:1.9!important;color:var(--text)!important;white-space:pre-wrap!important;}
 #exercise .hsk5PaperQuestion{margin:0!important;padding:7px 0 10px!important;border-bottom:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;}
+/* Scroll performance: keep long Reading papers cheap to paint without changing visual layout. */
+#exercise .hsk5PaperQuestion{content-visibility:auto;contain:layout paint style;contain-intrinsic-size:0 108px;}
+
 #exercise .hsk5PaperQText{margin:0 0 5px!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:16px!important;line-height:1.65!important;font-weight:650!important;color:var(--text)!important;white-space:pre-wrap!important;}
 #exercise .hsk5PaperQText .paperQNo{font-family:inherit!important;font-weight:800!important;}
 #exercise .hsk5PaperOptions{display:flex!important;flex-wrap:nowrap!important;align-items:flex-start!important;gap:2px 20px!important;}
