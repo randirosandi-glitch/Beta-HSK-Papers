@@ -7486,6 +7486,48 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   .topin{padding-left:20px!important;padding-right:20px!important;}
 }
 </style>
+
+<!-- HSK Papers v40 — use compact rail throughout tablet landscape; viewport-safe top geometry -->
+<style id="hsk-v40-landscape-compact-rail">
+@media (min-width:600px) and (max-width:1399px) and (orientation:landscape){
+  :root{--hsk-nav-width:56px!important;}
+  .mainNav{
+    position:fixed!important;left:0!important;right:auto!important;top:0!important;bottom:0!important;
+    width:56px!important;min-width:56px!important;max-width:56px!important;height:100vh!important;height:100dvh!important;
+    margin:0!important;padding:8px 3px!important;box-sizing:border-box!important;
+    display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+    gap:6px!important;overflow-x:hidden!important;overflow-y:auto!important;
+    border:0!important;border-right:1px solid var(--line)!important;border-radius:0!important;
+    background:var(--surface)!important;background-image:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;
+  }
+  .mainNav .navItem,.mainNav .navItem:hover,.mainNav .navItem:active,.mainNav .navItem:focus,.mainNav .navItem:focus-visible,.mainNav .navItem.active,.mainNav .navItem[aria-current="page"]{
+    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    width:100%!important;min-width:0!important;min-height:50px!important;height:auto!important;max-height:none!important;
+    margin:0!important;padding:5px 0!important;flex:0 0 auto!important;gap:3px!important;border:0!important;border-radius:9px!important;
+    background:transparent!important;color:var(--muted)!important;box-shadow:none!important;transform:none!important;
+  }
+  .mainNav .navItem .ico,.mainNav .navItem.active .ico,.mainNav .navItem[aria-current="page"] .ico{
+    display:inline-flex!important;visibility:visible!important;opacity:1!important;width:20px!important;height:20px!important;
+    min-width:20px!important;min-height:20px!important;flex:0 0 20px!important;color:currentColor!important;background:transparent!important;box-shadow:none!important;
+  }
+  .mainNav .navItem .navLabel,.mainNav .navItem.active .navLabel,.mainNav .navItem[aria-current="page"] .navLabel{
+    display:block!important;visibility:visible!important;opacity:1!important;position:static!important;width:100%!important;max-width:100%!important;height:auto!important;
+    overflow:visible!important;text-overflow:clip!important;white-space:normal!important;text-align:center!important;
+    color:currentColor!important;font-size:7.5px!important;line-height:1.1!important;font-weight:500!important;letter-spacing:-.15px!important;
+  }
+  .mainNav .navItem.active,.mainNav .navItem[aria-current="page"]{background:color-mix(in srgb,var(--blue) 12%,var(--surface))!important;color:var(--blue)!important;font-weight:700!important;}
+  .mainNav .navItem::before,.mainNav .navItem::after{content:none!important;display:none!important;}
+  main,.topin,.context,.appFooter{box-sizing:border-box!important;width:calc(100% - 56px)!important;max-width:none!important;margin-left:56px!important;margin-right:0!important;}
+  main{padding:20px 18px 76px!important;}
+  .topin{padding:10px 18px!important;}
+  .context{padding-left:18px!important;padding-right:18px!important;}
+}
+@media (min-width:600px) and (max-width:1399px) and (orientation:landscape){
+  /* Do not inherit the desktop content offset on the compact tablet rail. */
+  .top{min-width:0!important;}
+  .topin,.context{overflow-x:clip!important;}
+}
+</style>
 </body>
 </html>
 
