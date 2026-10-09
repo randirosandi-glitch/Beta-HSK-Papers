@@ -4529,9 +4529,8 @@ function applyHskListeningPartBounds(){
       const finish=Number(audio.dataset.partEnd);
       if(Number.isFinite(finish)&&audio.currentTime>=finish){audio.pause();audio.currentTime=finish;}
     });
-    audio.addEventListener('loadedmetadata',()=>{
-      if(audio.currentTime<bounds.start)audio.currentTime=bounds.start;
-    },{once:true});
+    const setPartStart=()=>{if(audio.currentTime<bounds.start)audio.currentTime=bounds.start;};
+    if(audio.readyState>=1)setPartStart();else audio.addEventListener('loadedmetadata',setPartStart,{once:true});
   });
 }
 function renderListeningAudioPlayer(){
