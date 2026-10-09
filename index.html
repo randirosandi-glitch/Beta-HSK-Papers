@@ -8106,23 +8106,32 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   }
 }
 </style>
-<script id="hsk-h51001-audio-scroll-float-v9">
+<script id="hsk-h51001-audio-scroll-float-v10">
 (function(){
   'use strict';
-  if(window.__hskAudioScrollFloatV9)return;
-  window.__hskAudioScrollFloatV9=true;
+  if(window.__hskAudioScrollFloatV10)return;
+  window.__hskAudioScrollFloatV10=true;
 
   let activePanel=null, placeholder=null, home=null, observer=null, mutationObserver=null;
-  let scheduled=false, floatingState=false, panelOuterHeight=0, floatingScreenTop=null;
+  let scheduled=false, floatingState=false, panelOuterHeight=0;
+  let floatBottomGap=14, floatHeight=64;
 
   function findPanel(){
     return document.querySelector('#exercise .listeningAudioPanel') ||
-      document.querySelector('body>.listeningAudioPanel[data-float-bound-v9="1"]');
+      document.querySelector('body>.listeningAudioPanel[data-float-bound-v10="1"]');
   }
 
-  function viewportOffsetTop(){
+  function viewportBox(){
     const vv=window.visualViewport;
-    return vv && Number.isFinite(vv.offsetTop) ? vv.offsetTop : 0;
+    if(vv){
+      return {
+        top:vv.offsetTop || 0,
+        height:vv.height || window.innerHeight,
+        left:vv.offsetLeft || 0,
+        width:vv.width || window.innerWidth
+      };
+    }
+    return {top:0,height:window.innerHeight,left:0,width:window.innerWidth};
   }
 
   function measureNav(){
@@ -8145,16 +8154,21 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
       probe.remove();
       if(result.width>0 && result.height>0)return result;
     }
-    const width=Math.min(window.innerWidth-24,560),height=64;
-    return {left:(window.innerWidth-width)/2,top:window.innerHeight-14-height,width,height};
+    const vp=viewportBox(),width=Math.min(vp.width-24,560),height=64;
+    return {left:vp.left+(vp.width-width)/2,top:vp.top+vp.height-floatBottomGap-height,width,height};
   }
 
-  function syncFloatingViewport(){
-    if(!activePanel || !floatingState || floatingScreenTop===null)return;
-    /* Fixed elements can appear to drift when mobile browser chrome moves
-       the visual viewport. Compensate its vertical offset while keeping the
-       player's screen-space Y coordinate captured at the float transition. */
-    activePanel.style.setProperty('--hsk-audio-top',(floatingScreenTop+viewportOffsetTop())+'px');
+  function positionFloatingPlayer(){
+    if(!activePanel || !floatingState)return;
+    const vp=viewportBox();
+    const height=activePanel.getBoundingClientRect().height || floatHeight;
+    /* Anchor to the visible viewport's bottom edge, not a frozen top value.
+       Browser chrome expanding/collapsing changes visualViewport.height. */
+    const top=vp.top+vp.height-height-floatBottomGap;
+    activePanel.style.setProperty('--hsk-audio-top',top+'px');
+    activePanel.style.setProperty('--hsk-audio-left',vp.left+(vp.width-Math.min(vp.width-24,560))/2+'px');
+    activePanel.style.setProperty('--hsk-audio-width',Math.min(vp.width-24,560)+'px');
+    activePanel.style.setProperty('--hsk-audio-height',height+'px');
   }
 
   function setFloating(next){
@@ -8166,22 +8180,22 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
       panelOuterHeight=activePanel.getBoundingClientRect().height+
         (parseFloat(style.marginTop)||0)+(parseFloat(style.marginBottom)||0);
       if(!Number.isFinite(panelOuterHeight)||panelOuterHeight<=0)panelOuterHeight=64;
+      floatHeight=activePanel.getBoundingClientRect().height || 64;
 
-      floatingScreenTop=parseFloat(activePanel.style.getPropertyValue('--hsk-audio-top'));
-      if(!Number.isFinite(floatingScreenTop))floatingScreenTop=measureNav().top;
-
+      const nav=measureNav();
+      const vp=viewportBox();
+      floatBottomGap=Math.max(8,Math.round(vp.top+vp.height-(nav.top+nav.height)));
       placeholder.style.height=panelOuterHeight+'px';
       placeholder.style.margin='0';
       placeholder.style.display='block';
       document.body.appendChild(activePanel);
       floatingState=true;
-      syncFloatingViewport();
+      positionFloatingPlayer();
     }else{
       if(home && home.isConnected)home.insertBefore(activePanel,placeholder.nextSibling);
       placeholder.style.height='0px';
       placeholder.style.margin='0';
       floatingState=false;
-      floatingScreenTop=null;
     }
 
     activePanel.classList.toggle('is-floating',next);
@@ -8193,15 +8207,14 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   function update(){
     scheduled=false;
     if(!activePanel || !activePanel.isConnected || !placeholder || !placeholder.isConnected)return;
-
-    if(!floatingState){
+    if(floatingState){
+      positionFloatingPlayer();
+    }else{
       const nav=measureNav();
       activePanel.style.setProperty('--hsk-audio-left',nav.left+'px');
       activePanel.style.setProperty('--hsk-audio-top',nav.top+'px');
       activePanel.style.setProperty('--hsk-audio-width',nav.width+'px');
       activePanel.style.setProperty('--hsk-audio-height',nav.height+'px');
-    }else{
-      syncFloatingViewport();
     }
 
     const markerRect=placeholder.getBoundingClientRect();
@@ -8225,10 +8238,9 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
     if(!panel)return;
     if(panel===activePanel && placeholder && placeholder.isConnected)return;
     if(observer)observer.disconnect();
-
     activePanel=panel;
     floatingState=panel.classList.contains('is-floating');
-    panel.dataset.floatBoundV9='1';
+    panel.dataset.floatBoundV10='1';
 
     let marker=panel.previousElementSibling;
     if(!marker || !marker.classList.contains('listeningAudioSentinel')){
