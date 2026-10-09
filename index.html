@@ -7975,6 +7975,18 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   body.dark .mainNav{background:transparent!important;background-color:transparent!important;}
 }
 </style>
+<style id="portrait-navbar-clear-glass-v2">
+/* Portrait only: keep the dark-mode glass blur in both themes, with absolutely no surface tint. */
+@media (max-width:599px),(min-width:600px) and (orientation:portrait){
+  html body .mainNav{
+    background:transparent!important;
+    background-color:transparent!important;
+    background-image:none!important;
+    backdrop-filter:blur(16px) saturate(120%)!important;
+    -webkit-backdrop-filter:blur(16px) saturate(120%)!important;
+  }
+}
+</style>
 </body>
 </html>
 
