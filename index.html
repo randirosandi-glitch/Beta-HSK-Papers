@@ -3725,7 +3725,7 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
 <button class="authBack" onclick="resetAuthChoices()" type="button">← Pilih cara masuk</button>
 <div class="authFormTitle" id="authFormTitle" role="heading" aria-level="2">Buat akun baru</div>
 <label for="authUsername">Username</label>
-<input autocomplete="username" aria-describedby="authUsernameHint authError" aria-invalid="false" class="write usernameInput" id="authUsername" inputmode="text" maxlength="24" oninput="clearAuthError()" placeholder="contoh: randi" type="text"/>
+<input autocomplete="username" aria-describedby="authUsernameHint authError" aria-invalid="false" class="write usernameInput" id="authUsername" inputmode="text" maxlength="24" minlength="3" pattern="[A-Za-z0-9._-]{3,24}" required oninput="clearAuthError()" oninvalid="this.setAttribute('aria-invalid','true');document.getElementById('authError').textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf, angka, titik, garis bawah, atau tanda hubung.'" placeholder="contoh: randi" type="text"/>
 <div class="authHint" id="authUsernameHint">Username digunakan untuk menyimpan progres kamu. <b>Tidak perlu password.</b></div>
 <button class="btn primary authSubmit" id="authSubmit" type="submit">Buat akun &amp; mulai</button>
 <div class="authError" id="authError" role="alert" aria-live="assertive"></div>
