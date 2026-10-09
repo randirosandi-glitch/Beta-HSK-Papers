@@ -4567,17 +4567,64 @@ function applyHskListeningPartBounds(){
   if(fallback)applyBounds(null);
   loadHskListeningTimestampManifest().then(applyBounds);
 }
+/* Drive audio index endpoint. After deploying drive-audio-index.gs as a web app, paste its /exec URL here. */
+const HSK_LISTENING_DRIVE_INDEX_URL='';
+let __hskDriveAudioIndexPromise=null;
+function loadHskDriveAudioIndex(){
+  if(__hskDriveAudioIndexPromise)return __hskDriveAudioIndexPromise;
+  __hskDriveAudioIndexPromise=new Promise(resolve=>{
+    if(!HSK_LISTENING_DRIVE_INDEX_URL){resolve(null);return;}
+    const callback='__hskDriveAudioIndexCb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const script=document.createElement('script');
+    const timer=setTimeout(()=>{cleanup();resolve(null);},10000);
+    function cleanup(){clearTimeout(timer);try{delete window[callback];}catch(e){window[callback]=undefined;}script.remove();}
+    window[callback]=data=>{cleanup();resolve(data&&data.files?data:null);};
+    script.onerror=()=>{cleanup();resolve(null);};
+    script.src=HSK_LISTENING_DRIVE_INDEX_URL+(HSK_LISTENING_DRIVE_INDEX_URL.includes('?')?'&':'?')+'callback='+callback+'&_='+Date.now();
+    document.head.appendChild(script);
+  });
+  return __hskDriveAudioIndexPromise;
+}
+async function hydrateHskDriveAudioPlayer(panel){
+  if(!panel||panel.dataset.audioLookup==='done'||panel.dataset.audioLookup==='pending')return;
+  const code=String(panel.dataset.audioPackage||'').toUpperCase();
+  if(!/^HSK[45]\\d{3,}$/.test(code))return;
+  panel.dataset.audioLookup='pending';
+  const index=await loadHskDriveAudioIndex();
+  if(!panel.isConnected)return;
+  const item=index&&index.files&&index.files[code];
+  const area=panel.querySelector('.listeningAudioPlaceholder');
+  if(item&&item.url&&area){
+    const audio=document.createElement('audio');
+    audio.id='hskListeningAudio';audio.controls=true;audio.preload='metadata';
+    audio.style.cssText='display:block;width:100%;margin-top:10px';
+    audio.src=item.url;audio.setAttribute('aria-label','Audio Listening '+code);
+    audio.innerHTML='Browser tidak mendukung pemutar audio.';
+    area.replaceWith(audio);panel.dataset.audioLookup='done';
+  }else{
+    panel.dataset.audioLookup='done';
+    if(area&&HSK_LISTENING_DRIVE_INDEX_URL)area.textContent='Audio belum ditemukan di folder Google Drive · periksa nama file '+code+'.mp3';
+  }
+}
+function observeHskDriveAudioPlayers(){
+  const scan=root=>{
+    if(root.matches&&root.matches('.listeningAudioPanel[data-audio-package]'))hydrateHskDriveAudioPlayer(root);
+    root.querySelectorAll?.('.listeningAudioPanel[data-audio-package]').forEach(hydrateHskDriveAudioPlayer);
+  };
+  scan(document);
+  if(!window.__hskDriveAudioObserver){
+    window.__hskDriveAudioObserver=new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(node=>{if(node.nodeType===1)scan(node);})));
+    window.__hskDriveAudioObserver.observe(document.documentElement,{childList:true,subtree:true});
+  }
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observeHskDriveAudioPlayers,{once:true});
+else observeHskDriveAudioPlayers();
 function renderListeningAudioPlayer(code,count){
   const packageCode=String(code||route?.packageCode||'').toUpperCase();
-  /* Audio source map: keep MP3 files outside the app; add package IDs here as Drive uploads become ready. */
-  const HSK_LISTENING_AUDIO_SOURCES={
-    H51001:'https://drive.google.com/uc?export=download&id=1W08miajrwBEZhMpiDtPDRdiHaItS0fTR'
-  };
-  const audioUrl=HSK_LISTENING_AUDIO_SOURCES[packageCode]||'';
-  const audio=audioUrl
-    ? '<audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="'+audioUrl+'">Browser tidak mendukung pemutar audio.</audio>'
+  const knownAudio=packageCode==='H51001'
+    ? '<audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="https://drive.google.com/uc?export=download&id=1W08miajrwBEZhMpiDtPDRdiHaItS0fTR">Browser tidak mendukung pemutar audio.</audio>'
     : '<div class="listeningAudioPlaceholder" role="status">Audio belum diunggah · player siap digunakan</div>';
-  return '<section class="listeningAudioPanel" aria-label="Audio Listening" data-audio-package="'+packageCode+'"><div class="listeningAudioHeading"><strong>Audio Listening · '+packageCode+'</strong><span>'+Number(count||0)+' soal</span></div>'+audio+'</section>';
+  return '<section class="listeningAudioPanel" aria-label="Audio Listening" data-audio-package="'+packageCode+'"><div class="listeningAudioHeading"><strong>Audio Listening · '+packageCode+'</strong><span>'+Number(count||0)+' soal</span></div>'+knownAudio+'</section>';
 }
 function seekHskListeningAudio(){
   const audio=document.getElementById('hskListeningAudio');
