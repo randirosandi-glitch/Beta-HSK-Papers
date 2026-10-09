@@ -3652,6 +3652,32 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
 .authChoice:focus-visible,.authBack:focus-visible,.authSubmit:focus-visible,.authThemeToggle:focus-visible{outline:2px solid var(--blue)!important;outline-offset:3px!important;box-shadow:none!important;}
 .authForm .usernameInput:focus-visible{outline:2px solid var(--text)!important;outline-offset:3px!important;box-shadow:none!important;}
 .authForm .usernameInput[aria-invalid="true"]{border-color:var(--red)!important;}
+
+/* Final auth focus contrast: neutral in both themes; reserve red for invalid input. */
+body:not(.dark) .authForm .usernameInput:focus:not([aria-invalid="true"]),
+body:not(.dark) .authForm .usernameInput:focus-visible:not([aria-invalid="true"]),
+body:not(.dark) .usernameBox .usernameInput:focus:not([aria-invalid="true"]),
+body:not(.dark) .usernameBox .usernameInput:focus-visible:not([aria-invalid="true"]){
+  border-color:#17181b!important;
+  outline:2px solid #17181b!important;
+  outline-offset:3px!important;
+}
+body.dark .authForm .usernameInput:focus:not([aria-invalid="true"]),
+body.dark .authForm .usernameInput:focus-visible:not([aria-invalid="true"]),
+body.dark .usernameBox .usernameInput:focus:not([aria-invalid="true"]),
+body.dark .usernameBox .usernameInput:focus-visible:not([aria-invalid="true"]){
+  border-color:#f2f4f8!important;
+  outline:2px solid #f2f4f8!important;
+  outline-offset:3px!important;
+}
+body:not(.dark) .authForm .usernameInput[aria-invalid="true"]:focus,
+body:not(.dark) .authForm .usernameInput[aria-invalid="true"]:focus-visible,
+body.dark .authForm .usernameInput[aria-invalid="true"]:focus,
+body.dark .authForm .usernameInput[aria-invalid="true"]:focus-visible{
+  border-color:var(--red)!important;
+  outline:2px solid var(--red)!important;
+  outline-offset:3px!important;
+}
 </style>
 
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
