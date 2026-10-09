@@ -7969,10 +7969,10 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
 </style>
 
 <style id="portrait-navbar-transparency-v1">
-/* Portrait floating navbar: use the same dark translucent surface in both themes. */
+/* Portrait floating navbar: no color tint in either theme; preserve existing blur. */
 @media (orientation:portrait) {
-  .mainNav{background:rgba(31,34,44,.30)!important;}
-  body.dark .mainNav{background:rgba(31,34,44,.30)!important;}
+  .mainNav{background:transparent!important;background-color:transparent!important;}
+  body.dark .mainNav{background:transparent!important;background-color:transparent!important;}
 }
 </style>
 </body>
