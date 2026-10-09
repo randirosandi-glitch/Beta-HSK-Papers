@@ -6932,6 +6932,14 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     $('partsCrumb').textContent=m.label;
     /* Split Hanzi and Latin so only the Chinese title receives Ma Shan Zheng. */
     $('partsTitle').innerHTML='<span class="partsTitleHanzi">'+escFinal(m.zh)+'</span><span aria-hidden="true"> · </span>'+escFinal(m.label);
+    if(String(route.packageCode||'').toUpperCase()==='H51001'&&route.type==='listening'){
+      const all=d.flatMap(s=>Array.isArray(s.questions)?s.questions:[]);
+      let answered=0;
+      all.forEach(q=>{const id=String(q[0]);const idx=Number(id)<=20?0:1;const state=getSectionState(route.packageCode,route.type,idx);if(state?.answers&&Object.prototype.hasOwnProperty.call(state.answers,id)&&String(state.answers[id]).trim()!=='')answered++;});
+      const st={answered,total:all.length,pct:all.length?Math.round(answered/all.length*100):0};
+      $('sections').innerHTML='<button class="tile sectionPartTile" onclick="startSection(0)"><div class="sectionPartTitle">全部听力</div><small>Soal 1–45 · '+all.length+' soal</small>'+progressHTML(st,'Progres Listening')+'<p class="sectionCombinedNote">Bagian 1 dan 2 berada dalam satu alur soal.</p></button>';
+      return;
+    }
     const available=d.map((s,i)=>({s,i})).filter(x=>Array.isArray(x.s.questions)&&x.s.questions.length>0);
     const arr=available.map(({s,i})=>{
       const st=sectionStats(route.packageCode,route.type,i);
