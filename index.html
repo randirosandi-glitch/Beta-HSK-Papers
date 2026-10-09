@@ -104,7 +104,7 @@ html.auth-page,body.auth-page{overflow-x:hidden!important;overscroll-behavior-x:
 .hskAudioBoundaryLegend{display:flex;justify-content:space-between;gap:12px;margin-top:12px;font-size:12px;color:var(--muted,#687386)}.hskAudioBoundaryTrack{position:relative;height:5px;border-radius:99px;background:#d7dfe8;margin:8px 2px 4px}.hskAudioBoundaryMarker{position:absolute;top:-4px;height:13px;width:3px;border-radius:3px;background:#e86d5b;transform:translateX(-50%)}
 .listeningAudioPanel{margin:14px 0;padding:14px;border:1px solid var(--line,#d8dce2);border-radius:14px;background:var(--surface,#fff);color:var(--text,#202124)}
 /* H51001: keep the full player in its paper position; float only a compact control after it scrolls off-screen. */
-.listeningAudioSentinel{display:block;width:100%;height:1px;pointer-events:none}
+.listeningAudioSentinel{display:block;width:100%;height:0;min-height:0;margin:0;padding:0;pointer-events:none}
 #exercise .listeningAudioPanel{transition:background .18s ease,border-color .18s ease}
 body .listeningAudioPanel.is-floating{
  position:fixed!important;left:var(--hsk-audio-left,12px)!important;top:var(--hsk-audio-top,auto)!important;
@@ -8106,27 +8106,25 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   }
 }
 </style>
-<script id="hsk-h51001-audio-scroll-float-v6">
+<script id="hsk-h51001-audio-scroll-float-v7">
 (function(){
   'use strict';
-  if(window.__hskAudioScrollFloatV6)return;
-  window.__hskAudioScrollFloatV6=true;
+  if(window.__hskAudioScrollFloatV7)return;
+  window.__hskAudioScrollFloatV7=true;
 
-  let activePanel=null, sentinel=null, home=null, observer=null, mutationObserver=null;
-  let scheduled=false;
+  let activePanel=null, placeholder=null, home=null, observer=null, mutationObserver=null;
+  let scheduled=false, floatingState=false, panelOuterHeight=0;
 
   function findPanel(){
     return document.querySelector('#exercise .listeningAudioPanel') ||
-      document.querySelector('body>.listeningAudioPanel[data-float-bound-v6="1"]');
+      document.querySelector('body>.listeningAudioPanel[data-float-bound-v7="1"]');
   }
 
   function measureNav(){
     const nav=document.querySelector('.mainNav');
     if(nav){
       const rect=nav.getBoundingClientRect();
-      if(rect.width>0 && rect.height>0) return rect;
-      /* On the question sheet the navbar can be display:none. Measure a
-         temporary hidden copy so the player can occupy the navbar's slot. */
+      if(rect.width>0 && rect.height>0) return {left:rect.left,top:rect.top,width:rect.width,height:rect.height};
       const probe=nav.cloneNode(true);
       probe.removeAttribute('id');
       probe.setAttribute('aria-hidden','true');
@@ -8136,39 +8134,53 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
       probe.style.setProperty('pointer-events','none','important');
       probe.style.setProperty('transition','none','important');
       document.body.appendChild(probe);
-      const measured=probe.getBoundingClientRect();
-      const result={left:measured.left,top:measured.top,width:measured.width,height:measured.height};
+      const rect2=probe.getBoundingClientRect();
+      const result={left:rect2.left,top:rect2.top,width:rect2.width,height:rect2.height};
       probe.remove();
       if(result.width>0 && result.height>0) return result;
     }
-    /* Safe fallback for layouts where no measurable navbar exists. */
-    const width=Math.min(window.innerWidth-24,560);
-    const height=64;
+    const width=Math.min(window.innerWidth-24,560),height=64;
     return {left:(window.innerWidth-width)/2,top:window.innerHeight-14-height,width,height};
+  }
+
+  function setFloating(next){
+    if(!activePanel || !placeholder || !placeholder.isConnected)return;
+    if(next===floatingState)return;
+    floatingState=next;
+    if(next){
+      const style=getComputedStyle(activePanel);
+      panelOuterHeight=activePanel.getBoundingClientRect().height+
+        (parseFloat(style.marginTop)||0)+(parseFloat(style.marginBottom)||0);
+      /* Preserve the player's original space so the scroll trigger cannot
+         jump when the actual player is moved to <body>. */
+      placeholder.style.height=panelOuterHeight+'px';
+      placeholder.style.margin='0';
+      placeholder.style.display='block';
+      document.body.appendChild(activePanel);
+    }else{
+      if(home && home.isConnected) home.insertBefore(activePanel,placeholder.nextSibling);
+      placeholder.style.height='0px';
+      placeholder.style.margin='0';
+    }
+    activePanel.classList.toggle('is-floating',next);
+    const exercise=document.getElementById('exercise');
+    if(exercise) exercise.classList.toggle('audio-player-floating',next);
+    document.body.classList.toggle('audio-player-floating',next);
   }
 
   function update(){
     scheduled=false;
-    if(!activePanel || !activePanel.isConnected || !sentinel || !sentinel.isConnected) return;
+    if(!activePanel || !activePanel.isConnected || !placeholder || !placeholder.isConnected)return;
     const nav=measureNav();
     activePanel.style.setProperty('--hsk-audio-left',nav.left+'px');
     activePanel.style.setProperty('--hsk-audio-top',nav.top+'px');
     activePanel.style.setProperty('--hsk-audio-width',nav.width+'px');
     activePanel.style.setProperty('--hsk-audio-height',nav.height+'px');
 
-    /* Sentinel sits after the full-size player: only float once the entire
-       normal player has scrolled above the viewport. */
-    const sr=sentinel.getBoundingClientRect();
-    const floating=sr.top<0;
-    if(floating){
-      if(activePanel.parentNode!==document.body) document.body.appendChild(activePanel);
-    }else if(activePanel.parentNode!==home && home && home.isConnected){
-      home.insertBefore(activePanel,sentinel);
-    }
-    activePanel.classList.toggle('is-floating',floating);
-    const exercise=document.getElementById('exercise');
-    if(exercise) exercise.classList.toggle('audio-player-floating',floating);
-    document.body.classList.toggle('audio-player-floating',floating);
+    /* The placeholder represents the player's full original footprint.
+       Use its bottom edge, not a marker that shifts when the player moves. */
+    const r=placeholder.getBoundingClientRect();
+    setFloating(r.bottom<0);
   }
 
   function scheduleUpdate(){
@@ -8180,25 +8192,29 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   function bind(){
     const panel=findPanel();
     if(!panel)return;
-    if(panel===activePanel && sentinel && sentinel.isConnected)return;
+    if(panel===activePanel && placeholder && placeholder.isConnected)return;
 
-    if(observer) observer.disconnect();
+    if(observer)observer.disconnect();
     activePanel=panel;
-    panel.dataset.floatBoundV6='1';
+    floatingState=false;
+    panel.dataset.floatBoundV7='1';
 
-    let next=panel.nextElementSibling;
-    if(!next || !next.classList.contains('listeningAudioSentinel')){
-      next=document.createElement('span');
-      next.className='listeningAudioSentinel';
-      next.setAttribute('aria-hidden','true');
-      panel.parentNode.insertBefore(next,panel.nextSibling);
+    let marker=panel.previousElementSibling;
+    if(!marker || !marker.classList.contains('listeningAudioSentinel')){
+      marker=document.createElement('span');
+      marker.className='listeningAudioSentinel';
+      marker.setAttribute('aria-hidden','true');
+      marker.style.height='0px';
+      marker.style.margin='0';
+      panel.parentNode.insertBefore(marker,panel);
     }
-    sentinel=next;
-    home=sentinel.parentNode;
+    placeholder=marker;
+    home=panel.parentNode;
+    placeholder.style.height='0px';
 
     if('IntersectionObserver' in window){
       observer=new IntersectionObserver(scheduleUpdate,{threshold:[0]});
-      observer.observe(sentinel);
+      observer.observe(placeholder);
     }
     scheduleUpdate();
   }
@@ -8216,7 +8232,7 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
     }
   }
 
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
 })();
 </script>
