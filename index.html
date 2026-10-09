@@ -4615,34 +4615,34 @@ async function hydrateHskDriveAudioPlayer(panel){
     }
   }
   const area=panel.querySelector('.listeningAudioPlaceholder');
-  if(item&&item.url){
-    let audio=panel.querySelector('audio#hskListeningAudio');
-    if(!audio&&area){
-      audio=document.createElement('audio');
-      audio.id='hskListeningAudio';audio.controls=true;
-      audio.style.cssText='display:block;width:100%;margin-top:10px';
-      audio.innerHTML='Browser tidak mendukung pemutar audio.';
-      area.replaceWith(audio);
-    }
-    if(audio){
-      audio.preload='auto';
-      audio.src=item.url;
-      audio.setAttribute('aria-label','Audio Listening '+code);
-      audio.addEventListener('loadedmetadata',()=>{panel.dataset.audioStatus='ready';},{once:true});
-      audio.addEventListener('error',()=>{panel.dataset.audioStatus='error';},{once:true});
-      audio.load();
-      panel.dataset.audioLookup='done';
-      return;
-    }
+  if(item&&item.id){
+    const frame=document.createElement('iframe');
+    frame.title='Audio Listening '+code;
+    frame.allow='autoplay';
+    frame.loading='lazy';
+    frame.referrerPolicy='strict-origin-when-cross-origin';
+    frame.style.cssText='display:block;width:100%;height:82px;border:0;margin-top:10px;border-radius:8px';
+    frame.src='https://drive.google.com/file/d/'+encodeURIComponent(item.id)+'/preview';
+    frame.addEventListener('load',()=>{panel.dataset.audioStatus='loaded';},{once:true});
+    if(area)area.replaceWith(frame);
+    else panel.appendChild(frame);
+    panel.dataset.audioLookup='done';
+    return;
   }
   const fallbackUrl=HSK_DRIVE_AUDIO_FALLBACKS[code];
   if(fallbackUrl&&area){
-    const audio=document.createElement('audio');
-    audio.id='hskListeningAudio';audio.controls=true;audio.preload='auto';
-    audio.style.cssText='display:block;width:100%;margin-top:10px';
-    audio.src=fallbackUrl;audio.setAttribute('aria-label','Audio Listening '+code);
-    audio.addEventListener('error',()=>{panel.dataset.audioStatus='error';},{once:true});
-    area.replaceWith(audio);audio.load();panel.dataset.audioLookup='done';return;
+    const fileId=(fallbackUrl.match(/[?&]id=([^&]+)/)||[])[1];
+    if(fileId){
+      const frame=document.createElement('iframe');
+      frame.id='hskListeningAudio';
+      frame.title='Audio Listening '+code;
+      frame.allow='autoplay';
+      frame.loading='lazy';
+      frame.referrerPolicy='strict-origin-when-cross-origin';
+      frame.style.cssText='display:block;width:100%;height:82px;border:0;margin-top:10px;border-radius:8px';
+      frame.src='https://drive.google.com/file/d/'+encodeURIComponent(fileId)+'/preview';
+      area.replaceWith(frame);panel.dataset.audioLookup='done';return;
+    }
   }
   panel.dataset.audioLookup='done';
   if(area&&HSK_LISTENING_DRIVE_INDEX_URL)area.textContent='Audio belum ditemukan di folder Google Drive · periksa nama file '+code+'.mp3';
@@ -4662,8 +4662,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 else observeHskDriveAudioPlayers();
 function renderListeningAudioPlayer(code,count){
   const packageCode=String(code||route?.packageCode||'').toUpperCase();
-  const knownAudio=HSK_DRIVE_AUDIO_FALLBACKS[packageCode]
-    ? '<audio id="hskListeningAudio" controls preload="auto" style="display:block;width:100%;margin-top:10px" src="'+HSK_DRIVE_AUDIO_FALLBACKS[packageCode]+'">Browser tidak mendukung pemutar audio.</audio>'
+  const knownUrl=HSK_DRIVE_AUDIO_FALLBACKS[packageCode];
+  const knownId=knownUrl&&((knownUrl.match(/[?&]id=([^&]+)/)||[])[1]);
+  const knownAudio=knownId
+    ? '<iframe id="hskListeningAudio" title="Audio Listening '+packageCode+'" allow="autoplay" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" style="display:block;width:100%;height:82px;border:0;margin-top:10px;border-radius:8px" src="https://drive.google.com/file/d/'+encodeURIComponent(knownId)+'/preview"></iframe>'
     : '<div class="listeningAudioPlaceholder" role="status">Audio belum diunggah · player siap digunakan</div>';
   return '<section class="listeningAudioPanel" aria-label="Audio Listening" data-audio-package="'+packageCode+'"><div class="listeningAudioHeading"><strong>Audio Listening · '+packageCode+'</strong><span>'+Number(count||0)+' soal</span></div>'+knownAudio+'</section>';
 }
