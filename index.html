@@ -4569,7 +4569,11 @@ function applyHskListeningPartBounds(){
 }
 function renderListeningAudioPlayer(code,count){
   const packageCode=String(code||route?.packageCode||'').toUpperCase();
-  const audioUrl=packageCode==='H51001'?'https://hsk-papers-audio-test.web.app/audio/H51001.mp3':'';
+  /* Audio source map: keep MP3 files outside the app; add package IDs here as Drive uploads become ready. */
+  const HSK_LISTENING_AUDIO_SOURCES={
+    H51001:'https://drive.google.com/uc?export=download&id=1W08miajrwBEZhMpiDtPDRdiHaItS0fTR'
+  };
+  const audioUrl=HSK_LISTENING_AUDIO_SOURCES[packageCode]||'';
   const audio=audioUrl
     ? '<audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="'+audioUrl+'">Browser tidak mendukung pemutar audio.</audio>'
     : '<div class="listeningAudioPlaceholder" role="status">Audio belum diunggah · player siap digunakan</div>';
