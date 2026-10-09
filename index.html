@@ -7550,6 +7550,19 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   #levelsScreen .section:first-child,#packageScreen .section:first-child,#partsScreen .section:first-child{margin-top:0!important;}
 }
 </style>
+<!-- HSK Papers v42 — active navigation uses icon color only, no active tile background -->
+<style id="hsk-v42-nav-icon-only-active">
+.mainNav .navItem,.mainNav .navItem:hover,.mainNav .navItem:active,.mainNav .navItem:focus,.mainNav .navItem:focus-visible,.mainNav .navItem.active,.mainNav .navItem[aria-current="page"]{
+  background:transparent!important;background-color:transparent!important;background-image:none!important;
+  box-shadow:none!important;border-color:transparent!important;
+}
+.mainNav .navItem.active,.mainNav .navItem[aria-current="page"]{color:var(--muted)!important;font-weight:500!important;}
+.mainNav .navItem.active .ico,.mainNav .navItem[aria-current="page"] .ico{
+  color:var(--blue)!important;fill:currentColor!important;filter:none!important;transform:none!important;
+}
+.mainNav .navItem.active .navLabel,.mainNav .navItem[aria-current="page"] .navLabel{color:var(--muted)!important;font-weight:500!important;}
+.mainNav .navItem:hover{color:var(--text)!important;}
+</style>
 </body>
 </html>
 
