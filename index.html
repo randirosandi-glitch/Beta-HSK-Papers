@@ -4568,7 +4568,7 @@ function applyHskListeningPartBounds(){
   loadHskListeningTimestampManifest().then(applyBounds);
 }
 /* Drive audio index endpoint. After deploying drive-audio-index.gs as a web app, paste its /exec URL here. */
-const HSK_LISTENING_DRIVE_INDEX_URL='';
+const HSK_LISTENING_DRIVE_INDEX_URL='https://script.google.com/macros/s/AKfycbwzuV2f58gr1J6-oL2lKsOmYmCQWov8MGTJGhPVRcxBECvpjVaW39dGdBtng0t3f3goWQ/exec';
 let __hskDriveAudioIndexPromise=null;
 function loadHskDriveAudioIndex(){
   if(__hskDriveAudioIndexPromise)return __hskDriveAudioIndexPromise;
