@@ -4429,7 +4429,7 @@ function speakTranscript(id){
   utterance.pitch=1;
   window.__hskTtsCurrentId=String(id);
   utterance.onend=()=>{if(window.__hskTtsCurrentId===String(id))window.__hskTtsCurrentId=''};
-  utterance.onerror=()=>{if(window.__hskTtsCurrentId===String(id))window.__hskTtsCurrentId='';appNotice('Pembacaan gagal','Coba gunakan browser atau mesin teks-ke-suara Mandarin yang tersedia di perangkat.')};
+  utterance.onerror=()=>{if(window.__hskTtsCurrentId===String(id))window.__hskTtsCurrentId='';appNotice('Suara Mandarin belum tersedia','Aktifkan mesin teks-ke-ucapan di perangkat, lalu unduh data suara Mandarin (Tionghoa) pada pengaturan mesin TTS. Setelah itu coba Dengarkan teks lagi.')};
   synth.speak(utterance);
 }
 function toggleTranscript(id){$('t'+id).classList.toggle('show')}
