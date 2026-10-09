@@ -8106,69 +8106,118 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   }
 }
 </style>
-<script id="hsk-h51001-audio-scroll-float-v5">
+<script id="hsk-h51001-audio-scroll-float-v6">
 (function(){
   'use strict';
-  if(window.__hskAudioScrollFloatV5)return;
-  window.__hskAudioScrollFloatV5=true;
-  let observer=null,mutationObserver=null,activePanel=null;
-  function bind(){
-    const panel=document.querySelector('#exercise .listeningAudioPanel')||document.querySelector('body>.listeningAudioPanel[data-float-bound-v5="1"]');
-    if(!panel||panel===activePanel)return;
-    activePanel=panel;
-    panel.dataset.floatBoundV5='1';
-    let sentinel=panel.nextElementSibling;
-    if(!sentinel||!sentinel.classList.contains('listeningAudioSentinel')){
-      sentinel=document.createElement('span');
-      sentinel.className='listeningAudioSentinel';
-      sentinel.setAttribute('aria-hidden','true');
-      panel.parentNode.insertBefore(sentinel,panel.nextSibling);
-    }
-    const home=sentinel.parentNode;
-    const update=()=>{
-      if(!panel.isConnected||!sentinel.isConnected)return;
-      const nav=document.querySelector('.mainNav');
-      if(nav){
-        const n=nav.getBoundingClientRect();
-        if(n.width>0&&n.height>0){
-          panel.style.setProperty('--hsk-audio-left',n.left+'px');
-          panel.style.setProperty('--hsk-audio-top',n.top+'px');
-          panel.style.setProperty('--hsk-audio-width',n.width+'px');
-          panel.style.setProperty('--hsk-audio-height',n.height+'px');
-        }
-      }
-      /* Sentinel follows the full player, so floating starts only after the
-         normal player has completely scrolled above the viewport. */
-      const r=sentinel.getBoundingClientRect();
-      const floating=r.top<0;
-      if(floating){
-        if(panel.parentNode!==document.body)document.body.appendChild(panel);
-      }else if(panel.parentNode!==home){
-        home.insertBefore(panel,sentinel);
-      }
-      panel.classList.toggle('is-floating',floating);
-      const exercise=document.getElementById('exercise');
-      if(exercise)exercise.classList.toggle('audio-player-floating',floating);
-      document.body.classList.toggle('audio-player-floating',floating);
-    };
-    if(observer)observer.disconnect();
-    observer=new IntersectionObserver(update,{threshold:[0]});
-    observer.observe(sentinel);
-    document.addEventListener('scroll',update,{capture:true,passive:true});
-    window.addEventListener('scroll',update,{passive:true});
-    window.addEventListener('resize',update,{passive:true});
-    if(window.visualViewport){
-      window.visualViewport.addEventListener('resize',update,{passive:true});
-      window.visualViewport.addEventListener('scroll',update,{passive:true});
-    }
-    update();
+  if(window.__hskAudioScrollFloatV6)return;
+  window.__hskAudioScrollFloatV6=true;
+
+  let activePanel=null, sentinel=null, home=null, observer=null, mutationObserver=null;
+  let scheduled=false;
+
+  function findPanel(){
+    return document.querySelector('#exercise .listeningAudioPanel') ||
+      document.querySelector('body>.listeningAudioPanel[data-float-bound-v6="1"]');
   }
+
+  function measureNav(){
+    const nav=document.querySelector('.mainNav');
+    if(nav){
+      const rect=nav.getBoundingClientRect();
+      if(rect.width>0 && rect.height>0) return rect;
+      /* On the question sheet the navbar can be display:none. Measure a
+         temporary hidden copy so the player can occupy the navbar's slot. */
+      const probe=nav.cloneNode(true);
+      probe.removeAttribute('id');
+      probe.setAttribute('aria-hidden','true');
+      probe.style.setProperty('display','flex','important');
+      probe.style.setProperty('visibility','hidden','important');
+      probe.style.setProperty('opacity','0','important');
+      probe.style.setProperty('pointer-events','none','important');
+      probe.style.setProperty('transition','none','important');
+      document.body.appendChild(probe);
+      const measured=probe.getBoundingClientRect();
+      const result={left:measured.left,top:measured.top,width:measured.width,height:measured.height};
+      probe.remove();
+      if(result.width>0 && result.height>0) return result;
+    }
+    /* Safe fallback for layouts where no measurable navbar exists. */
+    const width=Math.min(window.innerWidth-24,560);
+    const height=64;
+    return {left:(window.innerWidth-width)/2,top:window.innerHeight-14-height,width,height};
+  }
+
+  function update(){
+    scheduled=false;
+    if(!activePanel || !activePanel.isConnected || !sentinel || !sentinel.isConnected) return;
+    const nav=measureNav();
+    activePanel.style.setProperty('--hsk-audio-left',nav.left+'px');
+    activePanel.style.setProperty('--hsk-audio-top',nav.top+'px');
+    activePanel.style.setProperty('--hsk-audio-width',nav.width+'px');
+    activePanel.style.setProperty('--hsk-audio-height',nav.height+'px');
+
+    /* Sentinel sits after the full-size player: only float once the entire
+       normal player has scrolled above the viewport. */
+    const sr=sentinel.getBoundingClientRect();
+    const floating=sr.top<0;
+    if(floating){
+      if(activePanel.parentNode!==document.body) document.body.appendChild(activePanel);
+    }else if(activePanel.parentNode!==home && home && home.isConnected){
+      home.insertBefore(activePanel,sentinel);
+    }
+    activePanel.classList.toggle('is-floating',floating);
+    const exercise=document.getElementById('exercise');
+    if(exercise) exercise.classList.toggle('audio-player-floating',floating);
+    document.body.classList.toggle('audio-player-floating',floating);
+  }
+
+  function scheduleUpdate(){
+    if(scheduled)return;
+    scheduled=true;
+    requestAnimationFrame(update);
+  }
+
+  function bind(){
+    const panel=findPanel();
+    if(!panel)return;
+    if(panel===activePanel && sentinel && sentinel.isConnected)return;
+
+    if(observer) observer.disconnect();
+    activePanel=panel;
+    panel.dataset.floatBoundV6='1';
+
+    let next=panel.nextElementSibling;
+    if(!next || !next.classList.contains('listeningAudioSentinel')){
+      next=document.createElement('span');
+      next.className='listeningAudioSentinel';
+      next.setAttribute('aria-hidden','true');
+      panel.parentNode.insertBefore(next,panel.nextSibling);
+    }
+    sentinel=next;
+    home=sentinel.parentNode;
+
+    if('IntersectionObserver' in window){
+      observer=new IntersectionObserver(scheduleUpdate,{threshold:[0]});
+      observer.observe(sentinel);
+    }
+    scheduleUpdate();
+  }
+
   function start(){
     bind();
     mutationObserver=new MutationObserver(bind);
     mutationObserver.observe(document.body,{childList:true,subtree:true});
+    document.addEventListener('scroll',scheduleUpdate,{capture:true,passive:true});
+    window.addEventListener('scroll',scheduleUpdate,{passive:true});
+    window.addEventListener('resize',scheduleUpdate,{passive:true});
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize',scheduleUpdate,{passive:true});
+      window.visualViewport.addEventListener('scroll',scheduleUpdate,{passive:true});
+    }
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
 })();
 </script>
 </body>
