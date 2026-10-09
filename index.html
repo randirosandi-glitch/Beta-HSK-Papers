@@ -106,7 +106,7 @@ html.auth-page,body.auth-page{overflow-x:hidden!important;overscroll-behavior-x:
 /* H51001: keep the full player in its paper position; float only a compact control after it scrolls off-screen. */
 .listeningAudioSentinel{display:block;width:100%;height:1px;pointer-events:none}
 #exercise .listeningAudioPanel{transition:background .18s ease,border-color .18s ease}
-#exercise .listeningAudioPanel.is-floating{
+body .listeningAudioPanel.is-floating{
  position:fixed!important;left:var(--hsk-audio-left,12px)!important;top:var(--hsk-audio-top,auto)!important;
  right:auto!important;bottom:auto!important;transform:none!important;z-index:2150!important;
  width:var(--hsk-audio-width,calc(100% - 24px))!important;height:var(--hsk-audio-height,64px)!important;
@@ -116,7 +116,7 @@ html.auth-page,body.auth-page{overflow-x:hidden!important;overscroll-behavior-x:
  backdrop-filter:blur(22px) saturate(145%)!important;-webkit-backdrop-filter:blur(22px) saturate(145%)!important;
  box-shadow:none!important;color:var(--text,#202124)
 }
-body.dark #exercise .listeningAudioPanel.is-floating{background:rgba(32,37,47,.90)!important;border-color:rgba(170,180,205,.18)!important}
+body.dark body .listeningAudioPanel.is-floating{background:rgba(32,37,47,.90)!important;border-color:rgba(170,180,205,.18)!important}
 body.audio-player-floating .mainNav{visibility:hidden!important;pointer-events:none!important}
 #exercise .listeningAudioPanel.is-floating .listeningAudioHeading,
 #exercise .listeningAudioPanel.is-floating .hskAudioBoundaryLegend,
@@ -125,7 +125,7 @@ body.audio-player-floating .mainNav{visibility:hidden!important;pointer-events:n
 #exercise .listeningAudioPanel.is-floating audio{display:block;width:100%;height:100%;min-width:0;margin:0!important}
 #exercise.audio-player-floating{padding-bottom:calc(116px + env(safe-area-inset-bottom, 0px))!important}
 @media(max-width:599px){
- #exercise .listeningAudioPanel.is-floating{padding:5px 7px!important;border-radius:27px!important}
+ body .listeningAudioPanel.is-floating{padding:5px 7px!important;border-radius:27px!important}
 }.listeningAudioHeading{display:flex;align-items:center;justify-content:space-between;gap:10px}.listeningAudioHeading span{font-size:.8em;opacity:.72}.listeningAudioSeek{margin-top:12px}.listeningAudioSeek label{display:block;font-size:.9em;margin-bottom:6px}.listeningAudioSeekRow{display:flex;gap:8px;align-items:center}.listeningAudioSeekRow input{min-width:0;width:120px;padding:9px;border:1px solid var(--line,#d8dce2);border-radius:8px;background:transparent;color:inherit}.listeningAudioNote{font-size:.82em;line-height:1.45;opacity:.78;margin:10px 0 0}.listeningNotice strong{color:var(--text)}.question .row{align-items:center}@media(max-width:599px){.question .row .btn{flex:1 1 auto;justify-content:center;min-height:44px}.listeningNotice{font-size:11px;padding:11px 12px}}
 
 /* Removed legacy landscape offsets; geometry is centralized in hsk-v41-landscape-layout. */.mainNav .navItem{transition:color .20s ease,background .20s ease,transform .16s cubic-bezier(.2,.8,.2,1),opacity .20s ease!important;}.mainNav .navItem .ico{transition:transform .20s cubic-bezier(.2,.8,.2,1),stroke-width .20s ease!important;}.mainNav .navItem.active .ico{transform:scale(1.06)}.mainNav .navItem:active{transform:scale(.95)!important}@media (prefers-reduced-motion:no-preference){.mainNav .navItem.navJustActivated .ico{animation:navIconSettle .28s cubic-bezier(.2,.8,.2,1)}@keyframes navIconSettle{0%{transform:scale(.94)}60%{transform:scale(1.09)}100%{transform:scale(1.06)}}}/* Removed second legacy landscape offset; labels and geometry are centralized in hsk-v41-landscape-layout. */
@@ -8106,17 +8106,17 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   }
 }
 </style>
-<script id="hsk-h51001-audio-scroll-float-v3">
+<script id="hsk-h51001-audio-scroll-float-v4">
 (function(){
   'use strict';
-  if(window.__hskAudioScrollFloatV3)return;
-  window.__hskAudioScrollFloatV3=true;
-  let observer=null,mutationObserver=null,activePanel=null,activeSentinel=null;
+  if(window.__hskAudioScrollFloatV4)return;
+  window.__hskAudioScrollFloatV4=true;
+  let observer=null,mutationObserver=null,activePanel=null;
   function bind(){
-    const panel=document.querySelector('#exercise .listeningAudioPanel');
+    const panel=document.querySelector('#exercise .listeningAudioPanel')||document.querySelector('body>.listeningAudioPanel[data-float-bound-v4="1"]');
     if(!panel||panel===activePanel)return;
     activePanel=panel;
-    panel.dataset.floatBoundV3='1';
+    panel.dataset.floatBoundV4='1';
     let sentinel=panel.previousElementSibling;
     if(!sentinel||!sentinel.classList.contains('listeningAudioSentinel')){
       sentinel=document.createElement('span');
@@ -8124,11 +8124,10 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
       sentinel.setAttribute('aria-hidden','true');
       panel.parentNode.insertBefore(sentinel,panel);
     }
-    activeSentinel=sentinel;
+    const home=sentinel.parentNode;
     const update=()=>{
       if(!panel.isConnected||!sentinel.isConnected)return;
       const nav=document.querySelector('.mainNav');
-      /* Read navbar geometry BEFORE hiding it; otherwise the measured box collapses to zero. */
       if(nav&&!document.body.classList.contains('audio-player-floating')){
         const n=nav.getBoundingClientRect();
         if(n.width>0&&n.height>0){
@@ -8140,6 +8139,11 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
       }
       const r=sentinel.getBoundingClientRect();
       const floating=r.bottom<0;
+      if(floating){
+        if(panel.parentNode!==document.body)document.body.appendChild(panel);
+      }else if(panel.parentNode!==home){
+        home.insertBefore(panel,sentinel.nextSibling);
+      }
       panel.classList.toggle('is-floating',floating);
       const exercise=document.getElementById('exercise');
       if(exercise)exercise.classList.toggle('audio-player-floating',floating);
@@ -8148,7 +8152,6 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
     if(observer)observer.disconnect();
     observer=new IntersectionObserver(update,{threshold:[0]});
     observer.observe(sentinel);
-    /* Capture scrolls from nested scrolling screens as well as the window. */
     document.addEventListener('scroll',update,{capture:true,passive:true});
     window.addEventListener('scroll',update,{passive:true});
     window.addEventListener('resize',update,{passive:true});
