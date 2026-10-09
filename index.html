@@ -4592,14 +4592,14 @@ function loadHskDriveAudioIndex(){
 async function hydrateHskDriveAudioPlayer(panel){
   if(!panel||panel.dataset.audioLookup==='done'||panel.dataset.audioLookup==='pending')return;
   const code=String(panel.dataset.audioPackage||'').trim().toUpperCase();
-  if(!/^(?:H[1-9]\\d{4,}|HSK[1-9]\\d{3,})$/.test(code))return;
+  if(!/^(?:H[1-9]\d{4,}|HSK[1-9]\d{3,})$/.test(code))return;
   panel.dataset.audioLookup='pending';
   let index=await loadHskDriveAudioIndex();
   if(!panel.isConnected)return;
   let files=index&&index.files;
   let item=files&&(files[code]||files[code+'.MP3']);
   if(!item&&files){
-    const matchedKey=Object.keys(files).find(key=>String(key).trim().replace(/\\.mp3$/i,'').toUpperCase()===code);
+      const matchedKey=Object.keys(files).find(key=>String(key).trim().replace(/\.mp3$/i,'').toUpperCase()===code);
     if(matchedKey)item=files[matchedKey];
   }
   // Retry once with a fresh index in case Drive's folder listing has just updated.
