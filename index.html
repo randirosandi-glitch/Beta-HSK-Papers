@@ -8106,10 +8106,10 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   }
 }
 </style>
-<script id="hsk-h51001-audio-scroll-float-v10">
+<script id="hsk-h51001-audio-scroll-float-v11">
 (function(){
   'use strict';
-  if(window.__hskAudioScrollFloatV10)return;
+  if(window.__hskAudioScrollFloatV11)return;
   window.__hskAudioScrollFloatV10=true;
 
   let activePanel=null, placeholder=null, home=null, observer=null, mutationObserver=null;
@@ -8118,7 +8118,7 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
 
   function findPanel(){
     return document.querySelector('#exercise .listeningAudioPanel') ||
-      document.querySelector('body>.listeningAudioPanel[data-float-bound-v10="1"]');
+      document.querySelector('body>.listeningAudioPanel[data-float-bound-v11="1"]');
   }
 
   function viewportBox(){
@@ -8161,14 +8161,19 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   function positionFloatingPlayer(){
     if(!activePanel || !floatingState)return;
     const vp=viewportBox();
-    const height=activePanel.getBoundingClientRect().height || floatHeight;
-    /* Anchor to the visible viewport's bottom edge, not a frozen top value.
-       Browser chrome expanding/collapsing changes visualViewport.height. */
-    const top=vp.top+vp.height-height-floatBottomGap;
-    activePanel.style.setProperty('--hsk-audio-top',top+'px');
-    activePanel.style.setProperty('--hsk-audio-left',vp.left+(vp.width-Math.min(vp.width-24,560))/2+'px');
-    activePanel.style.setProperty('--hsk-audio-width',Math.min(vp.width-24,560)+'px');
+    /* Use the compact floating geometry, never the original full paper panel height. */
+    const nav=measureNav();
+    const height=Math.max(48,Math.min(80,nav.height || floatHeight || 64));
+    const width=Math.min(vp.width-24,560);
+    activePanel.style.setProperty('--hsk-audio-left',Math.max(vp.left,nav.left)+'px');
+    activePanel.style.setProperty('--hsk-audio-width',width+'px');
     activePanel.style.setProperty('--hsk-audio-height',height+'px');
+    /* Portrait Chrome Android: let CSS bottom anchoring follow the same fixed-position
+       mechanism as the navbar instead of recalculating top from VisualViewport. */
+    if(!(window.matchMedia('(max-width:599px) and (orientation:portrait)').matches)){
+      const top=nav.top + nav.height - height;
+      activePanel.style.setProperty('--hsk-audio-top',top+'px');
+    }
   }
 
   function setFloating(next){
@@ -8190,6 +8195,12 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
       placeholder.style.display='block';
       document.body.appendChild(activePanel);
       floatingState=true;
+      /* Apply compact styles BEFORE measuring; otherwise the full listening panel
+         height is mistaken for the floating player's height and covers the questions. */
+      activePanel.classList.add('is-floating');
+      const exercise=document.getElementById('exercise');
+      if(exercise)exercise.classList.add('audio-player-floating');
+      document.body.classList.add('audio-player-floating');
       positionFloatingPlayer();
     }else{
       if(home && home.isConnected)home.insertBefore(activePanel,placeholder.nextSibling);
@@ -8198,10 +8209,12 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
       floatingState=false;
     }
 
-    activePanel.classList.toggle('is-floating',next);
-    const exercise=document.getElementById('exercise');
-    if(exercise)exercise.classList.toggle('audio-player-floating',next);
-    document.body.classList.toggle('audio-player-floating',next);
+    if(!next){
+      activePanel.classList.remove('is-floating');
+      const exercise=document.getElementById('exercise');
+      if(exercise)exercise.classList.remove('audio-player-floating');
+      document.body.classList.remove('audio-player-floating');
+    }
   }
 
   function update(){
@@ -8240,7 +8253,7 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
     if(observer)observer.disconnect();
     activePanel=panel;
     floatingState=panel.classList.contains('is-floating');
-    panel.dataset.floatBoundV10='1';
+    panel.dataset.floatBoundV11='1';
 
     let marker=panel.previousElementSibling;
     if(!marker || !marker.classList.contains('listeningAudioSentinel')){
@@ -8279,6 +8292,16 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   else start();
 })();
 </script>
+
+<style id="hsk-audio-float-v11-css">
+/* Compact audio control follows the navbar's CSS bottom anchor on mobile portrait. */
+@media (max-width:599px) and (orientation:portrait) {
+  body .listeningAudioPanel.is-floating {
+    top:auto!important;
+    bottom:14px!important;
+  }
+}
+</style>
 </body>
 </html>
 
