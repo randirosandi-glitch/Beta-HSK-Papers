@@ -4523,61 +4523,17 @@ function renderHsk5PaperExperience(pkg,qs){
   if(part==='part3')return renderHsk5PaperPart3(pkg,qs);
   return renderStandardQuestionCards();
 }
-let hskListeningTimestampManifest=null;
-let hskListeningManifestPromise=null;
-const HSK_LISTENING_H51001_BOUNDS={1:{start:0,end:726.858},2:{start:726.858,end:1815.928}};
-function loadHskListeningTimestampManifest(){
-  if(hskListeningTimestampManifest)return Promise.resolve(hskListeningTimestampManifest);
-  if(!hskListeningManifestPromise){
-    hskListeningManifestPromise=fetch('https://raw.githubusercontent.com/randirosandi-glitch/latihanhsk/main/data/audio-timestamps/H51001.json',{cache:'no-cache'})
-      .then(r=>{if(!r.ok)throw new Error('Timestamp manifest unavailable');return r.json();})
-      .then(data=>{hskListeningTimestampManifest=data;return data;})
-      .catch(()=>null);
-  }
-  return hskListeningManifestPromise;
-}
-function getHskListeningPartBounds(part,manifest){
-  const item=manifest?.parts?.find(x=>Number(x.part)===Number(part));
-  if(item&&Number.isFinite(item.startSeconds)&&Number.isFinite(item.endSeconds)&&item.endSeconds>item.startSeconds)return {start:item.startSeconds,end:item.endSeconds};
-  return HSK_LISTENING_H51001_BOUNDS[Number(part)]||null;
-}
-function applyHskListeningPartBounds(){
-  const audio=document.getElementById('hskListeningAudio');
-  const input=document.getElementById('hskListeningSeek');
-  const part=Math.max(1,Number(route.sectionIndex||0)+1);
-  if(!audio)return;
-  const applyBounds=manifest=>{
-    if(!audio.isConnected)return;
-    const bounds=getHskListeningPartBounds(part,manifest);
-    if(!bounds)return;
-    audio.dataset.partStart=String(bounds.start);
-    audio.dataset.partEnd=String(bounds.end);
-    if(input){input.min=String(bounds.start);input.max=String(bounds.end);input.value=String(bounds.start);}
-    if(!audio.dataset.boundaryGuard){
-      audio.dataset.boundaryGuard='1';
-      audio.addEventListener('timeupdate',()=>{
-        const finish=Number(audio.dataset.partEnd);
-        if(Number.isFinite(finish)&&audio.currentTime>=finish){audio.pause();audio.currentTime=finish;}
-      });
-    }
-    const setPartStart=()=>{if(audio.currentTime<bounds.start||audio.currentTime>bounds.end){audio.currentTime=bounds.start;}};
-    if(audio.readyState>=1)setPartStart();else audio.addEventListener('loadedmetadata',setPartStart,{once:true});
-  };
-  const fallback=HSK_LISTENING_H51001_BOUNDS[part];
-  if(fallback)applyBounds(null);
-  loadHskListeningTimestampManifest().then(applyBounds);
-}
-/* Drive audio index endpoint. After deploying drive-audio-index.gs as a web app, paste its /exec URL here. */
+/* HSK Papers audio — single Google Drive preview path (Beta).
+   Google Drive supplies the player UI; this block only resolves file IDs and embeds one preview. */
 const HSK_LISTENING_DRIVE_INDEX_URL='https://script.google.com/macros/s/AKfycbwzuV2f58gr1J6-oL2lKsOmYmCQWov8MGTJGhPVRcxBECvpjVaW39dGdBtng0t3f3goWQ/exec';
 const HSK_DRIVE_AUDIO_FALLBACKS={
-  H51001:'https://drive.google.com/uc?export=download&id=1W08miajrwBEZhMpiDtPDRdiHaItS0fTR',
-  H51002:'https://drive.google.com/uc?export=download&id=1QzZaNDLKtuc-bqSMAMwd2ZTcdU8_S-2c'
+  H51001:'1W08miajrwBEZhMpiDtPDRdiHaItS0fTR',
+  H51002:'1QzZaNDLKtuc-bqSMAMwd2ZTcdU8_S-2c'
 };
-let __hskDriveAudioIndexPromise=null;
+let hskDriveAudioIndexPromise=null;
 function loadHskDriveAudioIndex(){
-  if(__hskDriveAudioIndexPromise)return __hskDriveAudioIndexPromise;
-  __hskDriveAudioIndexPromise=new Promise(resolve=>{
-    if(!HSK_LISTENING_DRIVE_INDEX_URL){resolve(null);return;}
+  if(hskDriveAudioIndexPromise)return hskDriveAudioIndexPromise;
+  hskDriveAudioIndexPromise=new Promise(resolve=>{
     const callback='__hskDriveAudioIndexCb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
     const script=document.createElement('script');
     const timer=setTimeout(()=>{cleanup();resolve(null);},10000);
@@ -4587,65 +4543,45 @@ function loadHskDriveAudioIndex(){
     script.src=HSK_LISTENING_DRIVE_INDEX_URL+(HSK_LISTENING_DRIVE_INDEX_URL.includes('?')?'&':'?')+'callback='+callback+'&_='+Date.now();
     document.head.appendChild(script);
   });
-  return __hskDriveAudioIndexPromise;
+  return hskDriveAudioIndexPromise;
+}
+function getHskDriveAudioFileId(code,index){
+  const normalized=String(code||'').trim().toUpperCase();
+  const files=index&&index.files;
+  const item=files&&(files[normalized]||files[normalized+'.MP3']||
+    Object.values(files).find(file=>String(file.name||'').replace(/\.mp3$/i,'').trim().toUpperCase()===normalized));
+  if(item&&item.id)return item.id;
+  return HSK_DRIVE_AUDIO_FALLBACKS[normalized]||null;
+}
+function renderHskDriveAudioPreview(panel,fileId,code){
+  if(!panel||!fileId||!panel.isConnected)return;
+  if(panel.querySelector('iframe[data-hsk-drive-preview="1"]'))return;
+  const placeholder=panel.querySelector('.listeningAudioPlaceholder');
+  if(!placeholder)return;
+  const frame=document.createElement('iframe');
+  frame.dataset.hskDrivePreview='1';
+  frame.title='Audio Listening '+code;
+  frame.allow='autoplay';
+  frame.loading='lazy';
+  frame.referrerPolicy='strict-origin-when-cross-origin';
+  frame.style.cssText='display:block;width:100%;height:82px;border:0;margin-top:10px;border-radius:8px';
+  frame.src='https://drive.google.com/file/d/'+encodeURIComponent(fileId)+'/preview';
+  frame.addEventListener('load',()=>{panel.dataset.audioStatus='loaded';},{once:true});
+  placeholder.replaceWith(frame);
+  panel.dataset.audioLookup='done';
 }
 async function hydrateHskDriveAudioPlayer(panel){
   if(!panel||panel.dataset.audioLookup==='done'||panel.dataset.audioLookup==='pending')return;
   const code=String(panel.dataset.audioPackage||'').trim().toUpperCase();
-  if(!/^(?:H[1-9]\d{4,}|HSK[1-9]\d{3,})$/.test(code))return;
+  if(!/^(?:H[1-9]\\d{4,}|HSK[1-9]\\d{3,})$/.test(code))return;
   panel.dataset.audioLookup='pending';
-  let index=await loadHskDriveAudioIndex();
+  const index=await loadHskDriveAudioIndex();
   if(!panel.isConnected)return;
-  let files=index&&index.files;
-  let item=files&&(files[code]||files[code+'.MP3']);
-  if(!item&&files){
-      const matchedKey=Object.keys(files).find(key=>String(key).trim().replace(/\.mp3$/i,'').toUpperCase()===code);
-    if(matchedKey)item=files[matchedKey];
-  }
-  // Retry once with a fresh index in case Drive's folder listing has just updated.
-  if(!item&&HSK_LISTENING_DRIVE_INDEX_URL){
-    __hskDriveAudioIndexPromise=null;
-    index=await loadHskDriveAudioIndex();
-    if(!panel.isConnected)return;
-    files=index&&index.files;
-    item=files&&(files[code]||files[code+'.MP3']);
-    if(!item&&files){
-      const matchedKey=Object.keys(files).find(key=>String(key).trim().replace(/\\.mp3$/i,'').toUpperCase()===code);
-      if(matchedKey)item=files[matchedKey];
-    }
-  }
-  const area=panel.querySelector('.listeningAudioPlaceholder');
-  if(item&&item.id){
-    const frame=document.createElement('iframe');
-    frame.title='Audio Listening '+code;
-    frame.allow='autoplay';
-    frame.loading='lazy';
-    frame.referrerPolicy='strict-origin-when-cross-origin';
-    frame.style.cssText='display:block;width:100%;height:82px;border:0;margin-top:10px;border-radius:8px';
-    frame.src='https://drive.google.com/file/d/'+encodeURIComponent(item.id)+'/preview';
-    frame.addEventListener('load',()=>{panel.dataset.audioStatus='loaded';},{once:true});
-    if(area)area.replaceWith(frame);
-    else panel.appendChild(frame);
-    panel.dataset.audioLookup='done';
-    return;
-  }
-  const fallbackUrl=HSK_DRIVE_AUDIO_FALLBACKS[code];
-  if(fallbackUrl&&area){
-    const fileId=(fallbackUrl.match(/[?&]id=([^&]+)/)||[])[1];
-    if(fileId){
-      const frame=document.createElement('iframe');
-      frame.id='hskListeningAudio';
-      frame.title='Audio Listening '+code;
-      frame.allow='autoplay';
-      frame.loading='lazy';
-      frame.referrerPolicy='strict-origin-when-cross-origin';
-      frame.style.cssText='display:block;width:100%;height:82px;border:0;margin-top:10px;border-radius:8px';
-      frame.src='https://drive.google.com/file/d/'+encodeURIComponent(fileId)+'/preview';
-      area.replaceWith(frame);panel.dataset.audioLookup='done';return;
-    }
-  }
+  const fileId=getHskDriveAudioFileId(code,index);
+  if(fileId){renderHskDriveAudioPreview(panel,fileId,code);return;}
   panel.dataset.audioLookup='done';
-  if(area&&HSK_LISTENING_DRIVE_INDEX_URL)area.textContent='Audio belum ditemukan di folder Google Drive · periksa nama file '+code+'.mp3';
+  const placeholder=panel.querySelector('.listeningAudioPlaceholder');
+  if(placeholder)placeholder.textContent='Audio belum ditemukan · periksa nama file '+code+'.mp3';
 }
 function observeHskDriveAudioPlayers(){
   const scan=root=>{
@@ -4662,26 +4598,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 else observeHskDriveAudioPlayers();
 function renderListeningAudioPlayer(code,count){
   const packageCode=String(code||route?.packageCode||'').toUpperCase();
-  const knownUrl=HSK_DRIVE_AUDIO_FALLBACKS[packageCode];
-  const knownId=knownUrl&&((knownUrl.match(/[?&]id=([^&]+)/)||[])[1]);
-  const knownAudio=knownId
-    ? '<iframe id="hskListeningAudio" title="Audio Listening '+packageCode+'" allow="autoplay" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" style="display:block;width:100%;height:82px;border:0;margin-top:10px;border-radius:8px" src="https://drive.google.com/file/d/'+encodeURIComponent(knownId)+'/preview"></iframe>'
-    : '<div class="listeningAudioPlaceholder" role="status">Audio belum diunggah · player siap digunakan</div>';
-  return '<section class="listeningAudioPanel" aria-label="Audio Listening" data-audio-package="'+packageCode+'"><div class="listeningAudioHeading"><strong>Audio Listening · '+packageCode+'</strong><span>'+Number(count||0)+' soal</span></div>'+knownAudio+'</section>';
-}
-function seekHskListeningAudio(){
-  const audio=document.getElementById('hskListeningAudio');
-  const input=document.getElementById('hskListeningSeek');
-  if(!audio||!input)return;
-  const seconds=Number(input.value);
-  if(!Number.isFinite(seconds))return;
-  const start=Number(audio.dataset.partStart),finish=Number(audio.dataset.partEnd);
-  const fallback=HSK_LISTENING_H51001_BOUNDS[Math.max(1,Number(route.sectionIndex||0)+1)];
-  const lower=Number.isFinite(start)?start:fallback.start;
-  const upper=Number.isFinite(finish)?finish:fallback.end;
-  const bounded=Math.min(upper,Math.max(lower,seconds));
-  audio.currentTime=Math.min(bounded,Number.isFinite(audio.duration)?audio.duration:bounded);
-  audio.play().catch(()=>{});
+  return '<section class="listeningAudioPanel" aria-label="Audio Listening" data-audio-package="'+packageCode+'"><div class="listeningAudioHeading"><strong>Audio Listening · '+packageCode+'</strong><span>'+Number(count||0)+' soal</span></div><div class="listeningAudioPlaceholder" role="status">Memuat audio…</div></section>';
 }
 function renderQuestionCards(){
   const pkg=getActivePackageData();
