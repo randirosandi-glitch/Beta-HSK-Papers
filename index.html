@@ -4133,10 +4133,15 @@ function mergeStoresLatest(local,remote){
 async function pullCloudStateInternal(force=false){
   if(!currentUsername||!cloudEnabled())return false;
   try{
-    const local=readStore();
+    /* Read after the network lookup, not before it: the learner may answer while
+       cloudFindUser is in flight. Merging a pre-request snapshot can roll back
+       that newer local answer when the response arrives. */
     const row=await cloudFindUser(currentUsername);
+    const local=readStore();
     if(!row){
       await cloudCreateUser(currentUsername,local);
+      const latest=readStore();
+      if(JSON.stringify(latest)!==JSON.stringify(local)) await cloudUpdateUser(currentUsername,latest);
       renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
       return true;
     }
@@ -4162,16 +4167,18 @@ async function pushCloudState(store){
   if(cloudSyncBusy){cloudSyncPending=true;return false}
   cloudSyncBusy=true;
   try{
-    const local=readStore();
-    const candidate=store||local;
     const row=await cloudFindUser(currentUsername);
+    /* Use the newest local snapshot after the await. The scheduled argument
+       may have become stale while the cloud lookup was in flight. */
+    const latest=readStore();
     if(!row){
-      await cloudCreateUser(currentUsername,candidate);
-      writeStore(candidate);
+      await cloudCreateUser(currentUsername,latest);
+      const afterCreate=readStore();
+      if(JSON.stringify(afterCreate)!==JSON.stringify(latest)) await cloudUpdateUser(currentUsername,afterCreate);
       return true;
     }
     const remote=row.data||{};
-    const merged=mergeStoresLatest(candidate,remote).store;
+    const merged=mergeStoresLatest(latest,remote).store;
     writeStore(merged);
     await cloudUpdateUser(currentUsername,merged);
     return true;
