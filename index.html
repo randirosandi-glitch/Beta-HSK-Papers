@@ -4497,9 +4497,46 @@ function renderHsk5PaperExperience(pkg,qs){
   if(part==='part3')return renderHsk5PaperPart3(pkg,qs);
   return renderStandardQuestionCards();
 }
+let hskListeningTimestampManifest=null;
+let hskListeningManifestPromise=null;
+function loadHskListeningTimestampManifest(){
+  if(hskListeningTimestampManifest)return Promise.resolve(hskListeningTimestampManifest);
+  if(!hskListeningManifestPromise){
+    hskListeningManifestPromise=fetch('https://raw.githubusercontent.com/randirosandi-glitch/latihanhsk/main/data/audio-timestamps/H51001.json',{cache:'no-cache'})
+      .then(r=>{if(!r.ok)throw new Error('Timestamp manifest unavailable');return r.json();})
+      .then(data=>{hskListeningTimestampManifest=data;return data;})
+      .catch(()=>null);
+  }
+  return hskListeningManifestPromise;
+}
+function getHskListeningPartBounds(part,manifest){
+  const item=manifest?.parts?.find(x=>Number(x.part)===Number(part));
+  if(!item||!Number.isFinite(item.startSeconds)||!Number.isFinite(item.endSeconds)||item.endSeconds<=item.startSeconds)return null;
+  return {start:item.startSeconds,end:item.endSeconds};
+}
+function applyHskListeningPartBounds(){
+  const audio=document.getElementById('hskListeningAudio');
+  const input=document.getElementById('hskListeningSeek');
+  const part=Math.max(1,Number(route.sectionIndex||0)+1);
+  if(!audio)return;
+  loadHskListeningTimestampManifest().then(manifest=>{
+    const bounds=getHskListeningPartBounds(part,manifest);
+    if(!bounds)return;
+    audio.dataset.partStart=String(bounds.start);
+    audio.dataset.partEnd=String(bounds.end);
+    if(input){input.min=String(bounds.start);input.max=String(bounds.end);input.value=String(bounds.start);}
+    audio.addEventListener('timeupdate',()=>{
+      const finish=Number(audio.dataset.partEnd);
+      if(Number.isFinite(finish)&&audio.currentTime>=finish){audio.pause();audio.currentTime=finish;}
+    });
+    audio.addEventListener('loadedmetadata',()=>{
+      if(audio.currentTime<bounds.start)audio.currentTime=bounds.start;
+    },{once:true});
+  });
+}
 function renderListeningAudioPlayer(){
   const part=Math.max(1,Number(route.sectionIndex||0)+1);
-  return '<section class="listeningAudioPanel" aria-label="Audio Listening"><div class="listeningAudioHeading"><strong>Audio Listening · Bagian '+part+'</strong><span>H51001</span></div><audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="https://hsk-papers-audio-test.web.app/audio/H51001.mp3">Browser tidak mendukung pemutar audio.</audio><div class="listeningAudioSeek"><label for="hskListeningSeek">Lompat ke waktu (detik)</label><div class="listeningAudioSeekRow"><input id="hskListeningSeek" type="number" min="0" step="1" value="0" inputmode="numeric" aria-label="Waktu audio dalam detik"><button type="button" class="btn soft" onclick="seekHskListeningAudio()">Lompat</button></div></div><p class="listeningAudioNote">Audio sumber masih satu file. Gunakan kontrol waktu untuk menuju bagian yang diperlukan; batas waktu tiap bagian belum ditetapkan agar tidak salah memotong audio.</p></section>';
+  return '<section class="listeningAudioPanel" aria-label="Audio Listening"><div class="listeningAudioHeading"><strong>Audio Listening · Bagian '+part+'</strong><span>H51001</span></div><audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="https://hsk-papers-audio-test.web.app/audio/H51001.mp3">Browser tidak mendukung pemutar audio.</audio><div class="listeningAudioSeek"><label for="hskListeningSeek">Lompat ke waktu (detik)</label><div class="listeningAudioSeekRow"><input id="hskListeningSeek" type="number" min="0" step="1" value="0" inputmode="numeric" aria-label="Waktu audio dalam detik"><button type="button" class="btn soft" onclick="seekHskListeningAudio()">Lompat</button></div></div><p class="listeningAudioNote">Batas waktu bagian dibaca dari manifest timestamp di repository stable setelah waktunya diverifikasi.</p></section><script>setTimeout(applyHskListeningPartBounds,0)<\/script>';
 }
 function seekHskListeningAudio(){
   const audio=document.getElementById('hskListeningAudio');
@@ -4507,7 +4544,9 @@ function seekHskListeningAudio(){
   if(!audio||!input)return;
   const seconds=Number(input.value);
   if(!Number.isFinite(seconds)||seconds<0)return;
-  audio.currentTime=Math.min(seconds,Number.isFinite(audio.duration)?audio.duration:seconds);
+  const start=Number(audio.dataset.partStart),finish=Number(audio.dataset.partEnd);
+  const bounded=Number.isFinite(start)&&Number.isFinite(finish)?Math.min(finish,Math.max(start,seconds)):seconds;
+  audio.currentTime=Math.min(bounded,Number.isFinite(audio.duration)?audio.duration:bounded);
   audio.play().catch(()=>{});
 }
 function renderQuestionCards(){
