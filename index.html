@@ -4130,7 +4130,7 @@ function mergeStoresLatest(local,remote){
   out._syncMeta={version:1,updatedAt:Math.max(Number(a._syncMeta?.updatedAt||0),Number(b._syncMeta?.updatedAt||0),Date.now())};
   return {store:out,localWon};
 }
-async function pullCloudState(force=false){
+async function pullCloudStateInternal(force=false){
   if(!currentUsername||!cloudEnabled())return false;
   try{
     const local=readStore();
@@ -4147,6 +4147,15 @@ async function pullCloudState(force=false){
     renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
     return true;
   }catch(e){console.warn('Cloud sync pull failed',e);return false}
+}
+let cloudPullInFlight=null,cloudLastPullAt=0;
+function pullCloudState(force=false){
+  if(cloudPullInFlight)return cloudPullInFlight;
+  const now=Date.now();
+  if(!force&&now-cloudLastPullAt<12000)return Promise.resolve(false);
+  cloudLastPullAt=now;
+  cloudPullInFlight=pullCloudStateInternal(force).finally(()=>{cloudPullInFlight=null});
+  return cloudPullInFlight;
 }
 async function pushCloudState(store){
   if(!currentUsername||!cloudEnabled())return false;
@@ -4279,8 +4288,8 @@ function armHome(){if(typeof window.__hskArmBackGuard==='function'){window.__hsk
 function goHome(push=true){route={screen:'home',packageCode:null,type:null,sectionIndex:null};answers={};checked={};resultState=null;setScreen('home',push);armHome()}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushCloudSync()});
 window.addEventListener('pagehide',()=>flushCloudSync());
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUsername){pullCloudState(true)}});
-window.addEventListener('focus',()=>{if(currentUsername)pullCloudState(true)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUsername){pullCloudState()}});
+window.addEventListener('focus',()=>{if(currentUsername)pullCloudState()});
 
 function renderPackage(){let code=route.packageCode;let d=DB[code]||{};const progressStore=readStore();$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;const palettes={listening:{accent:'#ff6548',soft:'#fff0eb'},reading:{accent:'#7890d8',soft:'#eef2ff'},writing:{accent:'#e5ad3d',soft:'#fff5df'}};$('parts').innerHTML=Object.entries(META).map(([t,m])=>{const arr=d[t]||[],total=arr.reduce((a,x)=>a+x.questions.length,0),ps=arr.reduce((a,x,i)=>{const st=sectionStats(code,t,i,progressStore);return {answered:a.answered+st.answered,total:a.total+st.total}},{answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;const pal=palettes[t]||palettes.listening;return total?`<button class="partCard flatPartCard" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" type="button" onclick="openSections('${esc(code)}','${t}')"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">${total} soal tersedia</span>${progressHTML(ps,'Progres bagian')}</span><span class="partArrow" aria-hidden="true"><span class="material-symbols-rounded ico">arrow_forward</span></span></button>`:`<div class="partCard flatPartCard partDisabled" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" aria-disabled="true"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">Belum tersedia dari sumber paket</span></span></div>`}).join('')+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`}
 function renderSections(){const d=DB[route.packageCode]?.[route.type]||[];const progressStore=readStore();const m=META[route.type];if(!m){goHome(false);return}$('partsPkg').textContent=route.packageCode;$('partsCrumb').textContent=m.label;$('partsTitle').innerHTML='<span class="kaiti-ui-hanzi">'+escV17(m.zh)+'</span><span aria-hidden="true"> · </span>'+escV17(m.label);const available=d.map((s,i)=>({s,i})).filter(x=>Array.isArray(x.s.questions)&&x.s.questions.length>0);let arr=available.map(({s,i})=>{let st=sectionStats(route.packageCode,route.type,i,progressStore);const sectionName=s.title.replace(/^.*?·\s*/,'');return `<button class="tile sectionPartTile" onclick="startSection(${i})"><div class="sectionPartTitle kaiti-ui-hanzi">${esc(sectionName)}</div><small>Soal ${esc(s.range)} · ${s.questions.length} soal</small>${progressHTML(st,'Progres bagian')}</button>`});$('sections').innerHTML=arr.length?arr.join(''):`<div class="notice"><strong>${route.packageCode} · ${m.label}</strong><br>Bagian ini belum tersedia sebagai teks soal pada paket ini.</div>`}
