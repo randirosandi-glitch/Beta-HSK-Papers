@@ -8111,11 +8111,11 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   'use strict';
   if(window.__hskAudioScrollFloatV3)return;
   window.__hskAudioScrollFloatV3=true;
-  let observer,mutationObserver;
+  let observer=null,mutationObserver=null,activePanel=null,activeSentinel=null;
   function bind(){
     const panel=document.querySelector('#exercise .listeningAudioPanel');
-    if(!panel)return;
-    if(panel.dataset.floatBoundV3==='1')return;
+    if(!panel||panel===activePanel)return;
+    activePanel=panel;
     panel.dataset.floatBoundV3='1';
     let sentinel=panel.previousElementSibling;
     if(!sentinel||!sentinel.classList.contains('listeningAudioSentinel')){
@@ -8124,27 +8124,38 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
       sentinel.setAttribute('aria-hidden','true');
       panel.parentNode.insertBefore(sentinel,panel);
     }
+    activeSentinel=sentinel;
     const update=()=>{
       if(!panel.isConnected||!sentinel.isConnected)return;
-      const rect=sentinel.getBoundingClientRect();
-      const floating=rect.bottom<0;
+      const nav=document.querySelector('.mainNav');
+      /* Read navbar geometry BEFORE hiding it; otherwise the measured box collapses to zero. */
+      if(nav&&!document.body.classList.contains('audio-player-floating')){
+        const n=nav.getBoundingClientRect();
+        if(n.width>0&&n.height>0){
+          panel.style.setProperty('--hsk-audio-left',n.left+'px');
+          panel.style.setProperty('--hsk-audio-top',n.top+'px');
+          panel.style.setProperty('--hsk-audio-width',n.width+'px');
+          panel.style.setProperty('--hsk-audio-height',n.height+'px');
+        }
+      }
+      const r=sentinel.getBoundingClientRect();
+      const floating=r.bottom<0;
       panel.classList.toggle('is-floating',floating);
       const exercise=document.getElementById('exercise');
       if(exercise)exercise.classList.toggle('audio-player-floating',floating);
-      const nav=document.querySelector('.mainNav');
-      if(floating&&nav){
-        const n=nav.getBoundingClientRect();
-        panel.style.setProperty('--hsk-audio-left',n.left+'px');
-        panel.style.setProperty('--hsk-audio-top',n.top+'px');
-        panel.style.setProperty('--hsk-audio-width',n.width+'px');
-        panel.style.setProperty('--hsk-audio-height',n.height+'px');
-      }
+      document.body.classList.toggle('audio-player-floating',floating);
     };
     if(observer)observer.disconnect();
-    observer=new IntersectionObserver(update,{threshold:0});
+    observer=new IntersectionObserver(update,{threshold:[0]});
     observer.observe(sentinel);
+    /* Capture scrolls from nested scrolling screens as well as the window. */
+    document.addEventListener('scroll',update,{capture:true,passive:true});
     window.addEventListener('scroll',update,{passive:true});
     window.addEventListener('resize',update,{passive:true});
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize',update,{passive:true});
+      window.visualViewport.addEventListener('scroll',update,{passive:true});
+    }
     update();
   }
   function start(){
