@@ -4327,7 +4327,7 @@ window.addEventListener('focus',()=>{if(currentUsername)pullCloudState()});
 
 function renderPackage(){let code=route.packageCode;let d=DB[code]||{};const progressStore=readStore();$('pkgCrumb').textContent=code;$('pkgTitle').textContent='Paket '+code;const palettes={listening:{accent:'#ff6548',soft:'#fff0eb'},reading:{accent:'#7890d8',soft:'#eef2ff'},writing:{accent:'#e5ad3d',soft:'#fff5df'}};$('parts').innerHTML=Object.entries(META).map(([t,m])=>{const arr=d[t]||[],total=arr.reduce((a,x)=>a+x.questions.length,0),ps=arr.reduce((a,x,i)=>{const st=sectionStats(code,t,i,progressStore);return {answered:a.answered+st.answered,total:a.total+st.total}},{answered:0,total:0});ps.pct=ps.total?Math.round(ps.answered/ps.total*100):0;const pal=palettes[t]||palettes.listening;return total?`<button class="partCard flatPartCard" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" type="button" onclick="openSections('${esc(code)}','${t}')"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">${total} soal tersedia</span>${progressHTML(ps,'Progres bagian')}</span><span class="partArrow" aria-hidden="true"><span class="material-symbols-rounded ico">arrow_forward</span></span></button>`:`<div class="partCard flatPartCard partDisabled" style="--part-accent:${pal.accent};--part-soft:${pal.soft}" aria-disabled="true"><span class="partHanzi" aria-hidden="true">${esc(m.zh)}</span><span class="partMain"><strong>${esc(m.label)}</strong><span class="partMeta">Belum tersedia dari sumber paket</span></span></div>`}).join('')+`<div style="grid-column:1/-1">${renderPackageProgress(code)}</div>`}
 function renderSections(){const d=DB[route.packageCode]?.[route.type]||[];const progressStore=readStore();const m=META[route.type];if(String(route.packageCode||'').toUpperCase()==='H51001'&&route.type==='listening'){const all=d.flatMap(s=>Array.isArray(s.questions)?s.questions:[]);$('partsPkg').textContent=route.packageCode;$('partsCrumb').textContent=m.label;$('partsTitle').innerHTML='<span class="kaiti-ui-hanzi">听力</span><span aria-hidden="true"> · </span>'+escV17(m.label);$('sections').innerHTML='<button class="tile sectionPartTile" onclick="startSection(0)"><div class="sectionPartTitle kaiti-ui-hanzi">全部听力</div><small>Soal 1–45 · '+all.length+' soal</small><p class="sectionCombinedNote">Bagian 1 dan 2 berada dalam satu alur soal.</p></button>';return;}if(!m){goHome(false);return}$('partsPkg').textContent=route.packageCode;$('partsCrumb').textContent=m.label;$('partsTitle').innerHTML='<span class="kaiti-ui-hanzi">'+escV17(m.zh)+'</span><span aria-hidden="true"> · </span>'+escV17(m.label);const available=d.map((s,i)=>({s,i})).filter(x=>Array.isArray(x.s.questions)&&x.s.questions.length>0);let arr=available.map(({s,i})=>{let st=sectionStats(route.packageCode,route.type,i,progressStore);const sectionName=s.title.replace(/^.*?·\s*/,'');return `<button class="tile sectionPartTile" onclick="startSection(${i})"><div class="sectionPartTitle kaiti-ui-hanzi">${esc(sectionName)}</div><small>Soal ${esc(s.range)} · ${s.questions.length} soal</small>${progressHTML(st,'Progres bagian')}</button>`});$('sections').innerHTML=arr.length?arr.join(''):`<div class="notice"><strong>${route.packageCode} · ${m.label}</strong><br>Bagian ini belum tersedia sebagai teks soal pada paket ini.</div>`}
-function loadCurrentSectionState(){const st=getSectionState(route.packageCode,route.type,route.sectionIndex);answers={...st.answers};checked={...st.checked};answerEvents={...st.answerEvents};if(String(route.packageCode||'').toUpperCase()==='H51001'&&route.type==='listening'&&Number(route.sectionIndex)===0){for(const idx of [1]){const extra=getSectionState(route.packageCode,route.type,idx);answers={...extra.answers,...answers};checked={...extra.checked,...checked};answerEvents={...extra.answerEvents,...answerEvents};}}resultState=null}
+function loadCurrentSectionState(){const st=getSectionState(route.packageCode,route.type,route.sectionIndex);answers={...st.answers};checked={...st.checked};answerEvents={...st.answerEvents};if(route.type==='listening'&&Number(route.sectionIndex)===0&&window.__hsk45IsCombinedListening?.(route.packageCode)){const parts=DB[route.packageCode]?.listening||[];for(let idx=parts.length-1;idx>=1;idx--){const extra=getSectionState(route.packageCode,route.type,idx);answers={...extra.answers,...answers};checked={...extra.checked,...checked};answerEvents={...extra.answerEvents,...answerEvents};}}resultState=null}
 function instructionFor(type,idx){const code=String(route?.packageCode||'');const pkg=getActivePackageData();const id=Number(currentQuestions?.[0]?.[0]?.[0]||currentQuestions?.[0]?.[0]||0);const parts=pkg?.engineRules?.sections?.[type]?.parts||[];const part=parts.find(p=>ruleRangeContains(p.range,id));if(part?.instruction)return part.instruction;if(code==='HSK4-SUSUN-KATA')return 'Susun kata-kata berikut menjadi kalimat Mandarin yang benar. Jawaban dinilai berdasarkan kunci jawaban.';if(code==='HSK4-SUSUN-KALIMAT')return 'Susun kalimat-kalimat berikut menjadi paragraf yang benar dengan memilih urutan yang tepat.';if(type==='listening')return idx===0?'Dengarkan pernyataan lalu pilih apakah kalimat tersebut benar atau salah.':idx===1?'Dengarkan percakapan dengan saksama lalu pilih jawaban yang paling sesuai.':'Dengarkan percakapan lalu tentukan jawaban yang paling tepat berdasarkan informasi yang kamu dengar.';if(type==='reading')return idx===0?'Baca kalimat dan pilihan jawaban, lalu pilih kata atau ungkapan yang paling tepat.':idx===1?'Baca setiap kalimat dan pilih jawaban yang paling sesuai dengan maknanya.':idx===2?'Susun bagian-bagian kalimat menjadi urutan yang benar dengan memilih kombinasi yang tepat.':'Baca teks dengan saksama lalu pilih jawaban yang paling sesuai dengan informasi dalam bacaan.';return idx===0?'Susun kata-kata menjadi kalimat Mandarin yang benar. Kamu bisa klik kata untuk memasukkannya otomatis, atau mengetik langsung di kolom jawaban. Jawaban dinilai berdasarkan kunci jawaban.':'Gunakan kata yang diberikan untuk membuat kalimat Mandarin yang benar, lalu ketik jawabanmu. Jawaban ini tidak dinilai benar atau salah secara otomatis.'}
 function hsk5AutoPaperOptionLayout(){
   const pkg=getActivePackageData();
@@ -4383,7 +4383,7 @@ function scheduleHsk5AutoPaperOptionLayout(){
     requestAnimationFrame(hsk5AutoPaperOptionLayout);
   });
 }
-function renderExercise(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return}const h51001Combined=String(route.packageCode||'').toUpperCase()==='H51001'&&route.type==='listening'&&Number(route.sectionIndex)===0;currentQuestions=h51001Combined?(DB[route.packageCode]?.listening||[]).flatMap(s=>Array.isArray(s.questions)?s.questions:[]):(Array.isArray(sec.questions)?sec.questions:[]);page=Math.max(0,Math.min(pageCount()-1,Number(window.__hskResumePage||0)));window.__hskResumePage=page;currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;let st=sectionStats(route.packageCode,route.type,route.sectionIndex);let instruction=instructionFor(route.type,route.sectionIndex);if(h51001Combined){const saved=readStore();let answered=0;currentQuestions.forEach(q=>{const id=String(q[0]);const sectionIndex=Number(id)<=20?0:1;const state=getSectionState(route.packageCode,route.type,sectionIndex);if(state?.answers&&Object.prototype.hasOwnProperty.call(state.answers,id)&&String(state.answers[id]).trim()!=='')answered++;});st={answered:answered,total:currentQuestions.length,pct:currentQuestions.length?Math.round(answered/currentQuestions.length*100):0};instruction='第1-45题：请选出正确答案。';$('exPart').textContent='全部听力';$('exTitle').textContent='Listening · Soal 1–45';}$('questions').innerHTML=`<div class="instruction"><h2>Petunjuk</h2><p>${esc(instruction)}</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`+renderQuestionCards();restoreQuestionUI();scheduleHsk5AutoPaperOptionLayout()}
+function renderExercise(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return}const combinedListening=route.type==='listening'&&Number(route.sectionIndex)===0&&window.__hsk45IsCombinedListening?.(route.packageCode);currentQuestions=combinedListening?(DB[route.packageCode]?.listening||[]).flatMap(part=>Array.isArray(part.questions)?part.questions:[]):(Array.isArray(sec.questions)?sec.questions:[]);page=Math.max(0,Math.min(pageCount()-1,Number(window.__hskResumePage||0)));window.__hskResumePage=page;currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;let st=sectionStats(route.packageCode,route.type,route.sectionIndex);let instruction=instructionFor(route.type,route.sectionIndex);if(combinedListening){const answered=currentQuestions.filter(q=>answers[String(q[0])]!==undefined&&String(answers[String(q[0])]).trim()!=='').length;st={answered,total:currentQuestions.length,pct:currentQuestions.length?Math.round(answered/currentQuestions.length*100):0};instruction='Dengarkan audio dan jawab seluruh soal Listening sesuai urutan.';$('exPart').textContent='Semua Listening';$('exTitle').textContent='Listening · '+currentQuestions.length+' soal';}$('questions').innerHTML=`<div class="instruction"><h2>Petunjuk</h2><p>${esc(instruction)}</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`+renderQuestionCards();restoreQuestionUI();scheduleHsk5AutoPaperOptionLayout()}
 if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex)){currentQuestions.forEach(q=>refreshWordBank(String(q[0])))}
 function wordBankWords(id){const q=currentQuestions.find(x=>String(x[0])===String(id));return q?String(q[1]||'').trim().split(/\s+/).filter(Boolean):[]}
 function getWordChipMap(id){const input=$('w'+id);const words=wordBankWords(id);if(!input)return [];const tokens=String(input.value||'').trim().split(/\s+/).filter(Boolean);const used=new Set();const map=[];tokens.forEach((token,ti)=>{let found=-1;for(let i=0;i<words.length;i++){if(!used.has(i)&&words[i]===token){found=i;break}}if(found>=0){used.add(found);map.push({chipIndex:found,tokenIndex:ti})}});return map}
@@ -4567,11 +4567,13 @@ function applyHskListeningPartBounds(){
   if(fallback)applyBounds(null);
   loadHskListeningTimestampManifest().then(applyBounds);
 }
-function renderListeningAudioPlayer(){
-  const boundary=HSK_LISTENING_H51001_BOUNDS[1].end;
-  const total=HSK_LISTENING_H51001_BOUNDS[2].end;
-  const markerPct=(boundary/total*100).toFixed(3);
-  return '<section class="listeningAudioPanel" aria-label="Audio Listening"><div class="listeningAudioHeading"><strong>Audio Listening · H51001</strong><span>45 soal</span></div><audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="https://hsk-papers-audio-test.web.app/audio/H51001.mp3">Browser tidak mendukung pemutar audio.</audio></section>';
+function renderListeningAudioPlayer(code,count){
+  const packageCode=String(code||route?.packageCode||'').toUpperCase();
+  const audioUrl=packageCode==='H51001'?'https://hsk-papers-audio-test.web.app/audio/H51001.mp3':'';
+  const audio=audioUrl
+    ? '<audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="'+audioUrl+'">Browser tidak mendukung pemutar audio.</audio>'
+    : '<div class="listeningAudioPlaceholder" role="status">Audio belum diunggah · player siap digunakan</div>';
+  return '<section class="listeningAudioPanel" aria-label="Audio Listening" data-audio-package="'+packageCode+'"><div class="listeningAudioHeading"><strong>Audio Listening · '+packageCode+'</strong><span>'+Number(count||0)+' soal</span></div>'+audio+'</section>';
 }
 function seekHskListeningAudio(){
   const audio=document.getElementById('hskListeningAudio');
@@ -4591,7 +4593,7 @@ function renderQuestionCards(){
   const pkg=getActivePackageData();
   if(isHsk5Model(pkg) && route.type==='reading') return renderHsk5PaperExperience(pkg,currentQuestions);
   const cards=renderStandardQuestionCards();
-  if(route.type==='listening' && String(route.packageCode||pkg?.code||'').toUpperCase()==='H51001') return renderListeningAudioPlayer()+cards;
+  if(route.type==='listening' && window.__hsk45IsCombinedListening?.(route.packageCode)) return renderListeningAudioPlayer(route.packageCode,currentQuestions.length)+cards;
   return cards;
 }
 
@@ -6956,12 +6958,13 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     $('partsCrumb').textContent=m.label;
     /* Split Hanzi and Latin so only the Chinese title receives Ma Shan Zheng. */
     $('partsTitle').innerHTML='<span class="partsTitleHanzi">'+escFinal(m.zh)+'</span><span aria-hidden="true"> · </span>'+escFinal(m.label);
-    if(String(route.packageCode||'').toUpperCase()==='H51001'&&route.type==='listening'){
-      const all=d.flatMap(s=>Array.isArray(s.questions)?s.questions:[]);
-      let answered=0;
-      all.forEach(q=>{const id=String(q[0]);const idx=Number(id)<=20?0:1;const state=getSectionState(route.packageCode,route.type,idx);if(state?.answers&&Object.prototype.hasOwnProperty.call(state.answers,id)&&String(state.answers[id]).trim()!=='')answered++;});
+    if(window.__hsk45IsCombinedListening?.(route.packageCode)&&route.type==='listening'&&d.some(part=>Array.isArray(part.questions)&&part.questions.length)){
+      const all=d.flatMap(part=>Array.isArray(part.questions)?part.questions:[]);
+      const saved={answers:{},checked:{},answerEvents:{}};
+      for(let idx=d.length-1;idx>=0;idx--){const state=getSectionState(route.packageCode,route.type,idx);Object.assign(saved.answers,state.answers||{});Object.assign(saved.checked,state.checked||{});Object.assign(saved.answerEvents,state.answerEvents||{});}
+      const answered=all.filter(q=>saved.answers[String(q[0])]!==undefined&&String(saved.answers[String(q[0])]).trim()!=='').length;
       const st={answered,total:all.length,pct:all.length?Math.round(answered/all.length*100):0};
-      $('sections').innerHTML='<button class="tile sectionPartTile" onclick="startSection(0)"><div class="sectionPartTitle">全部听力</div><small>Soal 1–45 · '+all.length+' soal</small>'+progressHTML(st,'Progres Listening')+'<p class="sectionCombinedNote">Bagian 1 dan 2 berada dalam satu alur soal.</p></button>';
+      $('sections').innerHTML='<button class="tile sectionPartTile" onclick="startSection(0)"><div class="sectionPartTitle">全部听力</div><small>Seluruh soal Listening · '+all.length+' soal</small>'+progressHTML(st,'Progres Listening')+'<p class="sectionCombinedNote">Semua bagian berada dalam satu alur soal.</p></button>';
       return;
     }
     const available=d.map((s,i)=>({s,i})).filter(x=>Array.isArray(x.s.questions)&&x.s.questions.length>0);
@@ -8304,6 +8307,19 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
     bottom:14px!important;
   }
 }
+</style>
+<script id="hsk45CombinedListeningV1">
+(function(){
+'use strict';
+window.__hsk45IsCombinedListening=function(code){
+const c=String(code||'').trim().toUpperCase();
+return /^H[45]\d{3,}$/.test(c)||/^HSK[45](?:[-_]?\d|[-_]|$)/.test(c);
+};
+})();
+</script>
+<style id="hsk45ListeningPlaceholderV1">
+.listeningAudioPlaceholder{display:flex;align-items:center;justify-content:center;min-height:48px;margin-top:10px;padding:10px 14px;border:1px dashed var(--line,#3a3a3a);border-radius:12px;color:var(--muted,#9aa3af);font-size:14px;font-weight:650;text-align:center;box-sizing:border-box}
+body .listeningAudioPanel.is-floating .listeningAudioPlaceholder{width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </body>
 </html>
