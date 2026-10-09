@@ -211,9 +211,10 @@ body.dark .authForm .usernameInput:focus-visible,
 body.dark .usernameBox .usernameInput:focus,
 body.dark .usernameBox .usernameInput:focus-visible{
   background:#2d3441!important;
-  border-color:#ff7658!important;
+  border-color:var(--text)!important;
   color:#f3f6fa!important;
-  outline:none!important;
+  outline:2px solid var(--text)!important;
+  outline-offset:2px!important;
 
 }
 
@@ -3647,7 +3648,8 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
   color:#c4ccd8!important;
 }
 /* Beta UX audit: restore visible, flat keyboard focus indicators on onboarding controls. */
-.authChoice:focus-visible,.authBack:focus-visible,.authSubmit:focus-visible,.authThemeToggle:focus-visible,.authForm .usernameInput:focus-visible{outline:2px solid var(--blue)!important;outline-offset:3px!important;box-shadow:none!important;}
+.authChoice:focus-visible,.authBack:focus-visible,.authSubmit:focus-visible,.authThemeToggle:focus-visible{outline:2px solid var(--blue)!important;outline-offset:3px!important;box-shadow:none!important;}
+.authForm .usernameInput:focus-visible{outline:2px solid var(--text)!important;outline-offset:3px!important;box-shadow:none!important;}
 .authForm .usernameInput[aria-invalid="true"]{border-color:var(--red)!important;}
 </style>
 
