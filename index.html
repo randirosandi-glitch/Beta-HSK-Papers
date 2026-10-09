@@ -6459,57 +6459,38 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       }
     }
     /*
-      Dynamic package catalog — repository files are the source of truth.
-      Never depend on a manually maintained package list when the repository
-      tree is reachable. The catalog cache is only a fallback.
+      Dynamic catalog loading — prefer the repository tree or complete folder
+      listings, but query those providers concurrently so one slow endpoint
+      does not delay a healthy endpoint. CDN/manifest are concurrent fallbacks.
     */
     const wantedFolders=['HSK 4','HSK 5','Workbook HSK4a','Workbook HSK4b'];
 
     function buildGroupsFromPaths(paths){
       const map=new Map();
       for(const rawPath of (paths||[])){
-        const path=String(rawPath||'').replace(/^\/+/, '');
-        if(!path || !/\.json$/i.test(path))continue;
-
+        const path=String(rawPath||'').replace(/^\\/+/, '');
+        if(!path || !/\\.json$/i.test(path))continue;
         const parts=path.split('/');
         if(parts.length!==3 || parts[0]!=='data')continue;
-
-        const folder=parts[1];
-        const file=parts[2];
+        const folder=parts[1],file=parts[2];
         if(!wantedFolders.includes(folder))continue;
-
-        const base=file.replace(/\.json$/i,'');
+        const base=file.replace(/\\.json$/i,'');
         if(/^(manifest|reading-passages)$/i.test(base))continue;
-
         let g=map.get(folder);
-        if(!g){
-          g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};
-          map.set(folder,g);
-        }
+        if(!g){g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};map.set(folder,g)}
         addFile(g,base,path);
       }
       return [...map.values()].filter(g=>g.files.length);
     }
 
-    // PRIMARY: GitHub recursive tree. One request discovers the real files
-    // currently present on main, including newly added packages.
-    try{
+    async function fromTree(){
       const payload=await fetchJSON(TREE_API,6000);
-      const paths=Array.isArray(payload?.tree)
-        ? payload.tree.filter(x=>x?.type==='blob').map(x=>x.path).filter(Boolean)
-        : [];
+      const paths=Array.isArray(payload?.tree)?payload.tree.filter(x=>x?.type==='blob').map(x=>x.path).filter(Boolean):[];
       const groups=buildGroupsFromPaths(paths);
-      if(groups.length){
-        cacheCatalog(groups);
-        return {groups,source:'github-tree'};
-      }
-    }catch(err){
-      console.warn('GitHub repository tree catalog failed.',err);
+      if(!groups.length)throw new Error('GitHub Tree API returned no package files.');
+      return {groups,source:'github-tree'};
     }
-
-    // SECONDARY: GitHub Contents API. Fetch folders concurrently to avoid
-    // multiplying the 10-second timeout by the number of folders.
-    try{
+    async function fromContents(){
       const results=await Promise.all(wantedFolders.map(async folder=>{
         const url='https://api.github.com/repos/'+REPO+'/contents/data/'
           +folder.split('/').map(encodeURIComponent).join('/')
@@ -6517,63 +6498,52 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         try{return {folder,items:await fetchJSON(url,6000)}}
         catch(error){return {folder,items:null,error}}
       }));
-      if(results.every(x=>Array.isArray(x.items))){
-        const groups=[];
-        for(const {folder,items} of results){
-          const g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};
-          for(const item of items){
-            const file=String(item?.name||'');
-            if(item?.type!=='file' || !/\.json$/i.test(file))continue;
-            const base=file.replace(/\.json$/i,'');
-            if(/^(manifest|reading-passages)$/i.test(base))continue;
-            addFile(g,base,String(item.path||('data/'+folder+'/'+file)));
-          }
-          if(g.files.length)groups.push(g);
+      if(!results.every(x=>Array.isArray(x.items)))throw new Error('GitHub Contents API did not return all package folders.');
+      const groups=[];
+      for(const {folder,items} of results){
+        const g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};
+        for(const item of items){
+          const file=String(item?.name||'');
+          if(item?.type!=='file'||!/\\.json$/i.test(file))continue;
+          const base=file.replace(/\\.json$/i,'');
+          if(/^(manifest|reading-passages)$/i.test(base))continue;
+          addFile(g,base,String(item.path||('data/'+folder+'/'+file)));
         }
-        if(groups.length){
-          cacheCatalog(groups);
-          return {groups,source:'github-folder-contents'};
-        }
-      }else{
-        throw new Error('GitHub Contents API did not return all package folders.');
+        if(g.files.length)groups.push(g);
       }
-    }catch(err){
-      console.warn('GitHub folder catalog failed.',err);
+      if(!groups.length)throw new Error('GitHub Contents API returned no package files.');
+      return {groups,source:'github-folder-contents'};
     }
-
-    // TERTIARY: jsDelivr repository index.
-    try{
+    async function fromJsDelivr(){
       const url='https://data.jsdelivr.com/v1/package/gh/'+REPO+'@'+encodeURIComponent(REF)+'/flat';
       const payload=await fetchJSON(url,6000);
-      const paths=Array.isArray(payload?.files)
-        ? payload.files.map(x=>typeof x==='string'?x:x?.name).filter(Boolean)
-        : [];
+      const paths=Array.isArray(payload?.files)?payload.files.map(x=>typeof x==='string'?x:x?.name).filter(Boolean):[];
       const groups=buildGroupsFromPaths(paths);
-      if(groups.length){
-        cacheCatalog(groups);
-        return {groups,source:'github-files-jsdelivr'};
-      }
-    }catch(err){
-      console.warn('jsDelivr repository catalog failed.',err);
+      if(!groups.length)throw new Error('jsDelivr index returned no package files.');
+      return {groups,source:'github-files-jsdelivr'};
     }
-
-    // LAST RESORT: manifest. This is only used when live repository discovery
-    // is unavailable. It is deliberately refreshed before using local cache.
-    try{
+    async function fromManifest(){
       const m=await fetchJSON(RAW_BASE+'data/manifest.json',4000);
       const groups=groupsFromManifest(m);
-      if(groups.length){
-        cacheCatalog(groups);
-        return {groups,source:'manifest-fallback'};
-      }
-    }catch(err){
-      console.warn('Manifest fallback failed.',err);
+      if(!groups.length)throw new Error('Manifest returned no package files.');
+      return {groups,source:'manifest-fallback'};
     }
 
-    const cached=groupsFromCachedCatalog();
-    if(cached.length)return {groups:cached,source:'local-catalog-cache'};
-
-    throw new Error('Katalog package tidak dapat dimuat dari repository.');
+    let result;
+    try{
+      result=await Promise.any([fromTree(),fromContents()]);
+    }catch(primaryError){
+      try{
+        result=await Promise.any([fromJsDelivr(),fromManifest()]);
+      }catch(fallbackError){
+        const cached=groupsFromCachedCatalog();
+        if(cached.length)return {groups:cached,source:'local-catalog-cache'};
+        throw new Error('Katalog package tidak dapat dimuat dari repository.');
+      }
+    }
+    const groups=sortGroups(result.groups);
+    cacheCatalog(groups);
+    return {groups,source:result.source};
   }
 
   function sortGroups(groups){
