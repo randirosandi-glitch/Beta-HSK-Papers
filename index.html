@@ -103,20 +103,27 @@ html.auth-page,body.auth-page{overflow-x:hidden!important;overscroll-behavior-x:
 .sectionCombinedNote{margin:8px 0 0;color:var(--muted,#687386);font-size:13px}.listeningPartDivider{display:flex;align-items:center;gap:12px;margin:26px 0 18px;padding:14px 16px;border-top:2px solid #e86d5b;border-bottom:1px solid var(--line,#dbe2ea);background:var(--surface-soft,#f7f8fa);border-radius:12px}.listeningPartDivider span{font-family:serif;font-size:21px;font-weight:700;color:var(--text,#222)}.listeningPartDivider strong{font-size:14px;color:var(--muted,#687386)}
 .hskAudioBoundaryLegend{display:flex;justify-content:space-between;gap:12px;margin-top:12px;font-size:12px;color:var(--muted,#687386)}.hskAudioBoundaryTrack{position:relative;height:5px;border-radius:99px;background:#d7dfe8;margin:8px 2px 4px}.hskAudioBoundaryMarker{position:absolute;top:-4px;height:13px;width:3px;border-radius:3px;background:#e86d5b;transform:translateX(-50%)}
 .listeningAudioPanel{margin:14px 0;padding:14px;border:1px solid var(--line,#d8dce2);border-radius:14px;background:var(--surface,#fff);color:var(--text,#202124)}
-/* H51001: normal audio panel stays in the paper; only its compact version floats after scrolling past it. */
+/* H51001: keep the full player in its paper position; float only a compact control after it scrolls off-screen. */
 .listeningAudioSentinel{display:block;width:100%;height:1px;pointer-events:none}
 #exercise .listeningAudioPanel{transition:background .18s ease,border-color .18s ease}
-#exercise .listeningAudioPanel.is-floating{position:fixed;left:50%;bottom:calc(78px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);z-index:110;width:min(560px,calc(100% - 24px));margin:0;padding:5px 10px;border-radius:22px;background:rgba(248,250,252,.82);border:1px solid rgba(130,147,164,.22);backdrop-filter:blur(20px) saturate(135%);-webkit-backdrop-filter:blur(20px) saturate(135%);color:var(--text,#202124)}
-body.dark #exercise .listeningAudioPanel.is-floating{background:rgba(25,28,34,.86);border-color:rgba(190,204,224,.14)}
+#exercise .listeningAudioPanel.is-floating{
+ position:fixed!important;left:12px!important;right:12px!important;bottom:calc(76px + env(safe-area-inset-bottom, 0px))!important;
+ transform:none!important;z-index:2150!important;width:auto!important;max-width:560px;margin:0 auto!important;
+ padding:3px 8px!important;border-radius:24px!important;
+ background:color-mix(in srgb,var(--surface,#fff) 42%,transparent)!important;
+ border:1px solid color-mix(in srgb,var(--line,#d8dce2) 55%,transparent)!important;
+ backdrop-filter:blur(18px) saturate(120%)!important;-webkit-backdrop-filter:blur(18px) saturate(120%)!important;
+ box-shadow:none!important;color:var(--text,#202124)
+}
 #exercise .listeningAudioPanel.is-floating .listeningAudioHeading,
 #exercise .listeningAudioPanel.is-floating .hskAudioBoundaryLegend,
 #exercise .listeningAudioPanel.is-floating .hskAudioBoundaryTrack,
 #exercise .listeningAudioPanel.is-floating .listeningAudioNote{display:none!important}
-#exercise .listeningAudioPanel.is-floating audio{display:block;width:100%;height:38px;margin:0!important}
-#exercise.audio-player-floating{padding-bottom:calc(100px + env(safe-area-inset-bottom, 0px))!important}
+#exercise .listeningAudioPanel.is-floating audio{display:block;width:100%;height:36px;margin:0!important}
+#exercise.audio-player-floating{padding-bottom:calc(116px + env(safe-area-inset-bottom, 0px))!important}
 @media(max-width:599px){
- #exercise .listeningAudioPanel.is-floating{width:calc(100% - 24px);bottom:calc(78px + env(safe-area-inset-bottom, 0px));padding:4px 8px;border-radius:22px}
- #exercise .listeningAudioPanel.is-floating audio{height:36px}
+ #exercise .listeningAudioPanel.is-floating{left:12px!important;right:12px!important;bottom:calc(76px + env(safe-area-inset-bottom, 0px))!important;padding:2px 7px!important;border-radius:24px!important}
+ #exercise .listeningAudioPanel.is-floating audio{height:34px}
 }.listeningAudioHeading{display:flex;align-items:center;justify-content:space-between;gap:10px}.listeningAudioHeading span{font-size:.8em;opacity:.72}.listeningAudioSeek{margin-top:12px}.listeningAudioSeek label{display:block;font-size:.9em;margin-bottom:6px}.listeningAudioSeekRow{display:flex;gap:8px;align-items:center}.listeningAudioSeekRow input{min-width:0;width:120px;padding:9px;border:1px solid var(--line,#d8dce2);border-radius:8px;background:transparent;color:inherit}.listeningAudioNote{font-size:.82em;line-height:1.45;opacity:.78;margin:10px 0 0}.listeningNotice strong{color:var(--text)}.question .row{align-items:center}@media(max-width:599px){.question .row .btn{flex:1 1 auto;justify-content:center;min-height:44px}.listeningNotice{font-size:11px;padding:11px 12px}}
 
 /* Removed legacy landscape offsets; geometry is centralized in hsk-v41-landscape-layout. */.mainNav .navItem{transition:color .20s ease,background .20s ease,transform .16s cubic-bezier(.2,.8,.2,1),opacity .20s ease!important;}.mainNav .navItem .ico{transition:transform .20s cubic-bezier(.2,.8,.2,1),stroke-width .20s ease!important;}.mainNav .navItem.active .ico{transform:scale(1.06)}.mainNav .navItem:active{transform:scale(.95)!important}@media (prefers-reduced-motion:no-preference){.mainNav .navItem.navJustActivated .ico{animation:navIconSettle .28s cubic-bezier(.2,.8,.2,1)}@keyframes navIconSettle{0%{transform:scale(.94)}60%{transform:scale(1.09)}100%{transform:scale(1.06)}}}/* Removed second legacy landscape offset; labels and geometry are centralized in hsk-v41-landscape-layout. */
@@ -8097,16 +8104,17 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   }
 }
 </style>
-<script id="hsk-h51001-audio-scroll-float-v2">
+<script id="hsk-h51001-audio-scroll-float-v3">
 (function(){
   'use strict';
-  if(window.__hskAudioScrollFloatV2)return;
-  window.__hskAudioScrollFloatV2=true;
-  let observer;
+  if(window.__hskAudioScrollFloatV3)return;
+  window.__hskAudioScrollFloatV3=true;
+  let observer,mutationObserver;
   function bind(){
     const panel=document.querySelector('#exercise .listeningAudioPanel');
-    if(!panel||panel.dataset.floatBound==='1')return;
-    panel.dataset.floatBound='1';
+    if(!panel)return;
+    if(panel.dataset.floatBoundV3==='1')return;
+    panel.dataset.floatBoundV3='1';
     let sentinel=panel.previousElementSibling;
     if(!sentinel||!sentinel.classList.contains('listeningAudioSentinel')){
       sentinel=document.createElement('span');
@@ -8114,20 +8122,25 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
       sentinel.setAttribute('aria-hidden','true');
       panel.parentNode.insertBefore(sentinel,panel);
     }
-    if(observer)observer.disconnect();
-    observer=new IntersectionObserver(function(entries){
-      const entry=entries[0];
-      if(!entry||!panel.isConnected)return;
-      const floating=!entry.isIntersecting&&entry.boundingClientRect.top<0;
+    const update=()=>{
+      if(!panel.isConnected||!sentinel.isConnected)return;
+      const rect=sentinel.getBoundingClientRect();
+      const floating=rect.bottom<0;
       panel.classList.toggle('is-floating',floating);
       const exercise=document.getElementById('exercise');
       if(exercise)exercise.classList.toggle('audio-player-floating',floating);
-    },{threshold:0});
+    };
+    if(observer)observer.disconnect();
+    observer=new IntersectionObserver(update,{threshold:0});
     observer.observe(sentinel);
+    window.addEventListener('scroll',update,{passive:true});
+    window.addEventListener('resize',update,{passive:true});
+    update();
   }
   function start(){
     bind();
-    new MutationObserver(function(){bind();}).observe(document.body,{childList:true,subtree:true});
+    mutationObserver=new MutationObserver(bind);
+    mutationObserver.observe(document.body,{childList:true,subtree:true});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
