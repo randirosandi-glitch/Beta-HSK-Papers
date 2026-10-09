@@ -7932,6 +7932,31 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
 @media(max-width:599px),(orientation:portrait){.mainNav .navItem .heroicon-solid{width:22px!important;height:22px!important;flex-basis:22px!important}}
 </style>
 
+
+<style id="heroicons-filled-active-state-v2">
+/* Heroicons remain solid when active; selection changes color only. */
+.mainNav .navItem .heroicon-solid,
+.mainNav .navItem.active .heroicon-solid,
+.mainNav .navItem[aria-current="page"] .heroicon-solid{
+  fill:currentColor!important;
+  stroke:none!important;
+  filter:none!important;
+  opacity:1!important;
+}
+.mainNav .navItem .heroicon-solid path{
+  fill:currentColor!important;
+  stroke:none!important;
+}
+.mainNav .navItem.active,
+.mainNav .navItem[aria-current="page"]{
+  color:var(--navItemAccent,var(--blue))!important;
+}
+.mainNav .navItem.active .heroicon-solid,
+.mainNav .navItem[aria-current="page"] .heroicon-solid{
+  color:inherit!important;
+}
+</style>
+
 </body>
 </html>
 
