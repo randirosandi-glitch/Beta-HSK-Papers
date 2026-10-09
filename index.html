@@ -8164,8 +8164,11 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
     /* Use the compact floating geometry, never the original full paper panel height. */
     const nav=measureNav();
     const height=Math.max(48,Math.min(80,nav.height || floatHeight || 64));
-    const width=Math.min(vp.width-24,560);
-    activePanel.style.setProperty('--hsk-audio-left',Math.max(vp.left,nav.left)+'px');
+    const width=Math.max(0,Math.min(vp.width-24,560));
+    /* Center against the viewport itself. nav.left can be stale or expressed
+       in a different viewport coordinate space while Chrome's bars animate. */
+    const left=vp.left+(vp.width-width)/2;
+    activePanel.style.setProperty('--hsk-audio-left',left+'px');
     activePanel.style.setProperty('--hsk-audio-width',width+'px');
     activePanel.style.setProperty('--hsk-audio-height',height+'px');
     /* Portrait Chrome Android: let CSS bottom anchoring follow the same fixed-position
