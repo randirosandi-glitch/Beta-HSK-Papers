@@ -116,13 +116,13 @@ body .listeningAudioPanel.is-floating{
  backdrop-filter:blur(22px) saturate(145%)!important;-webkit-backdrop-filter:blur(22px) saturate(145%)!important;
  box-shadow:none!important;color:var(--text,#202124)
 }
-body.dark body .listeningAudioPanel.is-floating{background:rgba(32,37,47,.90)!important;border-color:rgba(170,180,205,.18)!important}
+body.dark .listeningAudioPanel.is-floating{background:rgba(32,37,47,.90)!important;border-color:rgba(170,180,205,.18)!important}
 body.audio-player-floating .mainNav{visibility:hidden!important;pointer-events:none!important}
-#exercise .listeningAudioPanel.is-floating .listeningAudioHeading,
-#exercise .listeningAudioPanel.is-floating .hskAudioBoundaryLegend,
-#exercise .listeningAudioPanel.is-floating .hskAudioBoundaryTrack,
-#exercise .listeningAudioPanel.is-floating .listeningAudioNote{display:none!important}
-#exercise .listeningAudioPanel.is-floating audio{display:block;width:100%;height:100%;min-width:0;margin:0!important}
+body .listeningAudioPanel.is-floating .listeningAudioHeading,
+body .listeningAudioPanel.is-floating .hskAudioBoundaryLegend,
+body .listeningAudioPanel.is-floating .hskAudioBoundaryTrack,
+body .listeningAudioPanel.is-floating .listeningAudioNote{display:none!important}
+body .listeningAudioPanel.is-floating audio{display:block;width:100%;height:100%;min-width:0;margin:0!important}
 #exercise.audio-player-floating{padding-bottom:calc(116px + env(safe-area-inset-bottom, 0px))!important}
 @media(max-width:599px){
  body .listeningAudioPanel.is-floating{padding:5px 7px!important;border-radius:27px!important}
