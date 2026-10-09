@@ -4001,12 +4001,23 @@ async function cloudUpdateUser(username,store){
   return true;
 }
 function syncNowStamp(){return Date.now()}
-function mergePlanArrays(localPlans,remotePlans){
-  const lm=new Map((Array.isArray(localPlans)?localPlans:[]).map(x=>[String(x.id),x]));
-  const rm=new Map((Array.isArray(remotePlans)?remotePlans:[]).map(x=>[String(x.id),x]));
+function mergePlanArrays(localPlans,remotePlans,localDeleted,remoteDeleted){
+  const deleted={};
+  for(const [id,stamp] of Object.entries(remoteDeleted&&typeof remoteDeleted==='object'?remoteDeleted:{}))deleted[String(id)]=Number(stamp)||Date.now();
+  for(const [id,stamp] of Object.entries(localDeleted&&typeof localDeleted==='object'?localDeleted:{}))deleted[String(id)]=Math.max(Number(deleted[String(id)]||0),Number(stamp)||Date.now());
+  const lm=new Map((Array.isArray(localPlans)?localPlans:[]).filter(x=>x&&x.id!=null).map(x=>[String(x.id),x]));
+  const rm=new Map((Array.isArray(remotePlans)?remotePlans:[]).filter(x=>x&&x.id!=null).map(x=>[String(x.id),x]));
   const ids=new Set([...lm.keys(),...rm.keys()]); const out=[]; let localWon=false;
-  ids.forEach(id=>{const l=lm.get(id),r=rm.get(id);if(!r){out.push(l);localWon=true;return}if(!l){out.push(r);return}const lt=Number(l.updatedAt||0),rt=Number(r.updatedAt||0);if(lt>=rt){out.push(l);if(lt>rt)localWon=true}else out.push(r)});
-  return {out,localWon};
+  ids.forEach(id=>{
+    /* A deletion tombstone wins over stale local or cloud copies. Plan IDs are unique and never reused. */
+    if(Object.prototype.hasOwnProperty.call(deleted,id))return;
+    const l=lm.get(id),r=rm.get(id);
+    if(!r){out.push(l);localWon=true;return}
+    if(!l){out.push(r);return}
+    const lt=Number(l.updatedAt||0),rt=Number(r.updatedAt||0);
+    if(lt>=rt){out.push(l);if(lt>rt)localWon=true}else out.push(r);
+  });
+  return {out,localWon,deleted};
 }
 function progressResetAt(store,key){
   const rm=store&&typeof store._progressResets==='object'&&store._progressResets?store._progressResets:{};
@@ -4042,7 +4053,7 @@ function mergeStoresLatest(local,remote){
   for(const [k,v] of Object.entries(resetB)){if(Number(resetB[k]||0)>Number(resetA[k]||0))mergedResets[k]=Number(resetB[k]||0)}
   const keys=new Set([...Object.keys(a),...Object.keys(b)]);
   for(const k of keys){
-    if(k==='_studyPlans'||k==='_attempts'||k==='_lastActivity'||k==='_syncMeta'||k==='_progressResets')continue;
+    if(k==='_studyPlans'||k==='_deletedStudyPlans'||k==='_attempts'||k==='_lastActivity'||k==='_syncMeta'||k==='_progressResets')continue;
     const l=a[k],r=b[k];
     const resetAt=Math.max(progressResetAt(a,k),progressResetAt(b,k));
     if(resetAt && k!=='_resume'){
@@ -4092,7 +4103,9 @@ function mergeStoresLatest(local,remote){
     }
     if(lt>=rt){out[k]=l;if(lt>rt)localWon=true}else out[k]=r;
   }
-  const plans=mergePlanArrays(a._studyPlans,b._studyPlans); out._studyPlans=plans.out; localWon ||= plans.localWon;
+  const plans=mergePlanArrays(a._studyPlans,b._studyPlans,a._deletedStudyPlans,b._deletedStudyPlans); out._studyPlans=plans.out; out._deletedStudyPlans=plans.deleted; localWon ||= plans.localWon;
+  /* Keep tombstones in both stores so stale cloud snapshots cannot restore deleted plans. */
+  if(Object.keys(out._deletedStudyPlans).length===0)delete out._deletedStudyPlans;
   const attempts=new Map();
   [...(Array.isArray(b._attempts)?b._attempts:[]),...(Array.isArray(a._attempts)?a._attempts:[])].forEach(x=>{
     if(!x?.id)return;
@@ -5864,9 +5877,15 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   window.deleteStudyPlan=function(id){
     const p=getPlanMaster(id);if(!p)return;
     appConfirm('Hapus rencana belajar?','Rencana “'+p.name+'” akan dihapus. Paket dan progres belajarmu tetap aman.',()=>{
-    savePlansMaster(plansStoreMaster().filter(x=>String(x.id)!==String(id)));
-    if(route.screen==='studyPlanDetail'&&String(route.studyPlanId)===String(id))window.openStudyPlans(true);
-    else window.renderStudyPlans();
+      const store=readStore();
+      const deleted=store._deletedStudyPlans&&typeof store._deletedStudyPlans==='object'?store._deletedStudyPlans:{};
+      deleted[String(id)]=Date.now();
+      store._deletedStudyPlans=deleted;
+      store._studyPlans=plansStoreMaster().filter(x=>String(x.id)!==String(id));
+      writeStore(store);
+      scheduleCloudSync();
+      if(route.screen==='studyPlanDetail'&&String(route.studyPlanId)===String(id))window.openStudyPlans(true);
+      else window.renderStudyPlans();
     },{icon:'⌫',okText:'Hapus',danger:true});
   };
 
