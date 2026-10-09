@@ -4587,12 +4587,29 @@ function loadHskDriveAudioIndex(){
 }
 async function hydrateHskDriveAudioPlayer(panel){
   if(!panel||panel.dataset.audioLookup==='done'||panel.dataset.audioLookup==='pending')return;
-  const code=String(panel.dataset.audioPackage||'').toUpperCase();
-  if(!/^(?:H[1-9]\d{4,}|HSK[1-9]\d{3,})$/.test(code))return;
+  const code=String(panel.dataset.audioPackage||'').trim().toUpperCase();
+  if(!/^(?:H[1-9]\\d{4,}|HSK[1-9]\\d{3,})$/.test(code))return;
   panel.dataset.audioLookup='pending';
-  const index=await loadHskDriveAudioIndex();
+  let index=await loadHskDriveAudioIndex();
   if(!panel.isConnected)return;
-  const item=index&&index.files&&index.files[code];
+  let files=index&&index.files;
+  let item=files&&(files[code]||files[code+'.MP3']);
+  if(!item&&files){
+    const matchedKey=Object.keys(files).find(key=>String(key).trim().replace(/\\.mp3$/i,'').toUpperCase()===code);
+    if(matchedKey)item=files[matchedKey];
+  }
+  // Retry once with a fresh index in case Drive's folder listing has just updated.
+  if(!item&&HSK_LISTENING_DRIVE_INDEX_URL){
+    __hskDriveAudioIndexPromise=null;
+    index=await loadHskDriveAudioIndex();
+    if(!panel.isConnected)return;
+    files=index&&index.files;
+    item=files&&(files[code]||files[code+'.MP3']);
+    if(!item&&files){
+      const matchedKey=Object.keys(files).find(key=>String(key).trim().replace(/\\.mp3$/i,'').toUpperCase()===code);
+      if(matchedKey)item=files[matchedKey];
+    }
+  }
   const area=panel.querySelector('.listeningAudioPlaceholder');
   if(item&&item.url){
     let audio=panel.querySelector('audio#hskListeningAudio');
