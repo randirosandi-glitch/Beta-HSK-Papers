@@ -7460,6 +7460,19 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   window.addEventListener('hsk:dynamic-catalog-ready',install,{once:true});
 })();
 </script>
+
+<!-- HSK Papers v38 — final cascade guard for tablet landscape navbar labels -->
+<style id="hsk-v38-tablet-landscape-nav-label-fix">
+@media (min-width:600px) and (max-width:899px) and (orientation:landscape){
+  .mainNav{width:76px!important;min-width:76px!important;max-width:76px!important;align-items:stretch!important;justify-content:flex-start!important;padding:14px 6px!important;gap:8px!important;overflow-x:hidden!important;overflow-y:auto!important;background:var(--surface)!important;border-right:1px solid var(--line)!important;}
+  .mainNav .navItem,.mainNav .navItem:hover,.mainNav .navItem:active,.mainNav .navItem:focus,.mainNav .navItem:focus-visible,.mainNav .navItem.active,.mainNav .navItem[aria-current="page"]{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;width:100%!important;min-width:0!important;min-height:62px!important;height:auto!important;padding:8px 2px!important;border:0!important;border-radius:12px!important;background:transparent!important;color:var(--muted)!important;box-shadow:none!important;transform:none!important;}
+  .mainNav .navItem .navLabel,.mainNav .navItem.active .navLabel,.mainNav .navItem[aria-current="page"] .navLabel{display:block!important;visibility:visible!important;opacity:1!important;position:static!important;width:100%!important;max-width:100%!important;height:auto!important;overflow:visible!important;text-overflow:clip!important;white-space:normal!important;text-align:center!important;color:currentColor!important;font-size:9px!important;line-height:1.2!important;font-weight:500!important;}
+  .mainNav .navItem .ico,.mainNav .navItem.active .ico,.mainNav .navItem[aria-current="page"] .ico{display:inline-flex!important;visibility:visible!important;opacity:1!important;width:23px!important;height:23px!important;min-width:23px!important;min-height:23px!important;flex:0 0 23px!important;color:currentColor!important;background:transparent!important;box-shadow:none!important;}
+  .mainNav .navItem.active,.mainNav .navItem[aria-current="page"]{background:color-mix(in srgb,var(--blue) 12%,var(--surface))!important;color:var(--blue)!important;font-weight:700!important;}
+  .mainNav .navItem::before,.mainNav .navItem::after{content:none!important;display:none!important;}
+  main,.topin,.context,.appFooter{width:calc(100% - 76px)!important;margin-left:76px!important;margin-right:0!important;box-sizing:border-box!important;}
+}
+</style>
 </body>
 </html>
 
