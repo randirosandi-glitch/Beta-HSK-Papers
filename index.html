@@ -7446,8 +7446,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   function ensureReadingPassages(){
     if(passageLoadPromise)return passageLoadPromise;
 
+    var passageController=new AbortController();
+    var passageTimeout=setTimeout(function(){passageController.abort()},8000);
     passageLoadPromise=fetch('./data/reading-passages.json',{
       cache:'no-store',
+      signal:passageController.signal,
       headers:{Accept:'application/json'}
     }).then(function(r){
       if(!r.ok)throw new Error('Reading passages HTTP '+r.status);
@@ -7468,7 +7471,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       window.__hskReadingPassagesReady=false;
       console.warn('HSK reading passages unavailable; embedded fallback retained.',err);
       return false;
-    });
+    }).finally(function(){clearTimeout(passageTimeout)});
 
     return passageLoadPromise;
   }
