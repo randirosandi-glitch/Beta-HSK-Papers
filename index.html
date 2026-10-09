@@ -7599,6 +7599,45 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 }
 .mainNav .navItem.active .navLabel,.mainNav .navItem[aria-current="page"] .navLabel{color:var(--muted)!important;font-weight:500!important;}
 </style>
+<!-- HSK Papers v45 — hard override for true portrait pill and icon-only active indicator -->
+<style id="hsk-v45-pill-nav-hard-override">
+@media (max-width:599px),(min-width:600px) and (orientation:portrait){
+  .mainNav{
+    position:fixed!important;left:50%!important;right:auto!important;top:auto!important;
+    bottom:calc(10px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;
+    display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:center!important;
+    width:max-content!important;min-width:0!important;max-width:calc(100vw - 20px)!important;height:auto!important;
+    margin:0!important;padding:5px!important;gap:2px!important;box-sizing:border-box!important;
+    border:1px solid var(--line)!important;border-radius:9999px!important;
+    background:color-mix(in srgb,var(--surface) 94%,transparent)!important;background-image:none!important;
+    box-shadow:none!important;backdrop-filter:blur(16px) saturate(125%)!important;-webkit-backdrop-filter:blur(16px) saturate(125%)!important;
+    overflow-x:auto!important;overflow-y:hidden!important;
+  }
+  .mainNav .navItem,.mainNav .navItem:hover,.mainNav .navItem:active,.mainNav .navItem:focus,.mainNav .navItem:focus-visible,.mainNav .navItem.active,.mainNav .navItem[aria-current="page"]{
+    display:flex!important;flex:0 0 auto!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    width:auto!important;min-width:52px!important;max-width:76px!important;height:auto!important;min-height:46px!important;max-height:none!important;
+    margin:0!important;padding:4px 7px!important;gap:3px!important;
+    border:0!important;border-radius:9999px!important;outline-offset:2px!important;
+    background:transparent!important;background-color:transparent!important;background-image:none!important;box-shadow:none!important;
+    color:var(--muted)!important;transform:none!important;
+  }
+  .mainNav .navItem .ico,.mainNav .navItem.active .ico,.mainNav .navItem[aria-current="page"] .ico{
+    width:21px!important;height:21px!important;min-width:21px!important;min-height:21px!important;flex:0 0 21px!important;
+    color:currentColor!important;background:transparent!important;box-shadow:none!important;
+  }
+  .mainNav .navItem .navLabel,.mainNav .navItem.active .navLabel,.mainNav .navItem[aria-current="page"] .navLabel{
+    display:block!important;visibility:visible!important;opacity:1!important;width:auto!important;max-width:none!important;height:auto!important;
+    margin:0!important;padding:0!important;overflow:visible!important;text-overflow:clip!important;white-space:nowrap!important;
+    font-size:9px!important;line-height:1.1!important;color:var(--muted)!important;font-weight:500!important;background:transparent!important;
+  }
+}
+.mainNav .navItem,.mainNav .navItem:hover,.mainNav .navItem:active,.mainNav .navItem:focus,.mainNav .navItem:focus-visible,.mainNav .navItem.active,.mainNav .navItem[aria-current="page"]{
+  background:transparent!important;background-color:transparent!important;background-image:none!important;box-shadow:none!important;
+}
+.mainNav .navItem.active,.mainNav .navItem[aria-current="page"]{color:var(--muted)!important;background:transparent!important;background-color:transparent!important;}
+.mainNav .navItem.active .ico,.mainNav .navItem[aria-current="page"] .ico{color:var(--accent,#ff6b52)!important;fill:currentColor!important;background:transparent!important;box-shadow:none!important;filter:none!important;}
+.mainNav .navItem.active .navLabel,.mainNav .navItem[aria-current="page"] .navLabel{color:var(--muted)!important;background:transparent!important;font-weight:500!important;}
+</style>
 </body>
 </html>
 
