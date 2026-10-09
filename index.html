@@ -4571,7 +4571,7 @@ function renderListeningAudioPlayer(){
   const boundary=HSK_LISTENING_H51001_BOUNDS[1].end;
   const total=HSK_LISTENING_H51001_BOUNDS[2].end;
   const markerPct=(boundary/total*100).toFixed(3);
-  return '<section class="listeningAudioPanel" aria-label="Audio Listening"><div class="listeningAudioHeading"><strong>Audio Listening · H51001</strong><span>45 soal</span></div><audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="https://hsk-papers-audio-test.web.app/audio/H51001.mp3">Browser tidak mendukung pemutar audio.</audio><div class="hskAudioBoundaryLegend"><span>Soal 1–20</span><span>Soal 21–45</span></div><div class="hskAudioBoundaryTrack" aria-label="Penanda batas antarbagian"><span class="hskAudioBoundaryMarker" style="left:'+markerPct+'%"></span></div><p class="listeningAudioNote">Penanda batas: 12:06,858 — setelah soal 20, sebelum soal 21.</p></section>';
+  return '<section class="listeningAudioPanel" aria-label="Audio Listening"><div class="listeningAudioHeading"><strong>Audio Listening · H51001</strong><span>45 soal</span></div><audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="https://hsk-papers-audio-test.web.app/audio/H51001.mp3">Browser tidak mendukung pemutar audio.</audio></section>';
 }
 function seekHskListeningAudio(){
   const audio=document.getElementById('hskListeningAudio');
