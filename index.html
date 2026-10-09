@@ -4569,6 +4569,10 @@ function applyHskListeningPartBounds(){
 }
 /* Drive audio index endpoint. After deploying drive-audio-index.gs as a web app, paste its /exec URL here. */
 const HSK_LISTENING_DRIVE_INDEX_URL='https://script.google.com/macros/s/AKfycbwzuV2f58gr1J6-oL2lKsOmYmCQWov8MGTJGhPVRcxBECvpjVaW39dGdBtng0t3f3goWQ/exec';
+const HSK_DRIVE_AUDIO_FALLBACKS={
+  H51001:'https://drive.google.com/uc?export=download&id=1W08miajrwBEZhMpiDtPDRdiHaItS0fTR',
+  H51002:'https://drive.google.com/uc?export=download&id=1QzZaNDLKtuc-bqSMAMwd2ZTcdU8_S-2c'
+};
 let __hskDriveAudioIndexPromise=null;
 function loadHskDriveAudioIndex(){
   if(__hskDriveAudioIndexPromise)return __hskDriveAudioIndexPromise;
@@ -4630,6 +4634,15 @@ async function hydrateHskDriveAudioPlayer(panel){
       panel.dataset.audioLookup='done';
       return;
     }
+  }
+  const fallbackUrl=HSK_DRIVE_AUDIO_FALLBACKS[code];
+  if(fallbackUrl&&area){
+    const audio=document.createElement('audio');
+    audio.id='hskListeningAudio';audio.controls=true;audio.preload='auto';
+    audio.style.cssText='display:block;width:100%;margin-top:10px';
+    audio.src=fallbackUrl;audio.setAttribute('aria-label','Audio Listening '+code);
+    audio.addEventListener('error',()=>{panel.dataset.audioStatus='error';},{once:true});
+    area.replaceWith(audio);audio.load();panel.dataset.audioLookup='done';return;
   }
   panel.dataset.audioLookup='done';
   if(area&&HSK_LISTENING_DRIVE_INDEX_URL)area.textContent='Audio belum ditemukan di folder Google Drive · periksa nama file '+code+'.mp3';
