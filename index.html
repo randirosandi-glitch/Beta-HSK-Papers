@@ -100,6 +100,7 @@ html.auth-page,body.auth-page{overflow-x:hidden!important;overscroll-behavior-x:
 .mainNav.authLocked{display:none!important;}
 
 .listeningNotice{margin:0 0 14px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--orange) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--orange) 24%,var(--line));color:var(--muted);font-size:12px;line-height:1.55}
+.hskAudioBoundaryLegend{display:flex;justify-content:space-between;gap:12px;margin-top:12px;font-size:12px;color:var(--muted,#687386)}.hskAudioBoundaryTrack{position:relative;height:5px;border-radius:99px;background:#d7dfe8;margin:8px 2px 4px}.hskAudioBoundaryMarker{position:absolute;top:-4px;height:13px;width:3px;border-radius:3px;background:#e86d5b;transform:translateX(-50%)}
 .listeningAudioPanel{margin:14px 0;padding:14px;border:1px solid var(--line,#d8dce2);border-radius:14px;background:var(--surface,#fff);color:var(--text,#202124)}.listeningAudioHeading{display:flex;align-items:center;justify-content:space-between;gap:10px}.listeningAudioHeading span{font-size:.8em;opacity:.72}.listeningAudioSeek{margin-top:12px}.listeningAudioSeek label{display:block;font-size:.9em;margin-bottom:6px}.listeningAudioSeekRow{display:flex;gap:8px;align-items:center}.listeningAudioSeekRow input{min-width:0;width:120px;padding:9px;border:1px solid var(--line,#d8dce2);border-radius:8px;background:transparent;color:inherit}.listeningAudioNote{font-size:.82em;line-height:1.45;opacity:.78;margin:10px 0 0}.listeningNotice strong{color:var(--text)}.question .row{align-items:center}@media(max-width:599px){.question .row .btn{flex:1 1 auto;justify-content:center;min-height:44px}.listeningNotice{font-size:11px;padding:11px 12px}}
 
 /* Removed legacy landscape offsets; geometry is centralized in hsk-v41-landscape-layout. */.mainNav .navItem{transition:color .20s ease,background .20s ease,transform .16s cubic-bezier(.2,.8,.2,1),opacity .20s ease!important;}.mainNav .navItem .ico{transition:transform .20s cubic-bezier(.2,.8,.2,1),stroke-width .20s ease!important;}.mainNav .navItem.active .ico{transform:scale(1.06)}.mainNav .navItem:active{transform:scale(.95)!important}@media (prefers-reduced-motion:no-preference){.mainNav .navItem.navJustActivated .ico{animation:navIconSettle .28s cubic-bezier(.2,.8,.2,1)}@keyframes navIconSettle{0%{transform:scale(.94)}60%{transform:scale(1.09)}100%{transform:scale(1.06)}}}/* Removed second legacy landscape offset; labels and geometry are centralized in hsk-v41-landscape-layout. */
@@ -4542,10 +4543,10 @@ function applyHskListeningPartBounds(){
   loadHskListeningTimestampManifest().then(applyBounds);
 }
 function renderListeningAudioPlayer(){
-  const part=Math.max(1,Number(route.sectionIndex||0)+1);
-  const bounds=HSK_LISTENING_H51001_BOUNDS[part]||HSK_LISTENING_H51001_BOUNDS[1];
-  const src='https://hsk-papers-audio-test.web.app/audio/H51001.mp3#t='+bounds.start+','+bounds.end;
-  return '<section class="listeningAudioPanel" aria-label="Audio Listening"><div class="listeningAudioHeading"><strong>Audio Listening · Bagian '+part+'</strong><span>H51001</span></div><audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="'+src+'">Browser tidak mendukung pemutar audio.</audio><div class="listeningAudioSeek"><label for="hskListeningSeek">Lompat ke waktu (detik)</label><div class="listeningAudioSeekRow"><input id="hskListeningSeek" type="number" min="'+bounds.start+'" max="'+bounds.end+'" step="0.1" value="'+bounds.start+'" inputmode="decimal" aria-label="Waktu audio dalam detik"><button type="button" class="btn soft" onclick="seekHskListeningAudio()">Lompat</button></div></div><p class="listeningAudioNote">Bagian '+part+' menggunakan batas waktu '+bounds.start.toFixed(3)+'–'+bounds.end.toFixed(3)+' detik. Waktu batas tersimpan di manifest stable.</p></section>';
+  const boundary=HSK_LISTENING_H51001_BOUNDS[1].end;
+  const total=HSK_LISTENING_H51001_BOUNDS[2].end;
+  const markerPct=(boundary/total*100).toFixed(3);
+  return '<section class="listeningAudioPanel" aria-label="Audio Listening"><div class="listeningAudioHeading"><strong>Audio Listening · H51001</strong><span>45 soal</span></div><audio id="hskListeningAudio" controls preload="metadata" style="display:block;width:100%;margin-top:10px" src="https://hsk-papers-audio-test.web.app/audio/H51001.mp3">Browser tidak mendukung pemutar audio.</audio><div class="hskAudioBoundaryLegend"><span>Soal 1–20</span><span>Soal 21–45</span></div><div class="hskAudioBoundaryTrack" aria-label="Penanda batas antarbagian"><span class="hskAudioBoundaryMarker" style="left:'+markerPct+'%"></span></div><p class="listeningAudioNote">Penanda batas: 12:06,858 — setelah soal 20, sebelum soal 21.</p></section>';
 }
 function seekHskListeningAudio(){
   const audio=document.getElementById('hskListeningAudio');
@@ -4982,6 +4983,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const PAGE_SIZE=10;
   let page=0;
   function questionPages(){
+    if(route.type==='listening')return currentQuestions.length?[currentQuestions]:[[]];
     const pkg=getActivePackageData();
     const isHsk5PassageSection=isHsk5Model(pkg)&&route.type==='reading'&&currentQuestions.length>0&&currentQuestions.every(q=>{
       const m=getResolvedQuestionModel(pkg,route.type,route.sectionIndex,q);
