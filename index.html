@@ -4573,7 +4573,7 @@ function renderHskDriveAudioPreview(panel,fileId,code){
 async function hydrateHskDriveAudioPlayer(panel){
   if(!panel||panel.dataset.audioLookup==='done'||panel.dataset.audioLookup==='pending')return;
   const code=String(panel.dataset.audioPackage||'').trim().toUpperCase();
-  if(!/^(?:H[1-9]\\d{4,}|HSK[1-9]\\d{3,})$/.test(code))return;
+  if(!/^(?:H[1-9]\d{4,}|HSK[1-9]\d{3,})$/.test(code))return;
   panel.dataset.audioLookup='pending';
   const index=await loadHskDriveAudioIndex();
   if(!panel.isConnected)return;
