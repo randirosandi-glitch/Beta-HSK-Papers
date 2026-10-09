@@ -8106,29 +8106,29 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   }
 }
 </style>
-<script id="hsk-h51001-audio-scroll-float-v4">
+<script id="hsk-h51001-audio-scroll-float-v5">
 (function(){
   'use strict';
-  if(window.__hskAudioScrollFloatV4)return;
-  window.__hskAudioScrollFloatV4=true;
+  if(window.__hskAudioScrollFloatV5)return;
+  window.__hskAudioScrollFloatV5=true;
   let observer=null,mutationObserver=null,activePanel=null;
   function bind(){
-    const panel=document.querySelector('#exercise .listeningAudioPanel')||document.querySelector('body>.listeningAudioPanel[data-float-bound-v4="1"]');
+    const panel=document.querySelector('#exercise .listeningAudioPanel')||document.querySelector('body>.listeningAudioPanel[data-float-bound-v5="1"]');
     if(!panel||panel===activePanel)return;
     activePanel=panel;
-    panel.dataset.floatBoundV4='1';
-    let sentinel=panel.previousElementSibling;
+    panel.dataset.floatBoundV5='1';
+    let sentinel=panel.nextElementSibling;
     if(!sentinel||!sentinel.classList.contains('listeningAudioSentinel')){
       sentinel=document.createElement('span');
       sentinel.className='listeningAudioSentinel';
       sentinel.setAttribute('aria-hidden','true');
-      panel.parentNode.insertBefore(sentinel,panel);
+      panel.parentNode.insertBefore(sentinel,panel.nextSibling);
     }
     const home=sentinel.parentNode;
     const update=()=>{
       if(!panel.isConnected||!sentinel.isConnected)return;
       const nav=document.querySelector('.mainNav');
-      if(nav&&!document.body.classList.contains('audio-player-floating')){
+      if(nav){
         const n=nav.getBoundingClientRect();
         if(n.width>0&&n.height>0){
           panel.style.setProperty('--hsk-audio-left',n.left+'px');
@@ -8137,12 +8137,14 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
           panel.style.setProperty('--hsk-audio-height',n.height+'px');
         }
       }
+      /* Sentinel follows the full player, so floating starts only after the
+         normal player has completely scrolled above the viewport. */
       const r=sentinel.getBoundingClientRect();
-      const floating=r.bottom<0;
+      const floating=r.top<0;
       if(floating){
         if(panel.parentNode!==document.body)document.body.appendChild(panel);
       }else if(panel.parentNode!==home){
-        home.insertBefore(panel,sentinel.nextSibling);
+        home.insertBefore(panel,sentinel);
       }
       panel.classList.toggle('is-floating',floating);
       const exercise=document.getElementById('exercise');
