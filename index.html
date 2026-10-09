@@ -4662,8 +4662,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 else observeHskDriveAudioPlayers();
 function renderListeningAudioPlayer(code,count){
   const packageCode=String(code||route?.packageCode||'').toUpperCase();
-  const knownAudio=packageCode==='H51001'
-    ? '<audio id="hskListeningAudio" controls preload="auto" style="display:block;width:100%;margin-top:10px" src="https://drive.google.com/uc?export=download&id=1W08miajrwBEZhMpiDtPDRdiHaItS0fTR">Browser tidak mendukung pemutar audio.</audio>'
+  const knownAudio=HSK_DRIVE_AUDIO_FALLBACKS[packageCode]
+    ? '<audio id="hskListeningAudio" controls preload="auto" style="display:block;width:100%;margin-top:10px" src="'+HSK_DRIVE_AUDIO_FALLBACKS[packageCode]+'">Browser tidak mendukung pemutar audio.</audio>'
     : '<div class="listeningAudioPlaceholder" role="status">Audio belum diunggah · player siap digunakan</div>';
   return '<section class="listeningAudioPanel" aria-label="Audio Listening" data-audio-package="'+packageCode+'"><div class="listeningAudioHeading"><strong>Audio Listening · '+packageCode+'</strong><span>'+Number(count||0)+' soal</span></div>'+knownAudio+'</section>';
 }
