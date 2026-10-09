@@ -6679,7 +6679,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     let lastError=null;
     for(const url of [meta.url,meta.remoteUrl||rawURL(meta.path)]){
       try{
-        const d=await fetchJSON(url,12000);
+        const timeout=url===meta.url?5000:9000;
+        const d=await fetchJSON(url,timeout);
         if(!d||typeof d!=='object')throw new Error('JSON package tidak valid: '+code);
         return d;
       }catch(e){lastError=e}
