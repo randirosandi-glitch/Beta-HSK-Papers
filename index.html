@@ -6468,13 +6468,13 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     function buildGroupsFromPaths(paths){
       const map=new Map();
       for(const rawPath of (paths||[])){
-        const path=String(rawPath||'').replace(/^\\/+/, '');
-        if(!path || !/\\.json$/i.test(path))continue;
+        const path=String(rawPath||'').replace(/^\/+/, '');
+        if(!path || !/\.json$/i.test(path))continue;
         const parts=path.split('/');
         if(parts.length!==3 || parts[0]!=='data')continue;
         const folder=parts[1],file=parts[2];
         if(!wantedFolders.includes(folder))continue;
-        const base=file.replace(/\\.json$/i,'');
+        const base=file.replace(/\.json$/i,'');
         if(/^(manifest|reading-passages)$/i.test(base))continue;
         let g=map.get(folder);
         if(!g){g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};map.set(folder,g)}
@@ -6504,8 +6504,8 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         const g={name:folder,path:'data/'+folder,kind:kind(folder),level:level(folder),files:[],codes:[]};
         for(const item of items){
           const file=String(item?.name||'');
-          if(item?.type!=='file'||!/\\.json$/i.test(file))continue;
-          const base=file.replace(/\\.json$/i,'');
+          if(item?.type!=='file'||!/\.json$/i.test(file))continue;
+          const base=file.replace(/\.json$/i,'');
           if(/^(manifest|reading-passages)$/i.test(base))continue;
           addFile(g,base,String(item.path||('data/'+folder+'/'+file)));
         }
