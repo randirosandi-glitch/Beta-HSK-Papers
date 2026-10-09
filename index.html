@@ -5639,7 +5639,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     }
     el.innerHTML=plans.map(p=>{
       const st=planStatsMaster(p);
-      return `<article class="studyPlanCard" role="button" tabindex="0" aria-label="Buka rencana ${escHtml(p.name)}" onclick="openStudyPlan('${escHtml(p.id)}')">
+      return `<article class="studyPlanCard" role="button" tabindex="0" data-plan-id="${escHtml(p.id)}" aria-label="Buka rencana ${escHtml(p.name)}" onclick="openStudyPlan('${escHtml(p.id)}')">
         <div class="studyPlanCardTop"><div class="studyPlanIcon" aria-hidden="true"><span class="material-symbols-rounded">checklist</span></div>
           <button class="studyPlanMenu" type="button" onclick="event.stopPropagation();toggleStudyPlanMenu('${escHtml(p.id)}')" aria-label="Menu rencana"><span class="material-symbols-rounded" aria-hidden="true">more_horiz</span></button>
         </div>
@@ -7883,15 +7883,7 @@ body.dark .studyPlanPickerLevel.active{background:var(--blue)!important;color:#f
     const card=e.target.closest?.('#studyPlansGrid .studyPlanCard[role="button"]');
     if(card && e.target===card && (e.key==='Enter'||e.key===' ')){
       e.preventDefault();
-      const label=card.getAttribute('aria-label')||'';
-      const name=label.replace(/^Buka rencana\s*/,'');
-      const plans=typeof window.__masterReliabilityFix==='object'?window.__masterReliabilityFix:null;
       if(typeof window.openStudyPlan==='function'&&card.dataset.planId)window.openStudyPlan(card.dataset.planId);
-      else if(typeof window.openStudyPlan==='function'){
-        const title=card.querySelector('h3')?.textContent?.trim();
-        const state=window.__studyPlanState;
-        if(title&&Array.isArray(state?.plans)){const p=state.plans.find(x=>x.name===title);if(p)window.openStudyPlan(p.id)}
-      }
     }
   },true);
 })();
