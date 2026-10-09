@@ -4280,7 +4280,7 @@ function correctIndex(q,type){const model=getResolvedQuestionModel(getActivePack
 function isCorrect(q,u,type,idx){const model=getResolvedQuestionModel(getActivePackageData(),type,idx,q);if(model.type==="sentence_ordering"||model.type==="sequence")return isSequenceAnswerCorrect(q,u);if(model.type==="guided_writing"||model.type==="picture_writing")return false;const ci=correctIndex(q,type);return Number(u)===ci}
 function lazyPackageMeta(code){try{const meta=window.__hskDatabase?.byCode?.get(String(code));if(!meta)return null;const folder=String(meta.path||'').split('/')[1]||'';if(/^HSK\s*[45]$/i.test(folder))return {total:100,folder};if(/^Workbook\s*HSK4a$/i.test(folder)||/^Workbook\s*HSK4b$/i.test(folder))return {total:50,folder};return {total:0,folder}}catch(e){return null}}
 function lazyStoredProgress(code,storeArg){const prefix=String(code)+'|',store=storeArg||readStore();let answered=0;for(const [key,raw] of Object.entries(store)){if(!key.startsWith(prefix)||!raw||typeof raw!=='object')continue;const a=raw.answers;if(!a||typeof a!=='object')continue;for(const v of Object.values(a)){if(v!==undefined&&String(v).trim()!=='')answered++}}return answered}
-function packageStats(code,storeArg){let total=0,answered=0,score=0,gradedTotal=0;const rows=[];const pkg=DB[code];if(pkg?.__lazy){const meta=lazyPackageMeta(code);const expected=Number(meta?.total)||0;const savedAnswered=lazyStoredProgress(code,storeArg);return {total:expected,answered:Math.min(savedAnswered,expected||savedAnswered),score:0,gradedTotal:0,pct:expected?Math.round(Math.min(savedAnswered,expected)/expected*100):0,scorePct:0,rows:[]}}for(const [type,m] of Object.entries(META)){const arr=pkg?.[type]||[];for(let i=0;i<arr.length;i++){const st=sectionStats(code,type,i,storeArg);total+=st.total;answered+=st.answered;if(type!=='writing'||isSequenceWriting(type,i)){score+=st.score;gradedTotal+=st.total}rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st,graded:type!=='writing'||isSequenceWriting(type,i)})}}return {total,answered,score,gradedTotal,pct:total?Math.round(answered/total*100):0,scorePct:gradedTotal?Math.round(score/gradedTotal*100):0,rows}}
+function packageStats(code,storeArg){const store=storeArg||readStore();let total=0,answered=0,score=0,gradedTotal=0;const rows=[];const pkg=DB[code];if(pkg?.__lazy){const meta=lazyPackageMeta(code);const expected=Number(meta?.total)||0;const savedAnswered=lazyStoredProgress(code,store);return {total:expected,answered:Math.min(savedAnswered,expected||savedAnswered),score:0,gradedTotal:0,pct:expected?Math.round(Math.min(savedAnswered,expected)/expected*100):0,scorePct:0,rows:[]}}for(const [type,m] of Object.entries(META)){const arr=pkg?.[type]||[];for(let i=0;i<arr.length;i++){const st=sectionStats(code,type,i,store);total+=st.total;answered+=st.answered;if(type!=='writing'||isSequenceWriting(type,i)){score+=st.score;gradedTotal+=st.total}rows.push({type,label:m.label,zh:m.zh,section:arr[i].title.replace(/^.*?·\s*/,''),range:arr[i].range,...st,graded:type!=='writing'||isSequenceWriting(type,i)})}}return {total,answered,score,gradedTotal,pct:total?Math.round(answered/total*100):0,scorePct:gradedTotal?Math.round(score/gradedTotal*100):0,rows}}
 function progressHTML(st,label='Progres'){return `<div class="progressWrap"><div class="progressMeta"><span>${label}</span><span>${st.answered}/${st.total} · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`}
 function renderPackageProgress(code){const st=packageStats(code);return progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres paket')}
 function renderContext(){const c=$('context');const tb=$('topBack');const top=document.querySelector('.top');if(top){const isHome=route.screen==='home';document.body.classList.toggle('home-route',isHome);top.classList.toggle('homeTopHidden',isHome);top.style.setProperty('display',isHome?'none':'','important');const nav=document.querySelector('.mainNav');if(nav)nav.classList.remove('focusNavHidden');}if(tb){const hideBack=route.screen==='home'||route.screen==='levels'||route.screen==='studyPlans';tb.style.setProperty('display',hideBack?'none':'inline-flex','important');}c.classList.remove('show');c.innerHTML=''}
@@ -4622,32 +4622,34 @@ function openScoreLevel(level){
     window.scrollTo({top:0,left:0,behavior:'smooth'});return;
   }
   const codes=Object.keys(DB).filter(c=>typeof isWB!=='function'||!isWB(c));
+  const progressStore=readStore();
   el.className='grid scorePackagesGrid';
-  const cards=codes.map((code,idx)=>{const st=packageStats(code);const score=st.total?st.scorePct:0;const status=st.answered===0?'Belum dikerjakan':st.answered===st.total?'Selesai':'Sedang berjalan';const accent=['blue','purple','orange','pink','green'][idx%5];return `<button class="tile packageTile packageTile-${accent}" type="button" onclick="showPackageScore('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('chart')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${st.score}/${st.total} benar · ${st.answered}/${st.total} terjawab</small></div><span class="pkgArrow">${score}%</span></div>${progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres pengerjaan')}<div class="pkgFooter"><span>Nilai paket</span><span>${score}%</span></div></button>`}).join('');
+  const cards=codes.map((code,idx)=>{const st=packageStats(code,progressStore);const score=st.total?st.scorePct:0;const status=st.answered===0?'Belum dikerjakan':st.answered===st.total?'Selesai':'Sedang berjalan';const accent=['blue','purple','orange','pink','green'][idx%5];return `<button class="tile packageTile packageTile-${accent}" type="button" onclick="showPackageScore('${esc(code)}')"><div class="pkgTop"><div class="tileIcon" aria-hidden="true">${svg('chart')}</div><span class="statusPill">${status}</span></div><div class="pkgTitleRow"><div><b>Paket ${esc(code)}</b><small>${st.score}/${st.total} benar · ${st.answered}/${st.total} terjawab</small></div><span class="pkgArrow">${score}%</span></div>${progressHTML({answered:st.answered,total:st.total,pct:st.pct},'Progres pengerjaan')}<div class="pkgFooter"><span>Nilai paket</span><span>${score}%</span></div></button>`}).join('');
   el.innerHTML=`<div class="scoreBackRow"><button class="btn" type="button" onclick="renderScores()">← Kembali ke level</button></div><div class="scoreLevelTitle"><div class="sectionKicker">HSK 4</div><h3>Nilai HSK 4</h3><p>Pilih paket untuk melihat rincian nilainya.</p></div>${cards||'<div class="notice">Belum ada paket latihan.</div>'}`;
   window.scrollTo({top:0,left:0,behavior:'smooth'});
 }
 function getProgressHistory(limit=3){
   const items=[],store=readStore();
   const attempts=Array.isArray(store._attempts)?store._attempts:[];
-  const latestAttempt=attempts.filter(x=>x&&x.code).sort((a,b)=>Number(b.updatedAt||b.timestamp||0)-Number(a.updatedAt||a.timestamp||0))[0]||null;
+  const latestByCode=new Map();let latestAttempt=null;
+  for(const attempt of attempts){if(!attempt||!attempt.code)continue;const ts=Number(attempt.updatedAt||attempt.timestamp||0);const code=String(attempt.code);if(ts>Number(latestByCode.get(code)||0))latestByCode.set(code,ts);if(!latestAttempt||ts>Number(latestAttempt.updatedAt||latestAttempt.timestamp||0))latestAttempt=attempt;}
   const last=store._lastActivity&&store._lastActivity.code?store._lastActivity:latestAttempt;
   /* Activity metadata is authoritative for identifying the latest package.
      This also works when the package catalog is still lazy-loading. */
   if(last?.code&&DB[last.code]){
-    const st=packageStats(last.code);
+    const st=packageStats(last.code,store);
     if(st.answered>0 || attempts.some(x=>String(x.code)===String(last.code))){
       items.push({code:last.code,st,latest:Number(last.updatedAt||last.timestamp||0),type:last.type,sectionIndex:Number(last.sectionIndex),resume:store._resume?.code===last.code?store._resume:null});
     }
   }
   Object.keys(DB).forEach(code=>{
     if(items.some(x=>x.code===code))return;
-    const st=packageStats(code); let latest=0,latestType=null,latestSection=null;
+    const st=packageStats(code,store); let latest=0,latestType=null,latestSection=null;
     Object.entries(META).forEach(([type])=>(DB[code]?.[type]||[]).forEach((_,i)=>{
       const raw=store[stateKey(code,type,i)];
       if(raw?.updatedAt&&Number(raw.updatedAt)>latest){latest=Number(raw.updatedAt);latestType=type;latestSection=i}
     }));
-    const attemptLatest=attempts.filter(x=>String(x.code)===String(code)).reduce((m,x)=>Math.max(m,Number(x.updatedAt||x.timestamp||0)),0);
+    const attemptLatest=Number(latestByCode.get(String(code))||0);
     latest=Math.max(latest,attemptLatest);
     if(st.answered>0 || attemptLatest>0)items.push({code,st,latest,type:latestType,sectionIndex:latestSection,resume:store._resume?.code===code?store._resume:null});
   });
@@ -4659,10 +4661,10 @@ function formatHistoryDate(ts){
   try{return new Intl.DateTimeFormat('id-ID',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(Number(ts)));}
   catch(e){return '';}
 }
-function renderHomeHistory(){
+function renderHomeHistory(historySnapshot){
   const el=$('homeHistoryList');
   if(!el)return;
-  const history=getProgressHistory(3);
+  const history=Array.isArray(historySnapshot)?historySnapshot:getProgressHistory(3);
   if(!history.length){
     el.innerHTML='<div class="homeHistoryEmpty"><strong>Belum ada riwayat paket.</strong><span>Paket yang sudah kamu pelajari akan muncul di sini.</span></div>';
     return;
@@ -4687,7 +4689,7 @@ function renderHomeHistory(){
 function renderHome(){
   const el=$('homeLastPackage');const sub=$('homeLastSub');if(!el)return;
   const greeting=$('homeGreeting');if(greeting)greeting.innerHTML='Halo, <b>'+esc(currentUsername||'—')+'</b>. Mari lanjutkan latihanmu.';
-  const last=getLastProgress();
+  const history=getProgressHistory(3);const last=history[0]||null;
   if(!last){
     const st=readStore(),activity=st._lastActivity;
     if(activity?.code){
@@ -4697,14 +4699,14 @@ function renderHome(){
       sub.textContent='';
       el.innerHTML='<div class="homeEmpty"><strong>Kamu belum mengerjakan soal apapun.</strong><button class="homeContinueBtn" type="button" onclick="openPackages()">Mulai belajar <span class="material-symbols-rounded ico actionArrow" aria-hidden="true">arrow_forward</span></button></div>';
     }
-    renderHomeHistory();return
+    renderHomeHistory(history);return
   }
   const code=last.code,st=last.st,pct=st.pct||0;
   const resume=last.resume&&last.resume.type&&last.resume.sectionIndex!=null?DB[code]?.[last.resume.type]?.[Number(last.resume.sectionIndex)]:null;
   const resumeLabel=resume?(META[last.resume.type]?.label||last.resume.type)+' · '+String(resume.title||'').replace(/^.*?·\s*/,''):'';
   sub.textContent='';
   el.innerHTML=`<div class="homeContinue"><div class="homeContinueHead"><div><div class="homeContinueTitle">Paket ${esc(code)}</div><div class="homeContinueMeta">${resumeLabel?esc(resumeLabel)+' · ':''}${st.answered}/${st.total} soal terjawab · ${st.score} benar</div></div><div class="homeContinuePct">${pct}%</div></div>${progressHTML({answered:st.answered,total:st.total,pct},'Progres paket')}<div class="homeContinueActions"><button class="homeContinueBtn" type="button" onclick="continueLastPackage('${esc(code)}')">${pct>=100?'Lihat paket':'Lanjut belajar'} <span class="material-symbols-rounded ico actionArrow" aria-hidden="true">arrow_forward</span></button></div><div class="syncStatus ${cloudEnabled()?'':'warn'}"><strong>${cloudEnabled()?'Tersinkron ke cloud':'Tersimpan di perangkat'}</strong>${cloudEnabled()?' · progres mengikuti username @'+esc(currentUsername):' · sinkronisasi cloud belum dikonfigurasi'}</div></div>`;
-  renderHomeHistory();
+  renderHomeHistory(history);
 }
 async function continueLastActivity(){
   const store=readStore(),a=store._lastActivity;
@@ -6492,7 +6494,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     // PRIMARY: GitHub recursive tree. One request discovers the real files
     // currently present on main, including newly added packages.
     try{
-      const payload=await fetchJSON(TREE_API,10000);
+      const payload=await fetchJSON(TREE_API,6000);
       const paths=Array.isArray(payload?.tree)
         ? payload.tree.filter(x=>x?.type==='blob').map(x=>x.path).filter(Boolean)
         : [];
@@ -6512,7 +6514,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         const url='https://api.github.com/repos/'+REPO+'/contents/data/'
           +folder.split('/').map(encodeURIComponent).join('/')
           +'?ref='+encodeURIComponent(REF);
-        try{return {folder,items:await fetchJSON(url,10000)}}
+        try{return {folder,items:await fetchJSON(url,6000)}}
         catch(error){return {folder,items:null,error}}
       }));
       if(results.every(x=>Array.isArray(x.items))){
@@ -6542,7 +6544,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     // TERTIARY: jsDelivr repository index.
     try{
       const url='https://data.jsdelivr.com/v1/package/gh/'+REPO+'@'+encodeURIComponent(REF)+'/flat';
-      const payload=await fetchJSON(url,10000);
+      const payload=await fetchJSON(url,6000);
       const paths=Array.isArray(payload?.files)
         ? payload.files.map(x=>typeof x==='string'?x:x?.name).filter(Boolean)
         : [];
@@ -6558,7 +6560,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     // LAST RESORT: manifest. This is only used when live repository discovery
     // is unavailable. It is deliberately refreshed before using local cache.
     try{
-      const m=await fetchJSON(RAW_BASE+'data/manifest.json',7000);
+      const m=await fetchJSON(RAW_BASE+'data/manifest.json',4000);
       const groups=groupsFromManifest(m);
       if(groups.length){
         cacheCatalog(groups);
@@ -6679,7 +6681,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     let lastError=null;
     for(const url of [meta.url,meta.remoteUrl||rawURL(meta.path)]){
       try{
-        const timeout=url===meta.url?5000:9000;
+        const timeout=url===meta.url?4500:6500;
         const d=await fetchJSON(url,timeout);
         if(!d||typeof d!=='object')throw new Error('JSON package tidak valid: '+code);
         return d;
