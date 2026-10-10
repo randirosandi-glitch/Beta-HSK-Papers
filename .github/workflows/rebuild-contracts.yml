@@ -1,0 +1,26 @@
+name: Beta rebuild contracts
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'tests/**'
+      - '.github/workflows/rebuild-contracts.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'tests/**'
+      - '.github/workflows/rebuild-contracts.yml'
+jobs:
+  source-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Beta
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run source-contract tests
+        run: node --test tests/rebuild-contracts.test.mjs
