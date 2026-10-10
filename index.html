@@ -4439,6 +4439,7 @@ function hskAudioDockToSlot(slot){
  }
  hskAudioPlayerPlaceholder=null;
  hskAudioPlayerNode.classList.remove('isFloating');
+ document.querySelector('.mainNav')?.classList.remove('focusNavHidden');
  ['left','top','bottom','transform'].forEach(p=>hskAudioPlayerNode.style.removeProperty(p));
 }
 function hskAudioFloatToBody(slot){
@@ -4456,6 +4457,7 @@ function hskAudioFloatToBody(slot){
  else slot.appendChild(placeholder);
  hskAudioPlayerPlaceholder=placeholder;
  hskAudioPlayerNode.classList.add('isFloating');
+ document.querySelector('.mainNav')?.classList.add('focusNavHidden');
  document.body.appendChild(hskAudioPlayerNode);
 }
 function renderHskAudioPlayer(){
@@ -8350,6 +8352,7 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   temp.querySelectorAll('article.question').forEach(function(article){
    var label=article.querySelector('.qtop span:first-child')?.textContent||'';
    var match=label.match(/\d+/),id=match?Number(match[0]):NaN;
+   var qtop=article.querySelectorAll('.qtop span');if(qtop[1])qtop[1].textContent=String(id)+'/'+String(section.questions.length);
    var part=partList.find(function(p){return Number(p.start)===id});
    if(!part)return;
    var divider=document.createElement('div');
