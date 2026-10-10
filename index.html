@@ -4265,7 +4265,10 @@ window.__hskPersistRoute=function(){try{if(!currentUsername)return;const r=route
 window.__hskReadPersistedRoute=function(){try{if(!currentUsername)return null;const raw=localStorage.getItem(LAST_ROUTE_KEY+':'+currentUsername);if(!raw)return null;const r=JSON.parse(raw);if(!r||typeof r!=='object')return null;return {screen:String(r.screen||'home'),packageCode:r.packageCode??null,type:r.type??null,sectionIndex:r.sectionIndex??null,studyPlanId:r.studyPlanId??null,materialKey:r.materialKey??null};}catch(e){return null}};
 window.__hskClearPersistedRoute=function(){try{if(currentUsername)localStorage.removeItem(LAST_ROUTE_KEY+':'+currentUsername)}catch(e){}};
 // BEGIN GENERATED MODULE: src/core/storage-adapter.js
-/* Source module body is mirrored here for the deployable single-file build. */
+/* Source module: local progress storage adapter.
+ * Compatibility contract: preserve the existing key and JSON shape.
+ * This is classic-script code; functions intentionally remain global for legacy callers.
+ */
 const STORAGE_PREFIX='hsk4-kelas-e-progress-v4:';
 function storageKey(){return STORAGE_PREFIX+(currentUsername||'guest')}
 function readStore(){try{return JSON.parse(localStorage.getItem(storageKey())||'{}')||{}}catch(e){return {}}}
