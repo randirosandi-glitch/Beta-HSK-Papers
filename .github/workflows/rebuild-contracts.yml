@@ -26,5 +26,7 @@ jobs:
           node-version: 22
       - name: Verify extracted module is synchronized
         run: node scripts/build.mjs --check
+      - name: Verify single-file build is reproducible
+        run: node scripts/build.mjs && git diff --exit-code -- index.html
       - name: Run source-contract tests
         run: node --test tests/*.test.mjs
