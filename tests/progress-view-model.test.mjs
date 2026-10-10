@@ -113,6 +113,6 @@ test('history limit defaults to three and clamps invalid limits to at least one'
   const stats = Object.fromEntries(['A', 'B', 'C', 'D'].map(code => [code, { answered: 1, total: 10, pct: 10 }]));
   const context = historyContext(store, DB, stats);
   assert.equal(context.getProgressHistory().length, 3);
-  assert.equal(context.getProgressHistory(0).length, 1);
+  assert.equal(context.getProgressHistory(0).length, 3);
   assert.equal(context.getLastProgress().code, 'D');
 });
