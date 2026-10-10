@@ -4180,12 +4180,13 @@ async function pushCloudState(store){
     const remote=row.data||{};
     const merged=mergeStoresLatest(latest,remote).store;
     writeStore(merged);
-    await cloudUpdateUser(currentUsername,merged);
+    /* Skip a full-row PATCH when the merged cloud snapshot is already identical. */
+    if(JSON.stringify(merged)!==JSON.stringify(remote)) await cloudUpdateUser(currentUsername,merged);
     return true;
   }catch(e){console.warn('Cloud sync push failed',e);cloudSyncPending=true;return false}
-  finally{cloudSyncBusy=false;if(cloudSyncPending){cloudSyncPending=false;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),180)}}
+  finally{cloudSyncBusy=false;if(cloudSyncPending){cloudSyncPending=false;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),1500)}}
 }
-function scheduleCloudSync(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),180)}
+function scheduleCloudSync(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),1500)}
 function flushCloudSync(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);pushCloudState(readStore())}
 function saveUsername(){const v=normalizeUsername($('usernameInput')?.value);const hint=$('usernameHint');if(!validUsername(v)){if(hint)hint.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf kecil, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;setUsernameLocal(v);hideUsernameModal();renderUserPill();renderContext();renderHome();renderScores();renderPackagesScreen();pullCloudState(true)}
 function changeUsername(){if($('usernameInput'))$('usernameInput').value=currentUsername;showUsernameModal()}
