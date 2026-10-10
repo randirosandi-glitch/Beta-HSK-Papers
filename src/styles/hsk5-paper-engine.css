@@ -1,0 +1,104 @@
+
+/* Checkpoint C1: marker-style option highlight layered behind option text. */
+/* HSK5 H51002 Paper Experience — sandbox v2. PDF-led layout. JSON untouched. */
+#exercise .hsk5PaperGroup{margin:0 0 24px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;}
+#exercise .hsk5PaperGroupHeader{margin:0 0 9px!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:17px!important;line-height:1.4!important;font-weight:700!important;color:var(--text)!important;}
+#exercise .hsk5PaperPassage{margin:0 0 8px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;}
+#exercise .hsk5PaperPassageText{font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:18px!important;line-height:1.9!important;color:var(--text)!important;white-space:pre-wrap!important;}
+#exercise .hsk5PaperQuestion{margin:0!important;padding:7px 0 10px!important;border-bottom:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;}
+/* Scroll performance: defer off-screen Reading questions without changing their visual styling. */
+#exercise .hsk5PaperQuestion{content-visibility:auto;}
+
+#exercise .hsk5PaperQText{margin:0 0 5px!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:16px!important;line-height:1.65!important;font-weight:650!important;color:var(--text)!important;white-space:pre-wrap!important;}
+#exercise .hsk5PaperQText .paperQNo{font-family:inherit!important;font-weight:800!important;}
+#exercise .hsk5PaperOptions{display:flex!important;flex-wrap:nowrap!important;align-items:flex-start!important;gap:2px 20px!important;}
+#exercise .hsk5PaperOptions.paperOptionsTwoRows{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1px 20px!important;}
+#exercise .hsk5PaperOptions.paperOptionsTwoRows .hsk5PaperOption{width:100%!important;}
+#exercise .hsk5PaperOption.opt{appearance:none!important;-webkit-appearance:none!important;min-height:0!important;width:auto!important;margin:0!important;padding:1px 0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--text)!important;box-shadow:none!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:15px!important;line-height:1.55!important;text-align:left!important;transform:none!important;}
+#exercise .hsk5PaperOption.opt:hover,#exercise .hsk5PaperOption.opt:focus,#exercise .hsk5PaperOption.opt:active{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--text)!important;}
+#exercise .hsk5PaperOption.opt.selected{background:transparent!important;border:0!important;color:var(--text)!important;font-weight:800!important;padding:1px 0!important;}
+#exercise .hsk5PaperOption.opt.correct{background:transparent!important;border:0!important;color:var(--text)!important;font-weight:800!important;padding:1px 0!important;}
+#exercise .hsk5PaperOption.opt.wrong{background:transparent!important;border:0!important;color:var(--text)!important;font-weight:800!important;padding:1px 0!important;}
+/* Marker-style selection: the colour is painted behind the text, not around the button. */
+#exercise .hsk5PaperOption .optText{display:inline-block!important;position:relative!important;isolation:isolate!important;white-space:normal!important;padding:0 2px!important;}
+#exercise .hsk5PaperOption .optText:before{content:""!important;position:absolute!important;z-index:-1!important;left:-5px!important;right:-5px!important;top:22%!important;bottom:14%!important;border-radius:2px 5px 3px 1px!important;opacity:0!important;transform:rotate(-0.7deg) skewX(-5deg)!important;transition:opacity .12s ease,transform .12s ease!important;background:linear-gradient(96deg,rgb(255 165 0 / .30) 0%,rgb(255 179 0 / .46) 38%,rgb(255 166 0 / .38) 72%,rgb(255 185 0 / .28) 100%)!important;clip-path:polygon(1% 12%,98% 3%,100% 83%,3% 96%)!important;pointer-events:none!important;}
+#exercise .hsk5PaperOption.opt.selected .optText:before{opacity:1!important;transform:rotate(-0.7deg) skewX(-5deg) scaleX(1)!important;}
+#exercise .hsk5PaperOption.opt.correct .optText:before{opacity:1!important;background:linear-gradient(96deg,rgb(34 197 94 / .28) 0%,rgb(34 197 94 / .44) 42%,rgb(34 197 94 / .32) 100%)!important;}
+#exercise .hsk5PaperOption.opt.wrong .optText:before{opacity:1!important;background:linear-gradient(96deg,rgb(239 68 68 / .28) 0%,rgb(239 68 68 / .44) 42%,rgb(239 68 68 / .32) 100%)!important;}
+#exercise .hsk5PaperOption.opt.selected.correct .optText:before{background:linear-gradient(96deg,rgb(34 197 94 / .28) 0%,rgb(34 197 94 / .44) 42%,rgb(34 197 94 / .32) 100%)!important;}
+#exercise .hsk5PaperOption.opt.selected.wrong .optText:before{background:linear-gradient(96deg,rgb(239 68 68 / .28) 0%,rgb(239 68 68 / .44) 42%,rgb(239 68 68 / .32) 100%)!important;}
+#exercise .hsk5PaperActions{margin-top:5px!important;display:flex!important;gap:7px!important;align-items:center!important;}
+#exercise .hsk5PaperActions .btn{min-height:30px!important;padding:4px 8px!important;border-radius:7px!important;font-size:11px!important;box-shadow:none!important;}
+#exercise .hsk5PaperFeedback{margin-top:5px!important;padding:5px 7px!important;border-radius:6px!important;font-size:11px!important;line-height:1.35!important;}
+/* Part 2: the paper is one question followed by a vertical A/B/C/D list. */
+#exercise .hsk5PaperPart2 .hsk5PaperQuestion{padding:8px 0 13px!important;}
+#exercise .hsk5PaperPart2 .hsk5PaperQText{font-size:16px!important;line-height:1.7!important;margin-bottom:5px!important;}
+#exercise .hsk5PaperPart2 .hsk5PaperOptions{display:grid!important;grid-template-columns:1fr!important;gap:0!important;}
+#exercise .hsk5PaperPart2 .hsk5PaperOption{width:100%!important;}
+/* HSK 5 Reading Part 3 — single source of truth.
+   PDF-led composition: passage text flows around an optional right-side image.
+   No mobile collapse; only dimensions scale with available width.
+   First-paint rule: the renderer emits paperOptionsTwoRows when needed. */
+#exercise .hsk5PaperPart3PassageText{overflow:visible!important;}
+#exercise .hsk5PaperPart3Media{
+  float:right!important;
+  width:min(36%,300px)!important;
+  max-width:300px!important;
+  margin:0 0 9px 18px!important;
+}
+#exercise .hsk5PaperPart3Media img{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  max-height:320px!important;
+  object-fit:contain!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#exercise .hsk5PaperPart3PassageText:after{
+  content:""!important;
+  display:block!important;
+  clear:both!important;
+}
+#exercise .hsk5PaperPart3 .hsk5PaperOptions{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:1px 20px!important;
+  align-items:flex-start!important;
+}
+#exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:1px 20px!important;
+}
+#exercise .hsk5PaperPart3 .hsk5PaperOptions:not(.paperOptionsTwoRows) .hsk5PaperOption{width:auto!important;}
+#exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows .hsk5PaperOption{width:100%!important;}
+@media(max-width:720px){
+  #exercise .hsk5PaperPart3 .hsk5PaperPassageText{font-size:16px!important;line-height:1.8!important;}
+  #exercise .hsk5PaperPart3Media{
+    float:right!important;
+    width:36%!important;
+    max-width:140px!important;
+    margin:0 0 8px 12px!important;
+  }
+  #exercise .hsk5PaperPart3Media img{
+    max-width:100%!important;
+    max-height:180px!important;
+    margin:0!important;
+  }
+  #exercise .hsk5PaperPart3 .hsk5PaperOptions{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:1px 12px!important;
+  }
+  #exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:1px 10px!important;
+  }
+  #exercise .hsk5PaperPart3 .hsk5PaperOptions:not(.paperOptionsTwoRows) .hsk5PaperOption{width:auto!important;}
+  #exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows .hsk5PaperOption{width:100%!important;}
+}
