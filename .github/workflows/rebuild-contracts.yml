@@ -22,5 +22,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Verify extracted module is synchronized
+        run: node scripts/build.mjs --check
       - name: Run source-contract tests
         run: node --test tests/rebuild-contracts.test.mjs
