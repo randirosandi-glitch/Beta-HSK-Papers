@@ -4142,6 +4142,7 @@ async function pullCloudStateInternal(force=false){
       await cloudCreateUser(currentUsername,local);
       const latest=readStore();
       if(JSON.stringify(latest)!==JSON.stringify(local)) await cloudUpdateUser(currentUsername,latest);
+      markCloudSnapshotSynced(readStore());
       renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
       return true;
     }
@@ -4149,11 +4150,14 @@ async function pullCloudStateInternal(force=false){
     const merged=mergeStoresLatest(local,remote).store;
     writeStore(merged);
     if(JSON.stringify(merged)!==JSON.stringify(remote)) await cloudUpdateUser(currentUsername,merged);
+    markCloudSnapshotSynced(readStore());
     renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
     return true;
   }catch(e){console.warn('Cloud sync pull failed',e);return false}
 }
 let cloudPullInFlight=null,cloudLastPullAt=0;
+let cloudLastSyncedSnapshot='';
+function markCloudSnapshotSynced(store){try{cloudLastSyncedSnapshot=JSON.stringify(store??readStore())}catch(e){cloudLastSyncedSnapshot=''}}
 function pullCloudState(force=false){
   if(cloudPullInFlight)return cloudPullInFlight;
   const now=Date.now();
@@ -4165,6 +4169,12 @@ function pullCloudState(force=false){
 async function pushCloudState(store){
   if(!currentUsername||!cloudEnabled())return false;
   if(cloudSyncBusy){cloudSyncPending=true;return false}
+  const snapshotBeforeRequest=readStore();
+  let localSnapshot='';
+  try{localSnapshot=JSON.stringify(snapshotBeforeRequest)}catch(e){}
+  /* If this exact local snapshot was already synced, avoid another GET entirely.
+     Cross-device updates are still checked by the throttled pull on focus/visibility. */
+  if(localSnapshot&&localSnapshot===cloudLastSyncedSnapshot)return true;
   cloudSyncBusy=true;
   try{
     const row=await cloudFindUser(currentUsername);
@@ -4182,6 +4192,7 @@ async function pushCloudState(store){
     writeStore(merged);
     /* Skip a full-row PATCH when the merged cloud snapshot is already identical. */
     if(JSON.stringify(merged)!==JSON.stringify(remote)) await cloudUpdateUser(currentUsername,merged);
+    markCloudSnapshotSynced(readStore());
     return true;
   }catch(e){console.warn('Cloud sync push failed',e);cloudSyncPending=true;return false}
   finally{cloudSyncBusy=false;if(cloudSyncPending){cloudSyncPending=false;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),1500)}}
