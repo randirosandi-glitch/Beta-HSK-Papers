@@ -8486,15 +8486,10 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   /* Use the exact same native finishCard() as Reading, generated in its
      original closure at the final page. The unified Listening view hides pagination,
      so relying on the currently visible page makes the assessment card disappear. */
-  var nativeFinishNode=root.querySelector('.finishCard');
-  var finishMarkup='';
-  if(typeof window.__hskGetNativeFinishCardMarkup==='function'){
-   try{finishMarkup=window.__hskGetNativeFinishCardMarkup()||'';}
-   catch(err){console.error('Could not build native Listening assessment card:',err);}
-  }
-  if(!finishMarkup&&nativeFinishNode)finishMarkup=nativeFinishNode.outerHTML;
-  /* Keep the exact native grade() handler used by Reading and Writing. */
-  if(typeof window.__hskRenderAllListeningCards==='function')temp.innerHTML=progressMarkup+window.__hskRenderAllListeningCards()+finishMarkup;
+  /* Reuse Reading's native finishCard() renderer, but do not capture its
+     markup before the Listening DOM is rebuilt. The card is rendered fresh
+     below, after the native assessment state has been updated. */
+  if(typeof window.__hskRenderAllListeningCards==='function')temp.innerHTML=progressMarkup+window.__hskRenderAllListeningCards();
   else temp.innerHTML=root.innerHTML;
   temp.querySelectorAll('.listeningNotice,.transcript,button[onclick^="toggleTranscript"],.questionPager').forEach(function(node){node.remove()});
   temp.querySelectorAll('.instruction').forEach(function(node){node.remove()});
@@ -8575,18 +8570,22 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
      panel, never nested inside the panel that gets rebuilt on every render. */
   var renderedFinish=questions.querySelector('.finishCard');
   if(renderedFinish)renderedFinish.remove();
+  /* Render the same native Reading assessment card from the current resultState.
+     Force the native pager to its final page only while generating its markup. */
   var finishHost=document.createElement('div');
-  finishHost.innerHTML=finishMarkup||'';
-  var nativeCard=finishHost.querySelector('.finishCard');
-  if(!nativeCard&&typeof window.__hskGetNativeFinishCardMarkup==='function'){
+  var nativeCard=null;
+  if(typeof window.__hskGetNativeFinishCardMarkup==='function'){
+   var savedAssessmentPage=page;
    try{
+    page=Math.max(0,pageCount()-1);
     finishHost.innerHTML=window.__hskGetNativeFinishCardMarkup()||'';
     nativeCard=finishHost.querySelector('.finishCard');
-   }catch(err){console.error('Could not restore native Listening assessment card:',err);}
+   }catch(err){console.error('Could not render native Listening assessment card:',err);}
+   finally{page=savedAssessmentPage;}
   }
   if(nativeCard)root.appendChild(nativeCard);
   else{
-   /* Preserve the native grade()/repeat() actions if native markup is unavailable. */
+   console.error('Native finishCard() did not return markup for Listening');
    var fallback=document.createElement('div');
    fallback.className='finishCard';
    fallback.innerHTML='<div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">Periksa semua jawaban sekaligus dan lihat nilai bagian ini.</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade()"><span class="material-symbols-rounded ico" aria-hidden="true">check</span><span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div>';
