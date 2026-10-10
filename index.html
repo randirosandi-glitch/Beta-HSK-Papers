@@ -8566,12 +8566,13 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   questions.id='hskListeningQuestionsPanel';
   questions.innerHTML=temp.innerHTML;
   root.replaceChildren(questions);
-  /* Keep the native assessment card as a sibling beneath the unified question
-     panel, never nested inside the panel that gets rebuilt on every render. */
+  /* Remove any assessment markup nested in the temporary question panel. */
   var renderedFinish=questions.querySelector('.finishCard');
   if(renderedFinish)renderedFinish.remove();
-  /* Render the same native Reading assessment card from the current resultState.
-     Force the native pager to its final page only while generating its markup. */
+  /* Restore individual answer feedback first, then append Reading's native
+     assessment card as the final sibling so later question restoration cannot
+     detach or overwrite it. */
+  if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
   var finishHost=document.createElement('div');
   var nativeCard=null;
   if(typeof window.__hskGetNativeFinishCardMarkup==='function'){
@@ -8583,16 +8584,16 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
    }catch(err){console.error('Could not render native Listening assessment card:',err);}
    finally{page=savedAssessmentPage;}
   }
-  if(nativeCard)root.appendChild(nativeCard);
-  else{
-   console.error('Native finishCard() did not return markup for Listening');
-   var fallback=document.createElement('div');
-   fallback.className='finishCard';
-   fallback.innerHTML='<div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">Periksa semua jawaban sekaligus dan lihat nilai bagian ini.</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade()"><span class="material-symbols-rounded ico" aria-hidden="true">check</span><span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div>';
-   root.appendChild(fallback);
+  /* Never leave the Listening screen without a visible native-style card. */
+  if(!nativeCard){
+   console.error('Native finishCard() returned no markup; using visible fallback');
+   var fallbackHost=document.createElement('div');
+   fallbackHost.innerHTML='<div class="finishCard"><div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">Periksa semua jawaban sekaligus dan lihat nilai bagian ini.</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade()"><span class="material-symbols-rounded ico" aria-hidden="true">check</span><span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div></div>';
+   nativeCard=fallbackHost.firstElementChild;
   }
-  /* Preserve finishCard()'s original inline onclick="grade()" unchanged. */
-  if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
+  var staleCard=root.querySelector(':scope > .finishCard');
+  if(staleCard)staleCard.remove();
+  root.appendChild(nativeCard);
  }
 
 
