@@ -8468,8 +8468,7 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
    catch(err){console.error('Could not build native Listening assessment card:',err);}
   }
   if(!finishMarkup&&nativeFinishNode)finishMarkup=nativeFinishNode.outerHTML;
-  /* Route only the Listening card through the explicit public grading bridge. */
-  finishMarkup=finishMarkup.replace(/onclick\s*=\s*["']grade\(\)["']/g,'onclick="window.__hskGradeSection()"');
+  /* Keep the exact native grade() handler used by Reading and Writing. */
   if(typeof window.__hskRenderAllListeningCards==='function')temp.innerHTML=progressMarkup+window.__hskRenderAllListeningCards()+finishMarkup;
   else temp.innerHTML=root.innerHTML;
   temp.querySelectorAll('.listeningNotice,.transcript,button[onclick^="toggleTranscript"],.questionPager').forEach(function(node){node.remove()});
@@ -8557,7 +8556,7 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
    else{
     var fallback=document.createElement('div');
     fallback.className='finishCard';
-    fallback.innerHTML='<div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">Periksa semua jawaban sekaligus dan lihat nilai bagian ini.</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="window.__hskGradeSection()"><span class="material-symbols-rounded ico" aria-hidden="true">check</span><span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div>';
+    fallback.innerHTML='<div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">Periksa semua jawaban sekaligus dan lihat nilai bagian ini.</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade()"><span class="material-symbols-rounded ico" aria-hidden="true">check</span><span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div>';
     root.appendChild(fallback);
    }
   }
