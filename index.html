@@ -8556,12 +8556,7 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
     root.appendChild(fallback);
    }
   }
-  /* Keep the exact native action used by Stable and the other sections.
-     Do not strip onclick or replace it with a custom event listener. */
-  root.querySelectorAll('.finishCard button[onclick*="grade"],.finishCard button.finishCardBtn').forEach(function(button){
-   if(button.classList.contains('finishCardBtnSecondary'))return;
-   button.setAttribute('onclick','grade()');
-  });
+  /* Preserve finishCard()'s original inline onclick="grade()" unchanged. */
   if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
  }
 
