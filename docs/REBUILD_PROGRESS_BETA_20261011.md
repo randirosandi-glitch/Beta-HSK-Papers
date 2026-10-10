@@ -7,7 +7,7 @@ Stable is out of scope and has not been modified in this rebuild.
 ## Current checkpoint
 
 - The deployable app remains index.html.
-- Twenty-one source fragments have been extracted while preserving the existing classic-script/global interfaces:
+- Thirty source fragments have been extracted while preserving the existing classic-script/global interfaces:
   - src/core/storage-adapter.js — storage key, readStore(), writeStore().
   - src/core/route-persistence.js — LAST_ROUTE_KEY and the three existing window route-persistence functions.
   - src/core/progress.js — progress-reset helpers, local/cloud store merge, and question-activity create/update helpers.
@@ -29,9 +29,18 @@ Stable is out of scope and has not been modified in this rebuild.
   - src/core/functional-repair.js — existing functional repair layer.
   - src/ui/parts-renderer.js — existing parts renderer.
   - src/ui/section-renderer.js — existing section renderer.
+  - src/styles/canonical.css — existing consolidated canonical stylesheet.
+  - src/styles/responsive-navigation.css — existing responsive navigation rules.
+  - src/styles/study-plans.css — existing study-plan presentation rules.
+  - src/styles/grade-loading.css — grading loading-state styles.
+  - src/styles/hsk5-paper-engine.css — HSK 5 paper-layout styles.
+  - src/styles/navigation-final-cascade.css — final navigation cascade.
+  - src/styles/dark-mode-contrast.css — dark-mode text-contrast rules.
+  - src/core/cloud-sync.js — pull/push orchestration, cached cloud snapshot, cooldown, and retry queue.
+  - src/core/auth-flow.js — username save/change, user pill, and cloud initialization flow.
 - scripts/build.mjs assembles the source fragments back into the marked regions of index.html.
 - The build is designed to keep a single-file deployment artifact while source modules are separated for maintainability.
-- Runtime behavior for these two fragments is intentionally unchanged; no storage key or serialized data schema migration was introduced.
+- Source extraction preserves the original script/style order and legacy globals. The only targeted behavior correction so far is persisting the active answer-event map by default; no storage key or serialized data schema migration was introduced.
 
 ## Automated safeguards
 
@@ -44,18 +53,17 @@ Stable is out of scope and has not been modified in this rebuild.
 - tests/study-plan-merge.test.mjs checks deletion tombstones and local/cloud plan conflict resolution.
 - tests/cloud-transport.test.mjs checks minimal Supabase requests, username encoding, request payloads, and HTTP errors.
 - .github/workflows/rebuild-contracts.yml checks module synchronization, reproducible index generation, inline script syntax, and all Node tests.
-- Latest successful source-contract run after the 21-module extraction: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38068584105
-- GitHub Pages deployment for the same index commit completed successfully: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38068583943
+- Latest source-contract runs are recorded in GitHub Actions; the combined JavaScript/CSS marker build check passed before the latest auth-flow extraction. Latest full contract run: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38068859044
 
 ## What is not claimed yet
 
 - These are not full browser/end-to-end tests.
 - The app has not yet completed the manual regression matrix across phone, tablet, and desktop.
-- The main question/data script (including the embedded question data), home-history DOM rendering, canonical grading implementation, most authentication/sync orchestration, study-plan follow-up patches, and CSS remain in the legacy inline runtime.
+- The main question/data script (including embedded question data), home-history DOM rendering, canonical grading implementation and its final wrapper, some auth/logout UI, study-plan follow-up patches, and most remaining CSS override blocks remain inline.
 
 ## Next migration step
 
-Progress merge/activity, statistics, recent history, section persistence, study-plan merge, and Supabase transport now have source modules and behavior-focused tests. The study-plan feature, catalog/package runtime, navigation controller, result pagination, and weekly dashboard were also extracted exactly into source modules while remaining in their original script positions. A targeted correctness fix ensures the active section's answer-event ID map is saved by default, so checked answers can continue updating existing activity records after state persistence; no storage key or record schema changed. Next: run the final contract suite after any further changes and perform a focused browser smoke check of sign-in, package opening, answer selection/checking, return navigation, study plans, and theme/responsive behavior. The public Beta page responds with the HSK Papers shell, but the full authenticated interaction matrix has not yet been verified. Do not change the 5,000-event retention policy during code movement.
+Progress merge/activity, statistics, recent history, section persistence, study-plan merge, and Supabase transport now have source modules and behavior-focused tests. The study-plan feature, catalog/package runtime, navigation controller, result pagination, weekly dashboard, reliability/repair layers, section renderers, cloud-sync orchestration, auth flow, and selected CSS blocks were extracted into source modules while remaining in their original positions. A targeted correctness fix ensures the active section's answer-event ID map is saved by default, so checked answers can continue updating existing activity records after state persistence; no storage key or record schema changed. Next: run the final contract suite after any further changes and perform a focused browser smoke check of sign-in, package opening, answer selection/checking, return navigation, study plans, and theme/responsive behavior. The public Beta page responds with the HSK Papers shell, but the full authenticated interaction matrix has not yet been verified. Do not change the 5,000-event retention policy during code movement.
 
 ## Permanent guardrails
 
