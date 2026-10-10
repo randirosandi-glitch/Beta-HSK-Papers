@@ -6,18 +6,28 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const indexPath = resolve(root, 'index.html');
 const checkOnly = process.argv.includes('--check');
 const html = await readFile(indexPath, 'utf8');
-const prefix = '// BEGIN GENERATED MODULE: ';
+const prefixes = [
+  { marker: '// BEGIN GENERATED MODULE: ', end: path => '// END GENERATED MODULE: ' + path, kind: 'js' },
+  { marker: '/* BEGIN GENERATED MODULE: ', end: path => '/* END GENERATED MODULE: ' + path + ' */', kind: 'css' }
+];
 const modules = [];
 let offset = 0;
 for (const line of html.split('\n')) {
-  if (line.startsWith(prefix)) modules.push({ path: line.slice(prefix.length).trim(), markerEnd: offset + line.length });
+  for (const prefix of prefixes) {
+    if (!line.startsWith(prefix.marker)) continue;
+    const suffix = prefix.kind === 'css' ? ' */' : '';
+    if (prefix.kind === 'css' && !line.endsWith(suffix)) throw new Error('Malformed CSS module marker: ' + line);
+    const path = line.slice(prefix.marker.length, suffix ? -suffix.length : undefined).trim();
+    modules.push({ path, markerEnd: offset + line.length, kind: prefix.kind, endMarker: prefix.end(path) });
+    break;
+  }
   offset += line.length + 1;
 }
 if (!modules.length) throw new Error('No generated source module markers found in index.html.');
 
 const replacements = [];
 for (const item of modules) {
-  const endMarker = '// END GENERATED MODULE: ' + item.path;
+  const endMarker = item.endMarker;
   const end = html.indexOf(endMarker, item.markerEnd + 1);
   if (end < 0 || html.indexOf(endMarker, end + endMarker.length) >= 0) {
     throw new Error('Expected exactly one end marker for ' + item.path);
