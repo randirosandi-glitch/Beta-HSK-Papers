@@ -4201,8 +4201,11 @@ async function pushCloudState(store){
   }catch(e){console.warn('Cloud sync push failed',e);cloudSyncPending=true;return false}
   finally{cloudSyncBusy=false;if(cloudSyncPending){cloudSyncPending=false;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),1500)}}
 }
-function scheduleCloudSync(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),1500)}
-function flushCloudSync(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);pushCloudState(readStore())}
+/* Local answers/progress are saved immediately, but cloud writes are committed only
+   when the learner presses the section-check button (grade()). */
+function scheduleCloudSync(){clearTimeout(cloudSyncTimer)}
+function flushCloudSync(){clearTimeout(cloudSyncTimer)}
+function syncAfterSectionCheck(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);pushCloudState(readStore())}
 function saveUsername(){const v=normalizeUsername($('usernameInput')?.value);const hint=$('usernameHint');if(!validUsername(v)){if(hint)hint.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf kecil, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;setUsernameLocal(v);hideUsernameModal();renderUserPill();renderContext();renderHome();renderScores();renderPackagesScreen();pullCloudState(true)}
 function changeUsername(){if($('usernameInput'))$('usernameInput').value=currentUsername;showUsernameModal()}
 function renderUserPill(){
@@ -4589,6 +4592,8 @@ function grade(push=true){
     if(has && !(route.type==='writing' && !isSequenceWriting(route.type,route.sectionIndex))) checked[id]=true;
   });
   saveSectionState(route.packageCode,route.type,route.sectionIndex);
+  /* The explicit section check is the only action that writes progress to cloud. */
+  syncAfterSectionCheck();
   resultState={score,total:currentQuestions.length,answered,checkedAt:Date.now()};
   /* Keep the exact exercise route. Assessment is now an inline state. */
   route={...route,screen:'exercise'};
