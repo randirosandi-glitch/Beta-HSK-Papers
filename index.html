@@ -8458,6 +8458,15 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
  }
 
+
+ /* Activate the unified per-question Listening renderer after the app's real renderer runs. */
+ const __hskOriginalRenderExercise=window.renderExercise;
+ if(typeof __hskOriginalRenderExercise==='function'&&!__hskOriginalRenderExercise.__hskListeningUnifiedHook){
+  const __hskWrappedRenderExercise=function(){const result=__hskOriginalRenderExercise.apply(this,arguments);if(isSupportedListening())renderListeningShell();return result;};
+  __hskWrappedRenderExercise.__hskListeningUnifiedHook=true;
+  __hskWrappedRenderExercise.__hskOriginal=__hskOriginalRenderExercise;
+  window.renderExercise=__hskWrappedRenderExercise;
+ }
 })();
 </script>
 
