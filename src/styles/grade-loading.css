@@ -1,0 +1,16 @@
+
+#hskGradeLoading{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;padding:24px;background:color-mix(in srgb,var(--bg,#fff) 72%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#hskGradeLoading.show{display:flex;animation:hskGradeFadeIn .14s ease-out both}
+#hskGradeLoading .hskGradePanel{width:min(280px,100%);padding:24px 20px;text-align:center;background:var(--surface,#fff);color:var(--text,#222);border:1px solid var(--line,#ddd);border-radius:18px}
+#hskGradeLoading .hskGradeSpinner{width:34px;height:34px;margin:0 auto 14px;border:3px solid color-mix(in srgb,var(--blue,#4778e8) 18%,transparent);border-top-color:var(--blue,#4778e8);border-radius:50%;animation:hskGradeSpin .75s linear infinite}
+#hskGradeLoading .hskGradeTitle{font-weight:750;font-size:16px}
+#hskGradeLoading .hskGradeSub{margin-top:6px;font-size:12px;color:var(--muted,#777)}
+#exercise .inlineResult{animation:hskGradeResultIn .32s cubic-bezier(.2,.7,.2,1) both}
+#exercise .inlineResultScore{font-variant-numeric:tabular-nums;animation:hskGradeNumberIn .38s ease-out both}
+@keyframes hskGradeSpin{to{transform:rotate(360deg)}}
+@keyframes hskGradeFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes hskGradeResultIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes hskGradeNumberIn{from{opacity:.35;transform:translateY(5px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+body.dark #hskGradeLoading{background:rgba(0,0,0,.56)}
+body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;border-color:#353638}
+@media(prefers-reduced-motion:reduce){#hskGradeLoading.show,#hskGradeLoading .hskGradeSpinner,#exercise .inlineResult,#exercise .inlineResultScore{animation:none!important}}
