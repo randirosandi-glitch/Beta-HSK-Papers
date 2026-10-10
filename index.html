@@ -8446,13 +8446,13 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   var key=code+'|listening|'+String(route.sectionIndex);
   if(key!==listenStateKey){listenStateKey=key;questionsVisible=false;transcriptVisible=false}
   var temp=document.createElement('div');
-  var progressNode=root.querySelector('.sectionProgress'),finishNode=root.querySelector('#sectionFinishCard,.finishCard');
+  var progressNode=root.querySelector('.sectionProgress');
   var progressMarkup=progressNode?progressNode.outerHTML:'';
-  var finishMarkup=finishNode?finishNode.outerHTML:'';
-  /* Listening replaces the normal question renderer, so explicitly preserve the native section-finish card. */
-  if(!finishMarkup&&typeof finishCard==='function'){
+  /* Always request the app's own finishCard for the final page; the unified Listening view has no question pagination. */
+  var finishMarkup='';
+  if(typeof finishCard==='function'){
    var savedFinishPage=page;
-   try{page=pageCount()-1;finishMarkup=finishCard();}finally{page=savedFinishPage;}
+   try{page=Math.max(0,pageCount()-1);finishMarkup=finishCard();}finally{page=savedFinishPage;}
   }
   if(typeof window.__hskRenderAllListeningCards==='function')temp.innerHTML=progressMarkup+window.__hskRenderAllListeningCards()+finishMarkup;
   else temp.innerHTML=root.innerHTML;
@@ -8530,10 +8530,11 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   var questions=document.createElement('div');
   questions.id='hskListeningQuestionsPanel';
   questions.innerHTML=temp.innerHTML;
-  /* Guarantee one finish card at the end of the unified Listening section. */
-  if(!questions.querySelector('#sectionFinishCard,.finishCard')){
-   var fallback=document.createElement('div');
-   fallback.innerHTML=typeof finishCard==='function'?finishCard():'';
+  /* Fallback uses the same native finishCard(), evaluated as the final page. */
+  if(!questions.querySelector('.finishCard')){
+   var fallback=document.createElement('div'),savedFinishPage=page;
+   try{page=Math.max(0,pageCount()-1);fallback.innerHTML=typeof finishCard==='function'?finishCard():'';}
+   finally{page=savedFinishPage;}
    var card=fallback.querySelector('.finishCard');
    if(card)questions.appendChild(card);
   }
