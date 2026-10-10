@@ -8393,7 +8393,7 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   });
   var controls=document.createElement('div');
   controls.id='hskListeningControls';
-  controls.innerHTML='<button type="button" class="hskListeningToggle" id="hskListeningQuestionsToggle" onclick="window.__hskToggleListeningQuestions()" aria-expanded="'+String(questionsVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan pertanyaan singkat':'Tampilkan pertanyaan singkat')</button><button type="button" class="hskListeningToggle" id="hskListeningTranscriptToggle" onclick="window.__hskToggleListeningTranscript()" aria-expanded="'+String(transcriptVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(transcriptVisible?'visibility_off':'subject')+'</span>'+(transcriptVisible?'Sembunyikan transkrip':'Tampilkan transkrip')+'</button>';
+  controls.innerHTML='<button type="button" class="hskListeningToggle" id="hskListeningQuestionsToggle" onclick="window.__hskToggleListeningQuestions()" aria-expanded="'+String(questionsVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan pertanyaan singkat':'Tampilkan pertanyaan singkat')+'</button><button type="button" class="hskListeningToggle" id="hskListeningTranscriptToggle" onclick="window.__hskToggleListeningTranscript()" aria-expanded="'+String(transcriptVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(transcriptVisible?'visibility_off':'subject')+'</span>'+(transcriptVisible?'Sembunyikan transkrip':'Tampilkan transkrip')+'</button>';
   var questions=document.createElement('div');
   questions.id='hskListeningQuestionsPanel';
   questions.innerHTML=temp.innerHTML;
@@ -8408,7 +8408,7 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   questionsVisible=!questionsVisible;
   var panel=document.getElementById('hskListeningQuestionsPanel'),btn=document.getElementById('hskListeningQuestionsToggle');
   if(panel)panel.querySelectorAll('.hskListeningShortPrompt').forEach(function(prompt){prompt.hidden=!questionsVisible});
-  if(btn){btn.setAttribute('aria-expanded',String(questionsVisible));btn.innerHTML='<span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan pertanyaan singkat':'Tampilkan pertanyaan singkat')'}
+  if(btn){btn.setAttribute('aria-expanded',String(questionsVisible));btn.innerHTML='<span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan pertanyaan singkat':'Tampilkan pertanyaan singkat');}
  };
  window.__hskToggleListeningTranscript=function(){
   transcriptVisible=!transcriptVisible;
