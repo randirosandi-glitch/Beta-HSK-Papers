@@ -8414,10 +8414,18 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
    if(optionsGroup){
     optionsGroup.classList.add('hsk5PaperOptions');
     var optionButtons=Array.from(optionsGroup.querySelectorAll(':scope > .opt'));
-    var longOption=optionButtons.some(function(button){var node=button.querySelector('.optText')||button;return (String(node.textContent||'').match(/[\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uF900-\\uFAFF]/g)||[]).length>3;});
+    var longOption=optionButtons.some(function(button){var node=button.querySelector('.optText')||button;return (String(node.textContent||'').match(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g)||[]).length>3;});
     optionsGroup.classList.toggle('paperOptionsTwoRows',!isTrueFalse&&longOption);
     optionsGroup.classList.toggle('paperOptionsCompact',!isTrueFalse&&!longOption);
-    optionButtons.forEach(function(button){button.classList.add('hsk5PaperOption');});
+    optionButtons.forEach(function(button,index){
+     button.classList.add('hsk5PaperOption');
+     if(isTrueFalse){
+      var label=index===0?'√ 正确':'× 错误';
+      var textNode=button.querySelector('.optText')||button;
+      textNode.textContent=label;
+      button.setAttribute('aria-label',label);
+     }
+    });
    }
    var part=partList.find(function(p){return Number(p.start)===id});
    if(!part)return;
