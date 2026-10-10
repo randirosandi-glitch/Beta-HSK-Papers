@@ -8345,6 +8345,16 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
  #hskListeningQuestionsPanel article.question .opts{column-gap:10px!important}
  #hskListeningQuestionsPanel article.question .opts.paperOptionsTwoRows{column-gap:10px!important}
 }
+
+/* Per-question reveal: question and transcript stay together, matching the paper-like Reading style. */
+#hskListeningQuestionsPanel .hskListeningQuestionReveal{margin:5px 0 2px!important}
+#hskListeningQuestionsPanel .hskListeningQuestionRevealToggle{display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;gap:6px!important;min-height:28px!important;margin:0!important;padding:3px 0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--muted)!important;font-size:12px!important;font-weight:700!important;box-shadow:none!important;cursor:pointer!important}
+#hskListeningQuestionsPanel .hskListeningQuestionRevealToggle .material-symbols-rounded{font-size:17px!important}
+#hskListeningQuestionsPanel .hskListeningQuestionRevealContent{margin:7px 0 5px!important;padding:0!important;border:0!important;background:transparent!important;color:var(--text)!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:15px!important;line-height:1.8!important;white-space:pre-wrap!important}
+#hskListeningQuestionsPanel .hskListeningQuestionRevealContent[hidden]{display:none!important}
+#hskListeningQuestionsPanel .hskListeningQuestionRevealQuestion,#hskListeningQuestionsPanel .hskListeningQuestionRevealTranscript{margin:0 0 10px!important}
+#hskListeningQuestionsPanel .hskListeningRevealLabel{display:block!important;margin:0 0 2px!important;font-family:inherit!important;font-size:11px!important;line-height:1.5!important;font-weight:800!important;color:var(--muted)!important}
+#hskListeningQuestionsPanel .hskListeningQuestionRevealQuestion>div:last-child,#hskListeningQuestionsPanel .hskListeningQuestionRevealTranscript>div:last-child{white-space:pre-wrap!important}
 </style>
 <script id="hskListeningUnifiedUxV1JS">
 (function(){
@@ -8428,6 +8438,22 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
     });
    }
    var part=partList.find(function(p){return Number(p.start)===id});
+   var reveal=document.createElement('div');
+   reveal.className='hskListeningQuestionReveal';
+   var revealButton=document.createElement('button');
+   revealButton.type='button';
+   revealButton.className='hskListeningQuestionRevealToggle';
+   revealButton.setAttribute('aria-expanded','false');
+   revealButton.innerHTML='<span class="material-symbols-rounded" aria-hidden="true">visibility</span><span>Tampilkan transkrip</span>';
+   var revealContent=document.createElement('div');
+   revealContent.className='hskListeningQuestionRevealContent';
+   revealContent.hidden=true;
+   var questionText=String(sourceQ?.[1]??'').trim();
+   var transcriptText=String(sourceQ?.[4]??'').trim();
+   if(questionText){var qb=document.createElement('div');qb.className='hskListeningQuestionRevealQuestion';qb.innerHTML='<span class="hskListeningRevealLabel">Pertanyaan</span>';var qbody=document.createElement('div');qbody.textContent=questionText;qb.appendChild(qbody);revealContent.appendChild(qb);}
+   if(transcriptText){var tb=document.createElement('div');tb.className='hskListeningQuestionRevealTranscript';tb.innerHTML='<span class="hskListeningRevealLabel">Transkrip</span>';var tbody=document.createElement('div');tbody.textContent=transcriptText;tb.appendChild(tbody);revealContent.appendChild(tb);}
+   revealButton.addEventListener('click',function(){var opening=revealContent.hidden;revealContent.hidden=!opening;revealButton.setAttribute('aria-expanded',String(opening));revealButton.querySelector('span:last-child').textContent=opening?'Sembunyikan transkrip':'Tampilkan transkrip';revealButton.querySelector('.material-symbols-rounded').textContent=opening?'visibility_off':'visibility';});
+   reveal.appendChild(revealButton);reveal.appendChild(revealContent);article.appendChild(reveal);
    if(!part)return;
    var divider=document.createElement('div');
    divider.className='hskListeningPartBreak';
@@ -8437,67 +8463,13 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
    if(part.instruction){var instruction=document.createElement('div');instruction.className='hskListeningPartInstruction';instruction.textContent=part.instruction;divider.appendChild(instruction)}
    article.parentNode.insertBefore(divider,article);
   });
-  var controls=document.createElement('div');
-  controls.id='hskListeningControls';
-  controls.innerHTML='<button type="button" class="hskListeningToggle" id="hskListeningQuestionsToggle" onclick="window.__hskToggleListeningQuestions()" aria-expanded="'+String(questionsVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan pertanyaan singkat':'Tampilkan pertanyaan singkat')+'</button><button type="button" class="hskListeningToggle" id="hskListeningTranscriptToggle" onclick="window.__hskToggleListeningTranscript()" aria-expanded="'+String(transcriptVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(transcriptVisible?'visibility_off':'subject')+'</span>'+(transcriptVisible?'Sembunyikan transkrip':'Tampilkan transkrip')+'</button>';
   var questions=document.createElement('div');
   questions.id='hskListeningQuestionsPanel';
   questions.innerHTML=temp.innerHTML;
-  var transcript=document.createElement('div');
-  transcript.id='hskListeningTranscriptPanel';
-  transcript.hidden=!transcriptVisible;
-  transcript.innerHTML=makeTranscript(section);
-  root.replaceChildren(controls,questions,transcript);
+  root.replaceChildren(questions);
   if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
  }
- window.__hskToggleListeningQuestions=function(){
-  questionsVisible=!questionsVisible;
-  var panel=document.getElementById('hskListeningQuestionsPanel'),btn=document.getElementById('hskListeningQuestionsToggle');
-  if(panel)panel.querySelectorAll('.hskListeningShortPrompt').forEach(function(prompt){prompt.hidden=!questionsVisible});
-  if(btn){btn.setAttribute('aria-expanded',String(questionsVisible));btn.innerHTML='<span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan pertanyaan singkat':'Tampilkan pertanyaan singkat');}
- };
- window.__hskToggleListeningTranscript=function(){
-  transcriptVisible=!transcriptVisible;
-  var panel=document.getElementById('hskListeningTranscriptPanel'),btn=document.getElementById('hskListeningTranscriptToggle');
-  if(panel)panel.hidden=!transcriptVisible;
-  if(btn){btn.setAttribute('aria-expanded',String(transcriptVisible));btn.innerHTML='<span class="material-symbols-rounded" aria-hidden="true">'+(transcriptVisible?'visibility_off':'subject')+'</span>'+(transcriptVisible?'Sembunyikan transkrip':'Tampilkan transkrip')}
- };
- var oldRender=window.renderExercise;
- if(typeof oldRender==='function'&&!oldRender.__hskListeningUnifiedHook){
-  var wrapped=function(){
-   var supported=route?.type==='listening'&&/^H[45]\d{4}$/i.test(String(route?.packageCode||''))&&!!DB[route.packageCode]?.__hskListeningUnified;
-   if(supported){
-    if(Number(route.sectionIndex)!==0)route={...route,sectionIndex:0};
-    if(typeof window.__hskResetQuestionPage==='function')window.__hskResetQuestionPage();
-   }
-   if(!supported)listenStateKey='';
-   var out=oldRender.apply(this,arguments);
-   var slot=document.getElementById('hskAudioPlayerSlot');
-   var header=document.querySelector('#exercise .focusHeader');
-   if(slot&&header&&slot.previousElementSibling!==header)header.insertAdjacentElement('afterend',slot);
-   if(typeof window.renderHskAudioPlayer==='function')window.renderHskAudioPlayer();
-   if(isSupportedListening()){
-    var sub=document.querySelector('#exercise .section .sub');
-    if(sub)sub.textContent='Pilih apakah ingin menampilkan soal atau transkrip.';
-    renderListeningShell();
-   }
-   return out;
-  };
-  wrapped.__hskListeningUnifiedHook=true;
-  wrapped.__hskOriginal=oldRender;
-  window.renderExercise=wrapped;
- }
- if(typeof window.setScreen==='function'&&!window.setScreen.__hskAudioScreenHook){
-  var oldSetScreen=window.setScreen;
-  var setWrapped=function(){
-   var out=oldSetScreen.apply(this,arguments);
-   requestAnimationFrame(function(){if(typeof window.renderHskAudioPlayer==='function')window.renderHskAudioPlayer();if(typeof window.scheduleHskAudioPlayerPosition==='function')window.scheduleHskAudioPlayerPosition()});
-   return out;
-  };
-  setWrapped.__hskAudioScreenHook=true;
-  setWrapped.__hskOriginal=oldSetScreen;
-  window.setScreen=setWrapped;
- }
+
 })();
 </script>
 
