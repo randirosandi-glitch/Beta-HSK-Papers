@@ -4022,6 +4022,12 @@ function mergePlanArrays(localPlans,remotePlans,localDeleted,remoteDeleted){
   });
   return {out,localWon,deleted};
 }
+// BEGIN GENERATED MODULE: src/core/progress.js
+/* Source module: progress and activity-history model.
+ * Compatibility contract: preserve the existing store schema, global function names,
+ * local/cloud merge behavior, reset tombstones, and 5,000-event retention policy.
+ * Classic-script declarations intentionally remain global for legacy callers.
+ */
 function progressResetAt(store,key){
   const rm=store&&typeof store._progressResets==='object'&&store._progressResets?store._progressResets:{};
   let at=Number(rm[key]||0)||0;
@@ -4136,6 +4142,44 @@ function mergeStoresLatest(local,remote){
   if(syncUpdatedAt)out._syncMeta={version:1,updatedAt:syncUpdatedAt};else delete out._syncMeta;
   return {store:out,localWon};
 }
+
+function createQuestionActivity(questionId){
+  const st=readStore();
+  const now=Math.max(Date.now(),Number(st._lastActivity?.updatedAt||0)+1);
+  const code=String(route.packageCode||''),type=String(route.type||''),sectionIndex=Number(route.sectionIndex||0),qid=String(questionId);
+  const id=(currentUsername||'guest')+'_'+now+'_'+Math.random().toString(36).slice(2,10);
+  const attempts=Array.isArray(st._attempts)?st._attempts.filter(x=>x&&x.id):[];
+  const event={id,timestamp:now,updatedAt:now,answeredAt:now,checkedAt:null,username:currentUsername||'',code,type,sectionIndex,questionId:qid,status:'answered',correct:null,schemaVersion:3};
+  attempts.push(event); st._attempts=attempts.slice(-5000);
+  st._lastActivity={code,type,sectionIndex,questionId:qid,updatedAt:now,schemaVersion:3};
+  writeStore(st); scheduleCloudSync();
+  try{window.dispatchEvent(new CustomEvent('hsk:progress-updated',{detail:{code,type,sectionIndex,questionId:qid,status:'answered',timestamp:now}}))}catch(e){}
+  return id;
+}
+function updateQuestionActivity(eventId,correct){
+  if(!eventId)return createQuestionActivity(arguments[2]);
+  const st=readStore(); const attempts=Array.isArray(st._attempts)?st._attempts.filter(x=>x&&x.id):[];
+  const i=attempts.findIndex(x=>String(x.id)===String(eventId));
+  if(i<0)return null;
+  const now=Math.max(Date.now(),Number(attempts[i].updatedAt||0)+1,Number(st._lastActivity?.updatedAt||0)+1);
+  attempts[i]={...attempts[i],checkedAt:now,updatedAt:now,status:'checked',correct:!!correct};
+  st._attempts=attempts.slice(-5000);
+  st._lastActivity={code:attempts[i].code,type:attempts[i].type,sectionIndex:attempts[i].sectionIndex,questionId:attempts[i].questionId,updatedAt:now,schemaVersion:3};
+  writeStore(st); scheduleCloudSync();
+  try{window.dispatchEvent(new CustomEvent('hsk:progress-updated',{detail:{...attempts[i],timestamp:now}}))}catch(e){}
+  return attempts[i].id;
+}
+function ensureQuestionActivity(questionId){
+  const qid=String(questionId); if(answerEvents[qid])return answerEvents[qid];
+  const id=createQuestionActivity(qid); answerEvents[qid]=id;
+  saveSectionState(route.packageCode,route.type,route.sectionIndex,answers,checked,answerEvents);
+  return id;
+}
+function recordQuestionAttempt(questionId,correct){
+  const qid=String(questionId); const eventId=answerEvents[qid]||ensureQuestionActivity(qid);
+  return updateQuestionActivity(eventId,correct);
+}
+// END GENERATED MODULE: src/core/progress.js
 async function pullCloudStateInternal(force=false){
   if(!currentUsername||!cloudEnabled())return false;
   try{
@@ -4563,42 +4607,7 @@ function choose(btn){let id=String(btn.dataset.q);resumeQuestionId=id;resultStat
 function permutations(){return ['ABC','ACB','BAC','BCA','CAB','CBA']}
 function escapeSequence(o,idx){let text=String(o);let m=text.match(/^([ABC])\s+(.*)$/);if(m)text=m[2];let label=['A','B','C'][idx]||'';return '<div class="sequenceLine"><b>'+label+'</b><span>'+esc(text)+'</span></div>'}
 function saveWritingAnswer(id){resultState=null;const e=$('w'+id);const v=e?e.value.trim():String(answers[id]??'');if(!v){appNotice('Jawaban belum diisi','Ketik jawaban terlebih dahulu.');return}const previous=answers[id];const changed=previous===undefined||String(previous)!==String(v);answers[id]=v;if(changed){answerEvents[id]=createQuestionActivity(id);}checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show good';f.textContent='✓ Jawaban tersimpan. Silakan periksa kembali kalimatmu sendiri.'}saveSectionState(route.packageCode,route.type,route.sectionIndex,answers,checked,answerEvents);refreshCurrentProgress()}
-function createQuestionActivity(questionId){
-  const st=readStore();
-  const now=Math.max(Date.now(),Number(st._lastActivity?.updatedAt||0)+1);
-  const code=String(route.packageCode||''),type=String(route.type||''),sectionIndex=Number(route.sectionIndex||0),qid=String(questionId);
-  const id=(currentUsername||'guest')+'_'+now+'_'+Math.random().toString(36).slice(2,10);
-  const attempts=Array.isArray(st._attempts)?st._attempts.filter(x=>x&&x.id):[];
-  const event={id,timestamp:now,updatedAt:now,answeredAt:now,checkedAt:null,username:currentUsername||'',code,type,sectionIndex,questionId:qid,status:'answered',correct:null,schemaVersion:3};
-  attempts.push(event); st._attempts=attempts.slice(-5000);
-  st._lastActivity={code,type,sectionIndex,questionId:qid,updatedAt:now,schemaVersion:3};
-  writeStore(st); scheduleCloudSync();
-  try{window.dispatchEvent(new CustomEvent('hsk:progress-updated',{detail:{code,type,sectionIndex,questionId:qid,status:'answered',timestamp:now}}))}catch(e){}
-  return id;
-}
-function updateQuestionActivity(eventId,correct){
-  if(!eventId)return createQuestionActivity(arguments[2]);
-  const st=readStore(); const attempts=Array.isArray(st._attempts)?st._attempts.filter(x=>x&&x.id):[];
-  const i=attempts.findIndex(x=>String(x.id)===String(eventId));
-  if(i<0)return null;
-  const now=Math.max(Date.now(),Number(attempts[i].updatedAt||0)+1,Number(st._lastActivity?.updatedAt||0)+1);
-  attempts[i]={...attempts[i],checkedAt:now,updatedAt:now,status:'checked',correct:!!correct};
-  st._attempts=attempts.slice(-5000);
-  st._lastActivity={code:attempts[i].code,type:attempts[i].type,sectionIndex:attempts[i].sectionIndex,questionId:attempts[i].questionId,updatedAt:now,schemaVersion:3};
-  writeStore(st); scheduleCloudSync();
-  try{window.dispatchEvent(new CustomEvent('hsk:progress-updated',{detail:{...attempts[i],timestamp:now}}))}catch(e){}
-  return attempts[i].id;
-}
-function ensureQuestionActivity(questionId){
-  const qid=String(questionId); if(answerEvents[qid])return answerEvents[qid];
-  const id=createQuestionActivity(qid); answerEvents[qid]=id;
-  saveSectionState(route.packageCode,route.type,route.sectionIndex,answers,checked,answerEvents);
-  return id;
-}
-function recordQuestionAttempt(questionId,correct){
-  const qid=String(questionId); const eventId=answerEvents[qid]||ensureQuestionActivity(qid);
-  return updateQuestionActivity(eventId,correct);
-}
+
 
 function checkOne(id,silent=false,restoreOnly=false){const q=currentQuestions.find(x=>String(x[0])===String(id))||((DB[route?.packageCode]?.[route?.type]?.[route?.sectionIndex]?.questions)||[]).find(x=>String(x[0])===String(id));if(!q)return;const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);
 if(model.type==="sentence_ordering"||model.type==="sequence"){const e=$('w'+id);const v=e?e.value.trim():String(answers[id]??'');if(!v){if(!silent)appNotice('Jawaban belum dipilih','Pilih atau ketik susunan jawaban terlebih dahulu.');return}answers[id]=v;const ok=isSequenceAnswerCorrect(q,v);checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — periksa kembali urutan kata atau lihat kunci jawaban.'}const input=$('w'+id);if(input){input.classList.remove('answer-correct','answer-wrong');input.classList.add(ok?'answer-correct':'answer-wrong')}if(!restoreOnly){saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress()}return}
