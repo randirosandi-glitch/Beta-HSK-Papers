@@ -4264,10 +4264,13 @@ const LAST_ROUTE_KEY='hsk4-kelas-e-last-route-v1';
 window.__hskPersistRoute=function(){try{if(!currentUsername)return;const r=route||{};localStorage.setItem(LAST_ROUTE_KEY+':'+currentUsername,JSON.stringify({screen:r.screen||'home',packageCode:r.packageCode??null,type:r.type??null,sectionIndex:r.sectionIndex??null,studyPlanId:r.studyPlanId??null,materialKey:r.materialKey??null,updatedAt:Date.now()}));}catch(e){console.warn('HSK route persist:',e)}};
 window.__hskReadPersistedRoute=function(){try{if(!currentUsername)return null;const raw=localStorage.getItem(LAST_ROUTE_KEY+':'+currentUsername);if(!raw)return null;const r=JSON.parse(raw);if(!r||typeof r!=='object')return null;return {screen:String(r.screen||'home'),packageCode:r.packageCode??null,type:r.type??null,sectionIndex:r.sectionIndex??null,studyPlanId:r.studyPlanId??null,materialKey:r.materialKey??null};}catch(e){return null}};
 window.__hskClearPersistedRoute=function(){try{if(currentUsername)localStorage.removeItem(LAST_ROUTE_KEY+':'+currentUsername)}catch(e){}};
+// BEGIN GENERATED MODULE: src/core/storage-adapter.js
+/* Source module body is mirrored here for the deployable single-file build. */
 const STORAGE_PREFIX='hsk4-kelas-e-progress-v4:';
 function storageKey(){return STORAGE_PREFIX+(currentUsername||'guest')}
 function readStore(){try{return JSON.parse(localStorage.getItem(storageKey())||'{}')||{}}catch(e){return {}}}
 function writeStore(s){try{localStorage.setItem(storageKey(),JSON.stringify(s))}catch(e){}}
+// END GENERATED MODULE: src/core/storage-adapter.js
 function getActivePackageData(){try{return DB?.[route?.packageCode]||null}catch(e){return null}}
 function getPackageEngineRules(pkg){return pkg&&pkg.engineRules&&pkg.engineRules.version?pkg.engineRules:null}
 function normalizeRuleRange(range){
