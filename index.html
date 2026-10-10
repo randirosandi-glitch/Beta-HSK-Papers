@@ -4004,6 +4004,11 @@ async function cloudUpdateUser(username,store){
   return true;
 }
 function syncNowStamp(){return Date.now()}
+// BEGIN GENERATED MODULE: src/core/study-plan-merge.js
+/* Source module: local/cloud study-plan merge.
+ * Keep deletion tombstones authoritative and resolve conflicting plan versions by updatedAt.
+ * Classic-script global function retained for the progress-store merge caller.
+ */
 function mergePlanArrays(localPlans,remotePlans,localDeleted,remoteDeleted){
   const deleted={};
   for(const [id,stamp] of Object.entries(remoteDeleted&&typeof remoteDeleted==='object'?remoteDeleted:{}))deleted[String(id)]=Number(stamp)||Date.now();
@@ -4022,6 +4027,7 @@ function mergePlanArrays(localPlans,remotePlans,localDeleted,remoteDeleted){
   });
   return {out,localWon,deleted};
 }
+// END GENERATED MODULE: src/core/study-plan-merge.js
 // BEGIN GENERATED MODULE: src/core/progress.js
 /* Source module: progress and activity-history model.
  * Compatibility contract: preserve the existing store schema, global function names,
