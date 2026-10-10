@@ -4279,7 +4279,7 @@ function performLogout(){
   renderUserPill();
   resetAuthChoices();
 }
-function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');document.body.classList.toggle('exercise-focus',name==='exercise');document.body.classList.toggle('result-focus',name==='result');renderContext();renderNavState();requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));/* canonical navigation guard owns browser history */if(!window.__hskRestoringLastRoute&&typeof window.__hskPersistRoute==='function')window.__hskPersistRoute();}
+function setScreen(name,push=true){if(!currentUsername){showAuthScreen();return}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const target=$(name);if(!target)return;target.classList.add('active');document.body.classList.toggle('exercise-focus',name==='exercise');document.body.classList.toggle('result-focus',name==='result');if(typeof renderHskAudioPlayer==='function')renderHskAudioPlayer();renderContext();renderNavState();requestAnimationFrame(()=>{window.scrollTo({top:0,left:0,behavior:'auto'});if(typeof scheduleHskAudioPlayerPosition==='function')scheduleHskAudioPlayerPosition();});/* canonical navigation guard owns browser history */if(!window.__hskRestoringLastRoute&&typeof window.__hskPersistRoute==='function')window.__hskPersistRoute();}
 function saveState(){return route}
 /* Persist only the current app route so a browser refresh returns to the same page.
    This is intentionally separate from answer/progress storage. */
@@ -4472,17 +4472,25 @@ function hskAudioFloatToBody(slot){
  document.body.appendChild(hskAudioPlayerNode);
 }
 function renderHskAudioPlayer(){
- const slot=$('hskAudioPlayerSlot');if(!slot)return;
+ const slot=$('hskAudioPlayerSlot');
  const code=String(route.packageCode||'');
  const target=route.screen==='exercise'&&route.type==='listening'&&/^H[45]\d{4}$/i.test(code);
  if(!target){
   if(hskAudioPlayerNode){
-   hskAudioDockToSlot(slot);
+   if(slot)hskAudioDockToSlot(slot);
+   else{
+    if(hskAudioPlayerPlaceholder?.parentNode)hskAudioPlayerPlaceholder.parentNode.removeChild(hskAudioPlayerPlaceholder);
+    hskAudioPlayerPlaceholder=null;
+    hskAudioPlayerNode.classList.remove('isFloating');
+    const nav=document.querySelector('.mainNav');
+    if(nav){nav.classList.remove('focusNavHidden');nav.removeAttribute('aria-hidden');nav.removeAttribute('inert');}
+   }
    hskAudioPlayerNode.hidden=true;
    hskAudioPlayerNode.querySelector('#hskAudioElement')?.pause();
   }
   return;
  }
+ if(!slot)return;
  if(!hskAudioPlayerNode){
   const el=document.createElement('div');el.className='hskAudioPlayer';el.id='hskAudioPlayer';
   el.innerHTML='<input class="hskAudioSeek" id="hskAudioSeek" type="range" min="0" max="1000" value="0" step="1" aria-label="Posisi audio"><div class="hskAudioControls"><div class="hskAudioSpeedWrap"><button type="button" id="hskAudioSpeedButton" aria-label="Atur kecepatan audio" aria-expanded="false">'+hskAudioIcon('menu')+'</button><div class="hskAudioSpeedMenu" id="hskAudioSpeedMenu" role="radiogroup" aria-label="Kecepatan audio">'+[0.5,0.75,1,1.25,1.5,1.75,2].map(v=>'<button type="button" role="radio" data-speed="'+v+'" aria-checked="'+(v===1?'true':'false')+'">'+(v===1?'1× Normal':v+'×')+'</button>').join('')+'</div></div><button type="button" id="hskAudioBack" aria-label="Mundur 10 detik">'+hskAudioIcon('skip_previous')+'</button><button type="button" class="hskAudioPlay" id="hskAudioPlay" aria-label="Putar audio">'+hskAudioIcon('play_arrow')+'</button><button type="button" id="hskAudioForward" aria-label="Maju 10 detik">'+hskAudioIcon('skip_next')+'</button></div><div class="hskAudioTime"><span id="hskAudioCurrent">0:00</span><span id="hskAudioDuration">0:00</span></div><div class="hskAudioUnavailable" id="hskAudioUnavailable" hidden>Audio paket ini belum terhubung.</div><audio id="hskAudioElement" preload="metadata"></audio>';
@@ -5255,6 +5263,23 @@ window.renderResult=function(){const rp=$('resultPkg'),rt=$('resultType'),rpart=
       appNotice('Tidak dapat kembali ke bagian',e.message||'Silakan coba lagi.');
     }
   };
+  window.__hskFinishCardMarkup=function(){return finishCard();};
+  const __hskPreviousExerciseRender=window.renderExercise;
+  if(typeof __hskPreviousExerciseRender==='function'&&!__hskPreviousExerciseRender.__hskFinishCardHook){
+    const __hskExerciseWithFinishCard=function(){
+      const result=__hskPreviousExerciseRender.apply(this,arguments);
+      const root=document.getElementById('questions');
+      if(root&&route.screen==='exercise'){
+        root.querySelectorAll(':scope > .finishCard').forEach(node=>node.remove());
+        const markup=finishCard();
+        if(markup)root.insertAdjacentHTML('beforeend',markup);
+      }
+      return result;
+    };
+    __hskExerciseWithFinishCard.__hskFinishCardHook=true;
+    __hskExerciseWithFinishCard.__hskOriginal=__hskPreviousExerciseRender;
+    window.renderExercise=__hskExerciseWithFinishCard;
+  }
   window.__hskRenderAllListeningCards=function(){
     const savedPage=page;
     let markup='';
