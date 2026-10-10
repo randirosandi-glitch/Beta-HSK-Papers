@@ -4774,13 +4774,19 @@ function grade(push=true){
      renderExercise() call bypasses that wrapper and drops the inline result card. */
   if(route.type==='listening'&&typeof window.renderExercise==='function')window.renderExercise();
   else renderExercise();
-  setScreen('exercise',false);
-  // After checking the section, bring the assessment card into view.
-  // Keep the sticky top bar clear so the score is immediately visible.
+  /* The user is already on the exercise screen. Calling setScreen() here
+     schedules its unconditional scroll-to-top and can override assessment focus. */
+  const exerciseScreen=document.getElementById('exercise');
+  if(!exerciseScreen||!exerciseScreen.classList.contains('active'))setScreen('exercise',false);
+  // Wait for the unified Listening renderer to replace the question DOM, then
+  // locate the checked card globally (not only under #exercise).
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
-      const assessment=document.querySelector('#exercise .finishCard.checked');
-      if(!assessment)return;
+      const assessment=document.querySelector('.finishCard.checked');
+      if(!assessment){
+        console.error('HSK assessment card missing after grade()', {type:route.type,packageCode:route.packageCode,sectionIndex:route.sectionIndex});
+        return;
+      }
       const top=assessment.getBoundingClientRect().top+window.scrollY-78;
       window.scrollTo({top:Math.max(0,top),left:0,behavior:'auto'});
     });
