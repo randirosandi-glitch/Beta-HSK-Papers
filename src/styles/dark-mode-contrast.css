@@ -1,0 +1,129 @@
+
+/*
+  HSK Papers — Dark Mode text visibility correction.
+  Purpose: neutralize legacy Light Mode hardcoded text colors.
+  Scope: color only. No layout, spacing, typography size, data, or JS changes.
+*/
+
+/* Package list / package cards */
+body.dark #packagesScreen .titleV12,
+body.dark #packagesScreen .descV12,
+body.dark #packagesScreen .progressV12 .progressMeta,
+body.dark #package>.grid>.tile,
+body.dark #package>.grid>.tile>b,
+body.dark #package>.grid>.tile>small,
+body.dark #package>.grid>.tile .progressMeta,
+body.dark #package .flatPartCard,
+body.dark #package .flatPartCard strong{
+  color:var(--text)!important;
+}
+body.dark #packagesScreen .descV12,
+body.dark #packagesScreen .progressV12 .progressMeta,
+body.dark #package>.grid>.tile>small,
+body.dark #package>.grid>.tile .progressMeta{
+  color:var(--muted)!important;
+}
+
+/* Part-selection cards */
+body.dark #partsScreen #sections .sectionPartTile{
+  color:var(--text)!important;
+}
+body.dark #partsScreen #sections .sectionPartTitle{
+  color:#f4f7fb!important;
+}
+body.dark #partsScreen #sections .sectionPartTile:nth-child(3n/**/+2) .sectionPartTitle{
+  color:#55c7d2!important;
+}
+body.dark #partsScreen #sections .sectionPartTile:nth-child(3n) .sectionPartTitle{
+  color:#9a78ff!important;
+}
+body.dark #partsScreen #sections .sectionPartTile>small,
+body.dark #partsScreen #sections .sectionPartTile .progressMeta{
+  color:#aeb8c8!important;
+}
+
+/* Exercise heading and HSK 5 paper headers */
+body.dark #exercise .section h2,
+body.dark #exercise .section h2#exTitle{
+  color:var(--text)!important;
+}
+body.dark #exercise .section h2#exTitle.hsk5PaperSectionHeader,
+body.dark #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle,
+body.dark #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{
+  color:#f3f6fa!important;
+}
+body.dark #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{
+  color:#c4ccd8!important;
+}
+
+/* HSK 5 paper body typography */
+body.dark #exercise .hsk5PaperGroupHeader,
+body.dark #exercise .hsk5PaperPassageText,
+body.dark #exercise .hsk5PaperQText,
+body.dark #exercise .hsk5PaperQNo,
+body.dark #exercise .hsk5PaperPart2 .hsk5PaperQNo,
+body.dark #exercise .hsk5PaperPart2 .hsk5PaperQText,
+body.dark #exercise .hsk5PaperOption.opt,
+body.dark #exercise .hsk5PaperOption.opt:hover,
+body.dark #exercise .hsk5PaperOption.opt:focus,
+body.dark #exercise .hsk5PaperOption.opt:active,
+body.dark #exercise .hsk5PaperOption.opt.selected,
+body.dark #exercise .hsk5PaperOption.opt.correct,
+body.dark #exercise .hsk5PaperOption.opt.wrong{
+  color:var(--text)!important;
+}
+
+/* Normal exercise text */
+body.dark #exercise .qtext,
+body.dark #exercise .qtext strong,
+body.dark #exercise .qtext b,
+body.dark #exercise .qtop,
+body.dark #exercise .qtop span:first-child,
+body.dark #exercise .instruction h2,
+body.dark #exercise .instruction p,
+body.dark #exercise .reference,
+body.dark #exercise .readingPassage .rpText{
+  color:var(--text)!important;
+}
+body.dark #exercise .qtop,
+body.dark #exercise .instruction p,
+body.dark #exercise .reference{
+  color:var(--muted)!important;
+}
+
+/* Breadcrumb / context text */
+body.dark #exercise .crumb #exPkg,
+body.dark #exercise .crumb #exPart,
+body.dark #exercise .focusHeader #exPkg{
+  color:var(--text)!important;
+}
+body.dark #exercise .crumb #exType,
+body.dark #exercise .crumb #exPkg:after{
+  color:var(--muted)!important;
+}
+
+/* Generic headings that had legacy hardcoded Light Mode colors */
+body.dark #packagesScreen .packagePageHead h2,
+body.dark #packagesScreen .packagePageHead .sectionKicker,
+body.dark #levelsScreen .levelLandingHead h2,
+body.dark #levelsScreen .levelLandingHead .sectionKicker,
+body.dark #studyPlans .studyPlansHead .sectionKicker{
+  color:var(--text)!important;
+}
+body.dark #packagesScreen .packagePageHead .sectionKicker,
+body.dark #levelsScreen .levelLandingHead .sectionKicker,
+body.dark #studyPlans .studyPlansHead .sectionKicker{
+  color:var(--blue)!important;
+}
+body.dark #packagesScreen .packagePageHead .sub,
+body.dark #levelsScreen .levelLandingHead .sub{
+  color:var(--muted)!important;
+}
+
+/* Explicitly keep the header identity readable */
+body.dark .brandTitleWrap .brandTitle{
+  color:var(--text)!important;
+}
+body.dark .brandTitleWrap .brandSubtitle{
+  color:var(--muted)!important;
+}
