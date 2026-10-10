@@ -125,14 +125,21 @@ function scanFolders(folder, output) {
     const code = name.replace(/\.mp3$/i, '').toUpperCase();
     let sharingAccess = '';
     try { sharingAccess = String(file.getSharingAccess()); } catch (ignored) {}
-    output[code] = {
-      name: name,
-      id: file.getId(),
-      url: 'https://drive.google.com/uc?export=download&id=' + encodeURIComponent(file.getId()),
-      folder: folder.getName(),
-      sharingAccess: sharingAccess,
-      mimeType: file.getMimeType()
-    };
+    const levelMatch = code.match(/^H([1-6])\d{4}$/);
+    const preferredFolder = levelMatch ? 'HSK ' + levelMatch[1] : '';
+    const current = output[code];
+    const currentIsPreferred = current && current.folder === preferredFolder;
+    const thisIsPreferred = preferredFolder && folder.getName() === preferredFolder;
+    if (!current || (thisIsPreferred && !currentIsPreferred)) {
+      output[code] = {
+        name: name,
+        id: file.getId(),
+        url: 'https://drive.google.com/uc?export=download&id=' + encodeURIComponent(file.getId()),
+        folder: folder.getName(),
+        sharingAccess: sharingAccess,
+        mimeType: file.getMimeType()
+      };
+    }
   }
   const folders = folder.getFolders();
   while (folders.hasNext()) scanFolders(folders.next(), output);
