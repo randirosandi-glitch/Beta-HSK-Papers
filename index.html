@@ -4127,7 +4127,10 @@ function mergeStoresLatest(local,remote){
     }
   }
   if(Object.keys(mergedResets).length)out._progressResets=mergedResets;else delete out._progressResets;
-  out._syncMeta={version:1,updatedAt:Math.max(Number(a._syncMeta?.updatedAt||0),Number(b._syncMeta?.updatedAt||0),Date.now())};
+  /* Keep sync metadata stable when the actual learner data did not change.
+     Adding Date.now() here made every merge look different and triggered a full-row PATCH. */
+  const syncUpdatedAt=Math.max(Number(a._syncMeta?.updatedAt||0),Number(b._syncMeta?.updatedAt||0));
+  if(syncUpdatedAt)out._syncMeta={version:1,updatedAt:syncUpdatedAt};else delete out._syncMeta;
   return {store:out,localWon};
 }
 async function pullCloudStateInternal(force=false){
@@ -4185,6 +4188,7 @@ async function pushCloudState(store){
       await cloudCreateUser(currentUsername,latest);
       const afterCreate=readStore();
       if(JSON.stringify(afterCreate)!==JSON.stringify(latest)) await cloudUpdateUser(currentUsername,afterCreate);
+      markCloudSnapshotSynced(readStore());
       return true;
     }
     const remote=row.data||{};
