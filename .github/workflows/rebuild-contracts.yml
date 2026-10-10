@@ -5,6 +5,8 @@ on:
     paths:
       - 'index.html'
       - 'tests/**'
+      - 'src/**'
+      - 'scripts/**'
       - '.github/workflows/rebuild-contracts.yml'
   pull_request:
     branches: [main]
