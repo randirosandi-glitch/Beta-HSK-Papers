@@ -40,6 +40,7 @@ test('saving a section preserves schema and clears covered progress-reset tombst
     },
     'H51001|reading|0': { answers: { 'old': 'B' }, checked: {}, answerEvents: { old: 'old-event' }, updatedAt: 10 }
   });
+  context.answerEvents = { old: 'old-event', '1': 'event-1' };
   context.saveSectionState('H51001', 'reading', 0);
   const store = getStore();
   assert.deepEqual(JSON.parse(JSON.stringify(store['H51001|reading|0'].answers)), { '1': 'A' });
