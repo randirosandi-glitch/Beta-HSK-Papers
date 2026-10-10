@@ -25,4 +25,4 @@ jobs:
       - name: Verify extracted module is synchronized
         run: node scripts/build.mjs --check
       - name: Run source-contract tests
-        run: node --test tests/rebuild-contracts.test.mjs
+        run: node --test tests/*.test.mjs
