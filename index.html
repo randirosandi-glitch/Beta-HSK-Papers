@@ -4419,20 +4419,57 @@ function scheduleHsk5AutoPaperOptionLayout(){
   });
 }
 
-let hskAudioPlayerNode=null,hskAudioPlayerCode=null,hskAudioFloatFrame=0,hskAudioSpeed=1;
+let hskAudioPlayerNode=null,hskAudioPlayerCode=null,hskAudioFloatFrame=0,hskAudioSpeed=1,hskAudioPlayerPlaceholder=null;
 function hskAudioSourceFor(code){
  const maps=window.HSK_AUDIO_URLS||window.HSK_AUDIO_FILES||{},pkg=DB[code]||{};
- const raw=maps[code]||pkg.audio_url||pkg.audioUrl||pkg.listening_audio_url||pkg.listeningAudioUrl||pkg.audio?.url||pkg.listening?.audio_url||'';
- if(typeof raw!=='string'||!raw.trim())return '';
- const u=raw.trim(),id=(u.match(/[?&]id=([\w-]+)/)||[])[1];
+ const candidate=maps[code]||pkg.audio_url||pkg.audioUrl||pkg.listening_audio_url||pkg.listeningAudioUrl||pkg.audio?.url||pkg.audio?.src||pkg.listening_audio?.url||pkg.listeningAudio?.url||pkg.listening?.audio_url||pkg.listening?.audioUrl||'';
+ const raw=typeof candidate==='string'?candidate:'';
+ if(!raw.trim())return '';
+ const u=raw.trim(),id=(u.match(/[?&]id=([\w-]+)/)||u.match(/\/file\/d\/([\w-]+)/))?.[1];
  if(/drive\.google\.com/.test(u)&&id&&!/\/uc\?/.test(u))return 'https://drive.google.com/uc?export=download&id='+id;
  return u;
 }
 function hskAudioIcon(name){return '<span class="material-symbols-rounded" aria-hidden="true">'+name+'</span>'}
+function hskAudioDockToSlot(slot){
+ if(!hskAudioPlayerNode||!slot)return;
+ if(hskAudioPlayerPlaceholder&&hskAudioPlayerPlaceholder.parentNode){
+  hskAudioPlayerPlaceholder.parentNode.replaceChild(hskAudioPlayerNode,hskAudioPlayerPlaceholder);
+ }else if(!slot.contains(hskAudioPlayerNode)){
+  slot.appendChild(hskAudioPlayerNode);
+ }
+ hskAudioPlayerPlaceholder=null;
+ hskAudioPlayerNode.classList.remove('isFloating');
+ ['left','top','bottom','transform'].forEach(p=>hskAudioPlayerNode.style.removeProperty(p));
+}
+function hskAudioFloatToBody(slot){
+ if(!hskAudioPlayerNode||!slot||hskAudioPlayerNode.classList.contains('isFloating'))return;
+ const rect=hskAudioPlayerNode.getBoundingClientRect();
+ const placeholder=document.createElement('div');
+ placeholder.className='hskAudioPlayerPlaceholder';
+ placeholder.setAttribute('aria-hidden','true');
+ placeholder.style.height=Math.max(rect.height,hskAudioPlayerNode.offsetHeight)+'px';
+ placeholder.style.width=Math.max(0,rect.width)+'px';
+ placeholder.style.marginBottom=getComputedStyle(hskAudioPlayerNode).marginBottom;
+ placeholder.style.marginLeft='auto';
+ placeholder.style.marginRight='auto';
+ if(slot.contains(hskAudioPlayerNode))slot.replaceChild(placeholder,hskAudioPlayerNode);
+ else slot.appendChild(placeholder);
+ hskAudioPlayerPlaceholder=placeholder;
+ hskAudioPlayerNode.classList.add('isFloating');
+ document.body.appendChild(hskAudioPlayerNode);
+}
 function renderHskAudioPlayer(){
  const slot=$('hskAudioPlayerSlot');if(!slot)return;
- const target=route.screen==='exercise'&&route.type==='listening'&&/^H5/i.test(String(route.packageCode||''));
- if(!target){if(hskAudioPlayerNode){hskAudioPlayerNode.classList.remove('isFloating');hskAudioPlayerNode.hidden=true;slot.appendChild(hskAudioPlayerNode)}return}
+ const code=String(route.packageCode||'');
+ const target=route.screen==='exercise'&&route.type==='listening'&&/^H[45]\d{4}$/i.test(code);
+ if(!target){
+  if(hskAudioPlayerNode){
+   hskAudioDockToSlot(slot);
+   hskAudioPlayerNode.hidden=true;
+   hskAudioPlayerNode.querySelector('#hskAudioElement')?.pause();
+  }
+  return;
+ }
  if(!hskAudioPlayerNode){
   const el=document.createElement('div');el.className='hskAudioPlayer';el.id='hskAudioPlayer';
   el.innerHTML='<input class="hskAudioSeek" id="hskAudioSeek" type="range" min="0" max="1000" value="0" step="1" aria-label="Posisi audio"><div class="hskAudioControls"><div class="hskAudioSpeedWrap"><button type="button" id="hskAudioSpeedButton" aria-label="Atur kecepatan audio" aria-expanded="false">'+hskAudioIcon('menu')+'</button><div class="hskAudioSpeedMenu" id="hskAudioSpeedMenu" role="radiogroup" aria-label="Kecepatan audio">'+[0.5,0.75,1,1.25,1.5,1.75,2].map(v=>'<button type="button" role="radio" data-speed="'+v+'" aria-checked="'+(v===1?'true':'false')+'">'+(v===1?'1× Normal':v+'×')+'</button>').join('')+'</div></div><button type="button" id="hskAudioBack" aria-label="Mundur 10 detik">'+hskAudioIcon('skip_previous')+'</button><button type="button" class="hskAudioPlay" id="hskAudioPlay" aria-label="Putar audio">'+hskAudioIcon('play_arrow')+'</button><button type="button" id="hskAudioForward" aria-label="Maju 10 detik">'+hskAudioIcon('skip_next')+'</button></div><div class="hskAudioTime"><span id="hskAudioCurrent">0:00</span><span id="hskAudioDuration">0:00</span></div><div class="hskAudioUnavailable" id="hskAudioUnavailable" hidden>Audio paket ini belum terhubung.</div><audio id="hskAudioElement" preload="metadata"></audio>';
@@ -4451,26 +4488,34 @@ function renderHskAudioPlayer(){
   document.addEventListener('pointerdown',e=>{if(!el.querySelector('.hskAudioSpeedWrap').contains(e.target)){menu.classList.remove('open');sb.setAttribute('aria-expanded','false')}});
  }
  hskAudioPlayerNode.hidden=false;
- const src=hskAudioSourceFor(route.packageCode),audio=hskAudioPlayerNode.querySelector('#hskAudioElement');
- if(hskAudioPlayerCode!==route.packageCode||audio.dataset.source!==(src||'')){
-  audio.pause();audio.removeAttribute('src');audio.load();hskAudioPlayerCode=route.packageCode;audio.dataset.source=src||'';if(src){audio.src=src;audio.load()}
+ const src=hskAudioSourceFor(code),audio=hskAudioPlayerNode.querySelector('#hskAudioElement');
+ const sourceChanged=hskAudioPlayerCode!==code||audio.dataset.source!==(src||'');
+ if(sourceChanged){
+  hskAudioDockToSlot(slot);
+  audio.pause();audio.removeAttribute('src');audio.load();
+  hskAudioPlayerCode=code;audio.dataset.source=src||'';
+  if(src){audio.src=src;audio.load()}
  }
  hskAudioPlayerNode.querySelectorAll('button').forEach(b=>{if(b.id!=='hskAudioSpeedButton')b.disabled=!src});
  hskAudioPlayerNode.querySelector('#hskAudioSeek').disabled=!src;
  hskAudioPlayerNode.querySelector('#hskAudioUnavailable').hidden=!!src;
- slot.appendChild(hskAudioPlayerNode);hskAudioPlayerNode.classList.remove('isFloating');
- hskAudioPlayerNode.style.left='';hskAudioPlayerNode.style.top='';hskAudioPlayerNode.style.bottom='';hskAudioPlayerNode.style.transform='';
- audio.playbackRate=hskAudioSpeed;scheduleHskAudioPlayerPosition();
+ if(!hskAudioPlayerNode.classList.contains('isFloating')&&!slot.contains(hskAudioPlayerNode))slot.appendChild(hskAudioPlayerNode);
+ audio.playbackRate=hskAudioSpeed;
+ scheduleHskAudioPlayerPosition();
 }
+
 function scheduleHskAudioPlayerPosition(){if(hskAudioFloatFrame)return;hskAudioFloatFrame=requestAnimationFrame(()=>{hskAudioFloatFrame=0;updateHskAudioPlayerPosition()})}
 function updateHskAudioPlayerPosition(){
- const player=hskAudioPlayerNode,slot=$('hskAudioPlayerSlot'),exercise=$('exercise');if(!player||player.hidden||!slot||!exercise||!exercise.classList.contains('active'))return;
- const header=exercise.querySelector('.focusHeader'),boundary=header?header.getBoundingClientRect().bottom:0,rect=slot.getBoundingClientRect(),floatNow=rect.top<boundary+4;
- if(floatNow){if(!player.classList.contains('isFloating')){player.classList.add('isFloating');document.body.appendChild(player)}}
- else if(player.classList.contains('isFloating')){player.classList.remove('isFloating');slot.appendChild(player)}
+ const player=hskAudioPlayerNode,slot=$('hskAudioPlayerSlot'),exercise=$('exercise');
+ if(!player||player.hidden||!slot||!exercise||!exercise.classList.contains('active'))return;
+ const rect=slot.getBoundingClientRect();
+ if(!player.classList.contains('isFloating')&&rect.bottom < -24)hskAudioFloatToBody(slot);
+ else if(player.classList.contains('isFloating')&&rect.top > 24)hskAudioDockToSlot(slot);
 }
 window.addEventListener('scroll',scheduleHskAudioPlayerPosition,{passive:true});
 window.addEventListener('orientationchange',scheduleHskAudioPlayerPosition,{passive:true});
+if(window.visualViewport){window.visualViewport.addEventListener('scroll',scheduleHskAudioPlayerPosition,{passive:true});window.visualViewport.addEventListener('resize',scheduleHskAudioPlayerPosition,{passive:true});}
+window.addEventListener('resize',scheduleHskAudioPlayerPosition,{passive:true});
 
 function renderExercise(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];page=Math.max(0,Math.min(pageCount()-1,Number(window.__hskResumePage||0)));window.__hskResumePage=page;currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;renderHskAudioPlayer();let st=sectionStats(route.packageCode,route.type,route.sectionIndex);let instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML=`<div class="instruction"><h2>Petunjuk</h2><p>${esc(instruction)}</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`+renderQuestionCards();restoreQuestionUI();scheduleHsk5AutoPaperOptionLayout()}
 if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex)){currentQuestions.forEach(q=>refreshWordBank(String(q[0])))}
@@ -6809,12 +6854,87 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     throw lastError||new Error('Paket gagal dimuat: '+code);
   }
 
-  function refreshPackageInBackground(meta,code){
+
+  function normalizeListeningPackage(data){
+    if(!data||typeof data!=='object'||!/^H[45]\d{4}$/i.test(String(data.code||'')))return data;
+    if(data.__hskListeningUnified&&Array.isArray(data.listening)&&data.listening.length===1)return data;
+    const source=Array.isArray(data.listening)?data.listening:[];
+    const valid=source.filter(part=>Array.isArray(part?.questions)&&part.questions.length);
+    if(!valid.length)return data;
+    const rules=Array.isArray(data.engineRules?.sections?.listening?.parts)?data.engineRules.sections.listening.parts:[];
+    const rangeOf=part=>{
+      if(Array.isArray(part?.range)&&part.range.length>=2)return [Number(part.range[0]),Number(part.range[1])];
+      const nums=String(part?.range||'').match(/\d+/g);
+      return nums&&nums.length>=2?[Number(nums[0]),Number(nums[1])]:[];
+    };
+    const idsOf=questions=>questions.map(q=>Number(q?.[0])).filter(Number.isFinite);
+    const allQuestions=valid.flatMap(part=>part.questions).sort((a,b)=>Number(a?.[0])-Number(b?.[0]));
+    let parts=[];
+    if(valid.length>1){
+      parts=valid.map((part,index)=>{
+        const ids=idsOf(part.questions),start=ids.length?Math.min(...ids):0,end=ids.length?Math.max(...ids):0;
+        const rule=rules.find(r=>{const rr=rangeOf(r);return rr.length===2&&start>=rr[0]&&start<=rr[1]&&end<=rr[1]});
+        const title=String(part.title||'').replace(/^.*?·\s*/,'').trim();
+        return {title:title||('第'+['一','二','三','四','五','六'][index]+'部分'),range:String(part.range||((start)+'–'+end)),start,end,instruction:String(part.instruction||rule?.instruction||'')};
+      });
+    }else if(rules.length>1){
+      parts=rules.map((rule,index)=>{
+        const rr=rangeOf(rule);if(rr.length!==2)return null;
+        const start=rr[0],end=rr[1];
+        if(!allQuestions.some(q=>Number(q?.[0])>=start&&Number(q?.[0])<=end))return null;
+        const title=String(rule.title||rule.name||('第'+['一','二','三','四','五','六'][index]+'部分')).replace(/^.*?·\s*/,'').trim();
+        return {title,range:Array.isArray(rule.range)?rule.range.join('–'):String(rule.range),start,end,instruction:String(rule.instruction||'')};
+      }).filter(Boolean);
+    }
+    if(!parts.length){
+      const ids=idsOf(allQuestions),start=ids.length?Math.min(...ids):0,end=ids.length?Math.max(...ids):0;
+      const original=valid[0]||{};
+      parts=[{title:String(original.title||'听力').replace(/^.*?·\s*/,'').trim(),range:String(original.range||((start)+'–'+end)),start,end,instruction:String(original.instruction||'')}];
+    }
+    const ids=idsOf(allQuestions),min=ids.length?Math.min(...ids):1,max=ids.length?Math.max(...ids):allQuestions.length;
+    migrateListeningProgress(String(data.code),source.length);
+    data.listening=[{title:'听力 · 全部题目',range:min+'–'+max,questions:allQuestions,parts,__hskListeningUnified:true}];
+    data.__hskListeningUnified=true;
+    return data;
+  }
+
+  function migrateListeningProgress(code,oldCount){
+    if(oldCount<2||typeof readStore!=='function'||typeof writeStore!=='function')return;
+    try{
+      const store=readStore()||{};
+      const marks=store.__hskListeningMigrations||{};
+      if(marks[code])return;
+      const targetKey=code+'|listening|0';
+      const merged=store[targetKey]||{answers:{},checked:{},answerEvents:{}};
+      const answers={...(merged.answers||{})},checked={...(merged.checked||{})},events={...(merged.answerEvents||{})};
+      for(let i=1;i<oldCount;i++){
+        const key=code+'|listening|'+i,old=store[key];
+        if(!old)continue;
+        Object.assign(answers,old.answers||{});
+        Object.assign(checked,old.checked||{});
+        Object.assign(events,old.answerEvents||{});
+        delete store[key];
+      }
+      store[targetKey]={...merged,answers,checked,answerEvents:events,updatedAt:Date.now()};
+      store.__hskListeningMigrations={...marks,[code]:true};
+      if(Array.isArray(store._attempts))store._attempts=store._attempts.map(item=>item&&item.code===code&&item.type==='listening'?{...item,sectionIndex:0}:item);
+      if(store._lastActivity?.code===code&&store._lastActivity?.type==='listening')store._lastActivity={...store._lastActivity,sectionIndex:0};
+      if(store._resume?.code===code&&store._resume?.type==='listening'){
+        const qid=Number(store._resume.questionId||0);
+        store._resume={...store._resume,sectionIndex:0,page:qid>0?Math.floor((qid-1)/10):0};
+      }
+      writeStore(store);
+      if(typeof scheduleCloudSync==='function')scheduleCloudSync();
+    }catch(error){console.warn('Listening progress migration skipped:',error)}
+  }
+
+  function refreshPackageInBackground(meta,code)
     if(packageRefresh.has(code))return packageRefresh.get(code);
     const p=fetchPackageNetwork(meta,code).then(async d=>{
       d.code=d.code||code;
       d.__folder=meta.group||meta.path.split('/')[1]||'';
       d.__lazy=false;
+      normalizeListeningPackage(d);
       DB[code]=d;
       await writeCachedPackage(code,d);
       return d;
@@ -6836,6 +6956,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         data.code=data.code||code;
         data.__folder=meta.group||meta.path.split('/')[1]||'';
         data.__lazy=false;
+        normalizeListeningPackage(data);
         DB[code]=data;
         refreshPackageInBackground(meta,code);
         return data;
@@ -6846,6 +6967,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         data.code=data.code||code;
         data.__folder=meta.group||meta.path.split('/')[1]||'';
         data.__lazy=false;
+        normalizeListeningPackage(data);
         DB[code]=data;
         await writeCachedPackage(code,data);
         return data;
@@ -6856,6 +6978,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
         data.code=data.code||code;
         data.__folder=meta.group||meta.path.split('/')[1]||'';
         data.__lazy=false;
+        normalizeListeningPackage(data);
         DB[code]=data;
         return data;
       }
@@ -8146,6 +8269,158 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   }
 }
 </style>
+
+<style id="hskListeningUnifiedUxV1">
+#hskAudioPlayerSlot{margin:0 0 12px!important;min-height:0!important}
+.hskAudioPlayerPlaceholder{display:block;box-sizing:border-box;max-width:100%;visibility:hidden;pointer-events:none}
+#hskListeningControls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+#hskListeningControls .hskListeningToggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;border:1px solid var(--line);border-radius:13px;padding:10px 14px;background:var(--surface);color:var(--text);font-size:13px;font-weight:700;box-shadow:none!important;cursor:pointer}
+#hskListeningControls .hskListeningToggle[aria-expanded="true"]{background:var(--text);color:var(--bg);border-color:var(--text)}
+#hskListeningQuestionsPanel[hidden],#hskListeningTranscriptPanel[hidden]{display:none!important}
+#hskListeningQuestionsPanel .instruction{margin-top:0}
+.hskListeningPartBreak{margin:14px 0 12px;padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--text)}
+.hskListeningPartBreak .hskListeningPartTitle{font-family:inherit;font-size:16px;font-weight:800;line-height:1.35}
+.hskListeningPartBreak .hskListeningPartMeta{margin-top:4px;color:var(--muted);font-size:12px;line-height:1.5}
+.hskListeningPartBreak .hskListeningPartInstruction{margin-top:7px;font-family:serif;font-size:14px;line-height:1.65}
+#hskListeningTranscriptPanel{margin:0 0 18px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--text)}
+.hskListeningTranscriptTitle{font-size:16px;font-weight:800;margin-bottom:12px}
+.hskListeningTranscriptPart{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.hskListeningTranscriptPart:first-of-type{margin-top:0;padding-top:0;border-top:0}
+.hskListeningTranscriptPartTitle{font-size:13px;font-weight:800;margin-bottom:8px}
+.hskListeningTranscriptItem{padding:10px 0;border-bottom:1px solid var(--line);white-space:pre-wrap;font-size:13px;line-height:1.8}
+.hskListeningTranscriptItem:last-child{border-bottom:0}
+.hskListeningTranscriptQ{font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px}
+#hskAudioPlayer.isFloating{position:fixed!important;z-index:1200!important;left:50%!important;right:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;transform:translateX(-50%)!important;width:min(560px,calc(100vw - 24px))!important;margin:0!important}
+@media (orientation:landscape) and (min-width:600px){
+ #hskAudioPlayer.isFloating{left:12px!important;top:50svh!important;bottom:auto!important;transform:translateY(-50%)!important;width:min(300px,calc(100vw - 24px))!important;padding:10px 14px!important}
+ #hskAudioPlayer.isFloating .hskAudioPlay{width:44px!important;height:44px!important;min-width:44px!important}
+ #hskAudioPlayer.isFloating .hskAudioControls{gap:10px!important}
+}
+@media (max-width:480px){#hskListeningControls .hskListeningToggle{flex:1 1 auto}}
+@supports not (top:50svh){@media (orientation:landscape) and (min-width:600px){#hskAudioPlayer.isFloating{top:50%!important}}}
+</style>
+<script id="hskListeningUnifiedUxV1JS">
+(function(){
+ 'use strict';
+ var listenStateKey='',questionsVisible=false,transcriptVisible=false;
+ function isSupportedListening(){
+  var code=String(route?.packageCode||'');
+  return route?.screen==='exercise'&&route?.type==='listening'&&/^H[45]\d{4}$/i.test(code)&&Array.isArray(DB[code]?.listening)&&DB[code].listening.length===1&&!!DB[code].__hskListeningUnified;
+ }
+ function escapeHtml(value){
+  return String(value??'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]});
+ }
+ function makeTranscript(section){
+  var qs=Array.isArray(section?.questions)?section.questions:[];
+  var parts=Array.isArray(section?.parts)?section.parts:[];
+  var html='<div class="hskListeningTranscriptTitle">听力文本 · Transkrip</div>';
+  var used=new Set();
+  function partBlock(part,questions){
+   var title=escapeHtml(String(part.title||'听力')),range=escapeHtml(String(part.range||''));
+   var out='<section class="hskListeningTranscriptPart"><div class="hskListeningTranscriptPartTitle">'+title+(range?' · '+range+'题':'')+'</div>';
+   questions.forEach(function(q){
+    var id=String(q?.[0]??''),txt=String(q?.[4]||'').trim();
+    if(!txt)return;
+    used.add(id);
+    out+='<article class="hskListeningTranscriptItem"><div class="hskListeningTranscriptQ">第 '+escapeHtml(id)+' 题</div><div>'+escapeHtml(txt)+'</div></article>';
+   });
+   return out+'</section>';
+  }
+  parts.forEach(function(part){
+   var start=Number(part.start),end=Number(part.end);
+   var subset=qs.filter(function(q){var id=Number(q?.[0]);return Number.isFinite(id)&&id>=start&&id<=end});
+   html+=partBlock(part,subset);
+  });
+  var remaining=qs.filter(function(q){return !used.has(String(q?.[0]??''))});
+  if(remaining.length)html+=partBlock({title:'Lainnya'},remaining);
+  if(!used.size)html+='<p>Transkrip belum tersedia di data paket ini.</p>';
+  return html;
+ }
+ function renderListeningShell(){
+  var root=document.getElementById('questions');
+  if(!root||!isSupportedListening())return;
+  var code=String(route.packageCode),section=DB[code].listening[0];
+  var key=code+'|listening|'+String(route.sectionIndex);
+  if(key!==listenStateKey){listenStateKey=key;questionsVisible=false;transcriptVisible=false}
+  var temp=document.createElement('div');
+  temp.innerHTML=root.innerHTML;
+  temp.querySelectorAll('.listeningNotice,.transcript,button[onclick^="toggleTranscript"]').forEach(function(node){node.remove()});
+  temp.querySelectorAll('.instruction').forEach(function(node){node.remove()});
+  var partList=Array.isArray(section.parts)?section.parts:[];
+  temp.querySelectorAll('article.question').forEach(function(article){
+   var label=article.querySelector('.qtop span:first-child')?.textContent||'';
+   var match=label.match(/\d+/),id=match?Number(match[0]):NaN;
+   var part=partList.find(function(p){return Number(p.start)===id});
+   if(!part)return;
+   var divider=document.createElement('div');
+   divider.className='hskListeningPartBreak';
+   var title=document.createElement('div');title.className='hskListeningPartTitle';title.textContent=part.title||'听力';
+   var meta=document.createElement('div');meta.className='hskListeningPartMeta';meta.textContent='Soal '+String(part.range||((part.start||'')+'–'+(part.end||'')));
+   divider.appendChild(title);divider.appendChild(meta);
+   if(part.instruction){var instruction=document.createElement('div');instruction.className='hskListeningPartInstruction';instruction.textContent=part.instruction;divider.appendChild(instruction)}
+   article.parentNode.insertBefore(divider,article);
+  });
+  var controls=document.createElement('div');
+  controls.id='hskListeningControls';
+  controls.innerHTML='<button type="button" class="hskListeningToggle" id="hskListeningQuestionsToggle" onclick="window.__hskToggleListeningQuestions()" aria-expanded="'+String(questionsVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan soal':'Tampilkan soal')+' ('+section.questions.length+')</button><button type="button" class="hskListeningToggle" id="hskListeningTranscriptToggle" onclick="window.__hskToggleListeningTranscript()" aria-expanded="'+String(transcriptVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(transcriptVisible?'visibility_off':'subject')+'</span>'+(transcriptVisible?'Sembunyikan transkrip':'Tampilkan transkrip')+'</button>';
+  var questions=document.createElement('div');
+  questions.id='hskListeningQuestionsPanel';
+  questions.hidden=!questionsVisible;
+  questions.innerHTML=temp.innerHTML;
+  var transcript=document.createElement('div');
+  transcript.id='hskListeningTranscriptPanel';
+  transcript.hidden=!transcriptVisible;
+  transcript.innerHTML=makeTranscript(section);
+  root.replaceChildren(controls,questions,transcript);
+ }
+ window.__hskToggleListeningQuestions=function(){
+  questionsVisible=!questionsVisible;
+  var panel=document.getElementById('hskListeningQuestionsPanel'),btn=document.getElementById('hskListeningQuestionsToggle');
+  if(panel)panel.hidden=!questionsVisible;
+  if(btn){btn.setAttribute('aria-expanded',String(questionsVisible));btn.innerHTML='<span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan soal':'Tampilkan soal')+' ('+(DB[route.packageCode]?.listening?.[0]?.questions?.length||0)+')'}
+ };
+ window.__hskToggleListeningTranscript=function(){
+  transcriptVisible=!transcriptVisible;
+  var panel=document.getElementById('hskListeningTranscriptPanel'),btn=document.getElementById('hskListeningTranscriptToggle');
+  if(panel)panel.hidden=!transcriptVisible;
+  if(btn){btn.setAttribute('aria-expanded',String(transcriptVisible));btn.innerHTML='<span class="material-symbols-rounded" aria-hidden="true">'+(transcriptVisible?'visibility_off':'subject')+'</span>'+(transcriptVisible?'Sembunyikan transkrip':'Tampilkan transkrip')}
+ };
+ var oldRender=window.renderExercise;
+ if(typeof oldRender==='function'&&!oldRender.__hskListeningUnifiedHook){
+  var wrapped=function(){
+   var supported=route?.type==='listening'&&/^H[45]\d{4}$/i.test(String(route?.packageCode||''))&&!!DB[route.packageCode]?.__hskListeningUnified;
+   if(supported&&Number(route.sectionIndex)!==0)route={...route,sectionIndex:0};
+   if(!supported)listenStateKey='';
+   var out=oldRender.apply(this,arguments);
+   var slot=document.getElementById('hskAudioPlayerSlot');
+   var header=document.querySelector('#exercise .focusHeader');
+   if(slot&&header&&slot.previousElementSibling!==header)header.insertAdjacentElement('afterend',slot);
+   if(typeof window.renderHskAudioPlayer==='function')window.renderHskAudioPlayer();
+   if(isSupportedListening()){
+    var sub=document.querySelector('#exercise .section .sub');
+    if(sub)sub.textContent='Pilih apakah ingin menampilkan soal atau transkrip.';
+    renderListeningShell();
+   }
+   return out;
+  };
+  wrapped.__hskListeningUnifiedHook=true;
+  wrapped.__hskOriginal=oldRender;
+  window.renderExercise=wrapped;
+ }
+ if(typeof window.setScreen==='function'&&!window.setScreen.__hskAudioScreenHook){
+  var oldSetScreen=window.setScreen;
+  var setWrapped=function(){
+   var out=oldSetScreen.apply(this,arguments);
+   requestAnimationFrame(function(){if(typeof window.renderHskAudioPlayer==='function')window.renderHskAudioPlayer();if(typeof window.scheduleHskAudioPlayerPosition==='function')window.scheduleHskAudioPlayerPosition()});
+   return out;
+  };
+  setWrapped.__hskAudioScreenHook=true;
+  setWrapped.__hskOriginal=oldSetScreen;
+  window.setScreen=setWrapped;
+ }
+})();
+</script>
+
 </body>
 </html>
 
