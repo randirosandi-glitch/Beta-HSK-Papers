@@ -8448,12 +8448,10 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   var temp=document.createElement('div');
   var progressNode=root.querySelector('.sectionProgress');
   var progressMarkup=progressNode?progressNode.outerHTML:'';
-  /* Always request the app's own finishCard for the final page; the unified Listening view has no question pagination. */
-  var finishMarkup='';
-  if(typeof finishCard==='function'){
-   var savedFinishPage=page;
-   try{page=Math.max(0,pageCount()-1);finishMarkup=finishCard();}finally{page=savedFinishPage;}
-  }
+  /* finishCard() is private to the core renderer's closure, so this separate
+     enhancement must preserve the native card already rendered into #questions. */
+  var nativeFinishNode=root.querySelector('.finishCard');
+  var finishMarkup=nativeFinishNode?nativeFinishNode.outerHTML:'';
   if(typeof window.__hskRenderAllListeningCards==='function')temp.innerHTML=progressMarkup+window.__hskRenderAllListeningCards()+finishMarkup;
   else temp.innerHTML=root.innerHTML;
   temp.querySelectorAll('.listeningNotice,.transcript,button[onclick^="toggleTranscript"],.questionPager').forEach(function(node){node.remove()});
@@ -8531,22 +8529,14 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   questions.id='hskListeningQuestionsPanel';
   questions.innerHTML=temp.innerHTML;
   root.replaceChildren(questions);
-  /* Final safeguard: after the unified Listening DOM replacement, append the app's
-     original finishCard directly if it did not survive. Never create a second scorer. */
+  /* Keep the native card captured before root.replaceChildren(). If no native
+     card was available, provide only the existing grade()/repeat() actions. */
   if(!root.querySelector('.finishCard')){
-   var savedFinishPage=page,finalMarkup='';
-   try{
-    page=Math.max(0,pageCount()-1);
-    if(typeof finishCard==='function')finalMarkup=finishCard();
-   }finally{page=savedFinishPage;}
    var finishHost=document.createElement('div');
-   finishHost.innerHTML=finalMarkup||'';
+   finishHost.innerHTML=finishMarkup||'';
    var nativeCard=finishHost.querySelector('.finishCard');
-   if(nativeCard){
-    root.appendChild(nativeCard);
-   }else{
-    /* Guaranteed fallback using the app's existing grade()/repeat() actions,
-       not a separate scoring implementation. */
+   if(nativeCard)root.appendChild(nativeCard);
+   else{
     var fallback=document.createElement('div');
     fallback.className='finishCard';
     fallback.innerHTML='<div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">Periksa semua jawaban sekaligus dan lihat nilai bagian ini.</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade()"><span class="material-symbols-rounded ico" aria-hidden="true">check</span><span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div>';
