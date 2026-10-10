@@ -3970,6 +3970,11 @@ function getUsername(){try{const v=normalizeUsername(localStorage.getItem(USERNA
 function setUsernameLocal(v){try{localStorage.setItem(USERNAME_KEY,normalizeUsername(v))}catch(e){}}
 function showUsernameModal(){const m=$('usernameModal');if(!m)return;m.classList.add('show');m.setAttribute('aria-hidden','false');setTimeout(()=>{$('usernameInput')?.focus()},60)}
 function hideUsernameModal(){const m=$('usernameModal');if(!m)return;m.classList.remove('show');m.setAttribute('aria-hidden','true')}
+// BEGIN GENERATED MODULE: src/core/cloud-transport.js
+/* Source module: Supabase REST transport.
+ * Preserve current request payloads, selected fields, headers, and error messages.
+ * This module does not change sync cadence, retries, or stored cloud schema.
+ */
 function cloudUrl(path=''){return CLOUD_CONFIG.url.replace(/\/$/,'')+'/rest/v1/'+CLOUD_TABLE+path}
 function cloudErrorMessage(status){if(status===401||status===403)return 'Supabase menolak akses. Periksa RLS policy untuk anon (SELECT, INSERT, UPDATE).';if(status===409)return 'Username sudah terdaftar.';return 'Gagal terhubung ke Supabase (HTTP '+status+').'}
 function cloudHeaders(extra={}){return {'apikey':CLOUD_CONFIG.anonKey,'Authorization':'Bearer '+CLOUD_CONFIG.anonKey,'Content-Type':'application/json',...extra}}
@@ -4004,6 +4009,7 @@ async function cloudUpdateUser(username,store){
   return true;
 }
 function syncNowStamp(){return Date.now()}
+// END GENERATED MODULE: src/core/cloud-transport.js
 // BEGIN GENERATED MODULE: src/core/study-plan-merge.js
 /* Source module: local/cloud study-plan merge.
  * Keep deletion tombstones authoritative and resolve conflicting plan versions by updatedAt.
