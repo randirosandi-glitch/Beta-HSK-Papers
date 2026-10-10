@@ -6928,7 +6928,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     }catch(error){console.warn('Listening progress migration skipped:',error)}
   }
 
-  function refreshPackageInBackground(meta,code)
+  function refreshPackageInBackground(meta,code){
     if(packageRefresh.has(code))return packageRefresh.get(code);
     const p=fetchPackageNetwork(meta,code).then(async d=>{
       d.code=d.code||code;
