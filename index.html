@@ -8294,30 +8294,18 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
 <style id="hskListeningUnifiedUxV1">
 #hskAudioPlayerSlot{margin:0 0 12px!important;min-height:0!important}
 .hskAudioPlayerPlaceholder{display:block;box-sizing:border-box;max-width:100%;visibility:hidden;pointer-events:none}
-#hskListeningControls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
-#hskListeningControls .hskListeningToggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;border:1px solid var(--line);border-radius:13px;padding:10px 14px;background:var(--surface);color:var(--text);font-size:13px;font-weight:700;box-shadow:none!important;cursor:pointer}
-#hskListeningControls .hskListeningToggle[aria-expanded="true"]{background:var(--text);color:var(--bg);border-color:var(--text)}
-#hskListeningQuestionsPanel[hidden],#hskListeningTranscriptPanel[hidden]{display:none!important}
 #hskListeningQuestionsPanel .instruction{margin-top:0}
 .hskListeningPartBreak{margin:14px 0 12px;padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--text)}
 .hskListeningPartBreak .hskListeningPartTitle{font-family:inherit;font-size:16px;font-weight:800;line-height:1.35}
 .hskListeningPartBreak .hskListeningPartMeta{margin-top:4px;color:var(--muted);font-size:12px;line-height:1.5}
 .hskListeningPartBreak .hskListeningPartInstruction{margin-top:7px;font-family:serif;font-size:14px;line-height:1.65}
-#hskListeningTranscriptPanel{margin:0 0 18px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--text)}
-.hskListeningTranscriptTitle{font-size:16px;font-weight:800;margin-bottom:12px}
-.hskListeningTranscriptPart{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
-.hskListeningTranscriptPart:first-of-type{margin-top:0;padding-top:0;border-top:0}
-.hskListeningTranscriptPartTitle{font-size:13px;font-weight:800;margin-bottom:8px}
-.hskListeningTranscriptItem{padding:10px 0;border-bottom:1px solid var(--line);white-space:pre-wrap;font-size:13px;line-height:1.8}
-.hskListeningTranscriptItem:last-child{border-bottom:0}
-.hskListeningTranscriptQ{font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px}
 #hskAudioPlayer.isFloating{position:fixed!important;z-index:1200!important;left:50%!important;right:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;transform:translateX(-50%)!important;width:min(560px,calc(100vw - 24px))!important;margin:0!important}
 @media (orientation:landscape) and (min-width:600px){
  #hskAudioPlayer.isFloating{left:12px!important;top:50svh!important;bottom:auto!important;transform:translateY(-50%)!important;width:min(300px,calc(100vw - 24px))!important;padding:10px 14px!important}
  #hskAudioPlayer.isFloating .hskAudioPlay{width:44px!important;height:44px!important;min-width:44px!important}
  #hskAudioPlayer.isFloating .hskAudioControls{gap:10px!important}
 }
-@media (max-width:480px){#hskListeningControls .hskListeningToggle{flex:1 1 auto}}
+@media (max-width:480px){}
 @supports not (top:50svh){@media (orientation:landscape) and (min-width:600px){#hskAudioPlayer.isFloating{top:50%!important}}}
 
 /* PDF-like Listening rendering: reuse the same flat Kaiti typography and spacing as HSK 5 Reading. */
