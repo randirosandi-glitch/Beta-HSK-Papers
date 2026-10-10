@@ -8326,9 +8326,20 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
 #hskListeningQuestionsPanel article.question .row{display:flex!important;gap:8px!important;margin-top:5px!important}
 #hskListeningQuestionsPanel article.question .row .btn{min-height:30px!important;padding:4px 8px!important;border-radius:7px!important;font-size:11px!important;box-shadow:none!important}
 #hskListeningQuestionsPanel article.question .feedback{margin-top:5px!important;padding:5px 7px!important;border-radius:6px!important;font-size:11px!important;line-height:1.35!important}
-#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .qtext{display:block!important;margin:0 0 10px!important}
-#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .opts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
-#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .opts>.opt{width:100%!important;min-height:0!important;padding:1px 0!important}
+/* HSK 4 true/false: statement on the left, boxed bold check/cross controls on the right. */
+#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTrueFalseLine{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin:3px 0 8px!important}
+#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTrueFalseLine>.qtext{display:block!important;flex:1 1 auto!important;min-width:0!important;margin:0!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:16px!important;line-height:1.7!important;font-weight:600!important}
+#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTrueFalseLine>.opts{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:7px!important;margin:0!important}
+#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTFChoice{display:grid!important;place-items:center!important;flex:0 0 42px!important;width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important;padding:0!important;border:1.5px solid var(--line)!important;border-radius:5px!important;background:transparent!important;color:var(--text)!important;box-shadow:none!important}
+#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTFIcon{font-size:27px!important;font-weight:900!important;font-variation-settings:'FILL' 0,'wght' 800!important;line-height:1!important}
+#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTFChoice.selected{border:2px solid var(--text)!important;background:color-mix(in srgb,var(--text) 8%,transparent)!important}
+#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTFChoice.correct{border-color:#22c55e!important;background:rgb(34 197 94 / .16)!important;color:#22c55e!important}
+#hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTFChoice.wrong{border-color:#ef4444!important;background:rgb(239 68 68 / .16)!important;color:#ef4444!important}
+@media(max-width:420px){
+ #hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTrueFalseLine{gap:8px!important}
+ #hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTFChoice{flex-basis:36px!important;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important}
+ #hskListeningQuestionsPanel article.question.hskListeningTrueFalseQuestion .hskListeningTFIcon{font-size:24px!important}
+}
 @media(max-width:420px){
  #hskListeningQuestionsPanel article.question .opts{column-gap:10px!important}
  #hskListeningQuestionsPanel article.question .opts.paperOptionsTwoRows{column-gap:10px!important}
@@ -8433,12 +8444,22 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
     optionButtons.forEach(function(button,index){
      button.classList.add('hsk5PaperOption');
      if(isTrueFalse){
-      var label=index===0?'√ 正确':'× 错误';
-      var textNode=button.querySelector('.optText')||button;
-      textNode.textContent=label;
+      var optionValue=String(opts[index]||'').trim();
+      var isCorrectChoice=optionValue==='对'||optionValue==='正确';
+      var label=isCorrectChoice?'Benar':'Salah';
+      button.classList.add('hskListeningTFChoice',isCorrectChoice?'hskListeningTFTrue':'hskListeningTFFalse');
+      button.innerHTML='<span class="hskListeningTFIcon material-symbols-rounded" aria-hidden="true">'+(isCorrectChoice?'check':'close')+'</span>';
       button.setAttribute('aria-label',label);
+      button.setAttribute('title',label);
      }
     });
+    if(isTrueFalse&&prompt&&optionsGroup){
+     var tfLine=document.createElement('div');tfLine.className='hskListeningTrueFalseLine';
+     prompt.parentNode.insertBefore(tfLine,prompt);
+     tfLine.appendChild(prompt);
+     tfLine.appendChild(optionsGroup);
+     article.classList.add('hskListeningTrueFalseQuestion');
+    }
    }
    var part=partList.find(function(p){return Number(p.start)===id});
    var reveal=document.createElement('div');
