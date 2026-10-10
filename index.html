@@ -8556,26 +8556,11 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
     root.appendChild(fallback);
    }
   }
-  /* Inline handlers on cloned markup can be unreliable across the unified
-     renderer's DOM replacement. Bind the section-check action directly to the
-     app's existing grade() entry point, and remove onclick to prevent double runs. */
-  root.querySelectorAll('.finishCard button[onclick*="grade"]').forEach(function(button){
-   if(button.dataset.hskGradeBound==='1')return;
-   button.dataset.hskGradeBound='1';
-   button.removeAttribute('onclick');
-   button.addEventListener('click',function(event){
-    event.preventDefault();
-    event.stopPropagation();
-    /* Use the same core function called by Stable's native onclick="grade()".
-       Bypass the optional loading wrapper so grading runs directly in this scope. */
-    try{
-     if(typeof grade==='function')grade();
-     else throw new Error('Core grade() function is unavailable');
-    }catch(err){
-     console.error('HSK Listening section check failed:',err);
-     if(typeof appNotice==='function')appNotice('Gagal memeriksa bagian','Terjadi kesalahan saat menghitung nilai. Coba sekali lagi.');
-    }
-   });
+  /* Keep the exact native action used by Stable and the other sections.
+     Do not strip onclick or replace it with a custom event listener. */
+  root.querySelectorAll('.finishCard button[onclick*="grade"],.finishCard button.finishCardBtn').forEach(function(button){
+   if(button.classList.contains('finishCardBtnSecondary'))return;
+   button.setAttribute('onclick','grade()');
   });
   if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
  }
