@@ -7793,7 +7793,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       try{out=original.apply(this,arguments);}
       catch(e){
         console.error('HSK exercise render failed:',e);
-        window.showExerciseLoadRecovery?.('Soal belum berhasil dimuat','Terjadi masalah saat menampilkan soal. Refresh untuk mencoba memuat ulang data soal.');
+        window.showExerciseLoadRecovery?.('Soal belum berhasil dimuat','Kesalahan render: '+String(e?.message||e||'penyebab tidak diketahui')+'. Refresh untuk mencoba memuat ulang data soal.');
         return undefined;
       }
       try{
