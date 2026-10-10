@@ -3788,7 +3788,7 @@ body.dark .hskAudioPlayer{background:#fff;color:#171717}
 body.dark .hskAudioPlayer .hskAudioPlay{background:#171717;color:#fff}
 @media(orientation:landscape) and (min-width:600px){.hskAudioPlayer.isFloating{left:12px;top:50%;bottom:auto;transform:translateY(-50%);width:min(300px,calc(100vw - 24px));padding:10px 14px;border-radius:25px}.hskAudioPlayer.isFloating .hskAudioPlay{width:44px;height:44px;min-width:44px}.hskAudioPlayer.isFloating .hskAudioControls{gap:10px}.hskAudioPlayer.isFloating .hskAudioControls .material-symbols-rounded{font-size:22px}}
 @media(max-width:420px){.hskAudioPlayer{padding:11px 14px;border-radius:27px}.hskAudioPlayer .hskAudioPlay{width:50px;height:50px;min-width:50px}.hskAudioPlayer .hskAudioControls{gap:10px}}
-</style>
+body:not(.hskListeningAudioActive) #hskAudioPlayer{display:none!important}\nbody.hskListeningAudioActive #hskAudioPlayer[hidden]{display:none!important}\n</style>
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -4475,18 +4475,18 @@ function renderHskAudioPlayer(){
  const slot=$('hskAudioPlayerSlot');
  const code=String(route.packageCode||'');
  const target=route.screen==='exercise'&&route.type==='listening'&&/^H[45]\d{4}$/i.test(code);
+ document.body.classList.toggle('hskListeningAudioActive',target);
  if(!target){
   if(hskAudioPlayerNode){
-   if(slot)hskAudioDockToSlot(slot);
-   else{
-    if(hskAudioPlayerPlaceholder?.parentNode)hskAudioPlayerPlaceholder.parentNode.removeChild(hskAudioPlayerPlaceholder);
-    hskAudioPlayerPlaceholder=null;
-    hskAudioPlayerNode.classList.remove('isFloating');
-    const nav=document.querySelector('.mainNav');
-    if(nav){nav.classList.remove('focusNavHidden');nav.removeAttribute('aria-hidden');nav.removeAttribute('inert');}
-   }
-   hskAudioPlayerNode.hidden=true;
    hskAudioPlayerNode.querySelector('#hskAudioElement')?.pause();
+   if(hskAudioPlayerPlaceholder?.parentNode)hskAudioPlayerPlaceholder.parentNode.removeChild(hskAudioPlayerPlaceholder);
+   hskAudioPlayerPlaceholder=null;
+   hskAudioPlayerNode.classList.remove('isFloating');
+   ['left','top','bottom','transform'].forEach(p=>hskAudioPlayerNode.style.removeProperty(p));
+   if(slot&&slot.contains(hskAudioPlayerNode))slot.removeChild(hskAudioPlayerNode);
+   hskAudioPlayerNode.hidden=true;
+   const nav=document.querySelector('.mainNav');
+   if(nav){nav.classList.remove('focusNavHidden');nav.removeAttribute('aria-hidden');nav.removeAttribute('inert');}
   }
   return;
  }
@@ -8442,6 +8442,10 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   var progressNode=root.querySelector('.sectionProgress'),finishNode=root.querySelector('.finishCard');
   var progressMarkup=progressNode?progressNode.outerHTML:'';
   var finishMarkup=finishNode?finishNode.outerHTML:'';
+  if(!finishMarkup&&typeof finishCard==='function'){
+   var savedFinishPage=page;
+   try{page=pageCount()-1;finishMarkup=finishCard();}finally{page=savedFinishPage;}
+  }
   if(typeof window.__hskRenderAllListeningCards==='function')temp.innerHTML=progressMarkup+window.__hskRenderAllListeningCards()+finishMarkup;
   else temp.innerHTML=root.innerHTML;
   temp.querySelectorAll('.listeningNotice,.transcript,button[onclick^="toggleTranscript"],.questionPager').forEach(function(node){node.remove()});
