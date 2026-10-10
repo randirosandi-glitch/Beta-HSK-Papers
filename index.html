@@ -8565,8 +8565,10 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
    button.removeAttribute('onclick');
    button.addEventListener('click',function(event){
     event.preventDefault();
-    if(typeof window.__hskGradeSection==='function')window.__hskGradeSection();
-    else console.error('HSK section grading bridge unavailable');
+    /* Match Stable's native assessment-card action: use the app's public grade()
+       entry point so the existing grading/loading wrapper is preserved. */
+    if(typeof window.grade==='function')window.grade();
+    else console.error('HSK grade entry point unavailable');
    });
   });
   if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
