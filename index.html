@@ -8530,15 +8530,22 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   var questions=document.createElement('div');
   questions.id='hskListeningQuestionsPanel';
   questions.innerHTML=temp.innerHTML;
-  /* Fallback uses the same native finishCard(), evaluated as the final page. */
-  if(!questions.querySelector('.finishCard')){
-   var fallback=document.createElement('div'),savedFinishPage=page;
-   try{page=Math.max(0,pageCount()-1);fallback.innerHTML=typeof finishCard==='function'?finishCard():'';}
-   finally{page=savedFinishPage;}
-   var card=fallback.querySelector('.finishCard');
-   if(card)questions.appendChild(card);
-  }
   root.replaceChildren(questions);
+  /* Final safeguard: after the unified Listening DOM replacement, append the app's
+     original finishCard directly if it did not survive. Never create a second scorer. */
+  if(!root.querySelector('.finishCard')&&typeof finishCard==='function'){
+   var savedFinishPage=page,finalMarkup='';
+   try{
+    page=Math.max(0,pageCount()-1);
+    finalMarkup=finishCard();
+   }finally{page=savedFinishPage;}
+   if(finalMarkup){
+    var finishHost=document.createElement('div');
+    finishHost.innerHTML=finalMarkup;
+    var nativeCard=finishHost.querySelector('.finishCard');
+    if(nativeCard)root.appendChild(nativeCard);
+   }
+  }
   if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
  }
 
