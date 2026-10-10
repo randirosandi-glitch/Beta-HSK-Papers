@@ -4774,6 +4774,25 @@ function grade(push=true){
      renderExercise() call bypasses that wrapper and drops the inline result card. */
   if(route.type==='listening'&&typeof window.renderExercise==='function')window.renderExercise();
   else renderExercise();
+  /* Finalize Listening's assessment with the native card after the unified
+     renderer has finished replacing its DOM. This prevents a stale unchecked
+     card from surviving even when per-question feedback was updated correctly. */
+  if(route.type==='listening'){
+    try{
+      const savedAssessmentPage=page;
+      let checkedMarkup='';
+      try{page=Math.max(0,pageCount()-1);checkedMarkup=finishCard();}finally{page=savedAssessmentPage;}
+      const assessmentHost=document.createElement('div');
+      assessmentHost.innerHTML=checkedMarkup;
+      const checkedAssessment=assessmentHost.querySelector('.finishCard.checked');
+      const questionRoot=document.getElementById('questions');
+      if(checkedAssessment&&questionRoot){
+        const existingAssessment=questionRoot.querySelector('.finishCard');
+        if(existingAssessment)existingAssessment.replaceWith(checkedAssessment);
+        else questionRoot.appendChild(checkedAssessment);
+      }
+    }catch(assessmentError){console.error('Could not finalize native Listening score card:',assessmentError);}
+  }
   /* The user is already on the exercise screen. Calling setScreen() here
      schedules its unconditional scroll-to-top and can override assessment focus. */
   const exerciseScreen=document.getElementById('exercise');
