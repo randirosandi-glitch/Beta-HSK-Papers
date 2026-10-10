@@ -9,7 +9,7 @@ const html = await readFile(indexPath, 'utf8');
 const prefix = '// BEGIN GENERATED MODULE: ';
 const modules = [];
 let offset = 0;
-for (const line of html.split('\\n')) {
+for (const line of html.split('\n')) {
   if (line.startsWith(prefix)) modules.push({ path: line.slice(prefix.length).trim(), markerEnd: offset + line.length });
   offset += line.length + 1;
 }
@@ -41,7 +41,7 @@ if (checkOnly) {
 } else if (mismatches.length) {
   let output = html;
   for (const item of replacements.sort((a, b) => b.markerEnd - a.markerEnd)) {
-    output = output.slice(0, item.markerEnd + 1) + item.source + '\\n' + output.slice(item.end);
+    output = output.slice(0, item.markerEnd + 1) + item.source + '\n' + output.slice(item.end);
   }
   await writeFile(indexPath, output, 'utf8');
   console.log('Updated index.html from ' + mismatches.length + ' source module(s).');
