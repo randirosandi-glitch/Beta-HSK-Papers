@@ -4142,18 +4142,17 @@ async function pullCloudStateInternal(force=false){
     const row=await cloudFindUser(currentUsername);
     const local=readStore();
     if(!row){
-      await cloudCreateUser(currentUsername,local);
-      const latest=readStore();
-      if(JSON.stringify(latest)!==JSON.stringify(local)) await cloudUpdateUser(currentUsername,latest);
-      markCloudSnapshotSynced(readStore());
+      /* Do not create or upload learner progress during a background pull.
+         The first cloud write happens only after an explicit section check. */
       renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
       return true;
     }
     const remote=row.data||{};
     const merged=mergeStoresLatest(local,remote).store;
     writeStore(merged);
-    if(JSON.stringify(merged)!==JSON.stringify(remote)) await cloudUpdateUser(currentUsername,merged);
-    markCloudSnapshotSynced(readStore());
+    /* Pulls may merge cloud data into local storage, but never write back to cloud.
+       Cloud progress is committed only by syncAfterSectionCheck(). */
+    markCloudSnapshotSynced(remote);
     renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
     return true;
   }catch(e){console.warn('Cloud sync pull failed',e);return false}
