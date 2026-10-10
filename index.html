@@ -3186,6 +3186,8 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 
 <!-- HSK Papers v37 — one responsive navigation system: YouTube-style sidebar in landscape, floating bottom bar in portrait -->
 <style id="hsk-v37-responsive-youtube-nav">
+/* BEGIN GENERATED MODULE: src/styles/responsive-navigation.css */
+
 /* Portrait: compact floating bottom navigation. Keep the same structure in both themes. */
 @media (max-width:599px), (min-width:600px) and (orientation:portrait){
   .mainNav{
@@ -3277,6 +3279,7 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 }
 /* Auth must stay clean and hide app navigation until sign-in completes. */
 .mainNav.authLocked,body.auth-active .mainNav,html.auth-page .mainNav{display:none!important;visibility:hidden!important;pointer-events:none!important;}
+/* END GENERATED MODULE: src/styles/responsive-navigation.css */
 </style>
 
 <style id="hsk5-paper-engine-v2">
@@ -7936,6 +7939,8 @@ html body.dark .mainNav .navItem[aria-current="page"] .navLabel{
 </style>
 
 <style id="study-plan-ui-audit-v1">
+/* BEGIN GENERATED MODULE: src/styles/study-plans.css */
+
 /* Study Plan UI audit: one final, flat and responsive presentation layer. */
 #studyPlans,#studyPlanDetail{width:100%;max-width:960px;margin-inline:auto;box-sizing:border-box}
 #studyPlans *,#studyPlanDetail *,#studyPlanCreatorModal *,#studyPlanEditModal *,#studyPlanPickerModal *{box-sizing:border-box}
@@ -8073,6 +8078,7 @@ body.dark .studyPlanPickerLevel.active{background:var(--blue)!important;color:#f
 @media(prefers-reduced-motion:reduce){
   #studyPlansGrid .studyPlanCard,#studyPlanPackages .studyPlanPackage{transition:none!important}
 }
+/* END GENERATED MODULE: src/styles/study-plans.css */
 </style>
 <script id="study-plan-ui-keyboard-audit-v1">
 (function(){
@@ -8233,6 +8239,8 @@ body.dark .top {
 
 
 <style id="hsk-beta-grade-loading-v1">
+/* BEGIN GENERATED MODULE: src/styles/grade-loading.css */
+
 #hskGradeLoading{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;padding:24px;background:color-mix(in srgb,var(--bg,#fff) 72%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 #hskGradeLoading.show{display:flex;animation:hskGradeFadeIn .14s ease-out both}
 #hskGradeLoading .hskGradePanel{width:min(280px,100%);padding:24px 20px;text-align:center;background:var(--surface,#fff);color:var(--text,#222);border:1px solid var(--line,#ddd);border-radius:18px}
@@ -8248,6 +8256,7 @@ body.dark .top {
 body.dark #hskGradeLoading{background:rgba(0,0,0,.56)}
 body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;border-color:#353638}
 @media(prefers-reduced-motion:reduce){#hskGradeLoading.show,#hskGradeLoading .hskGradeSpinner,#exercise .inlineResult,#exercise .inlineResultScore{animation:none!important}}
+/* END GENERATED MODULE: src/styles/grade-loading.css */
 </style>
 <script id="hsk-beta-grade-loading-v1-js">
 (function(){
