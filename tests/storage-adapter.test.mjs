@@ -39,7 +39,7 @@ test('round-trips progress JSON without changing its shape', () => {
   const store = { 'H51001|reading|0': { answers: { '1': 'B' }, updatedAt: 123 }, _attempts: [{ id: 'evt-1' }] };
   context.writeStore(store);
   assert.deepEqual(JSON.parse(localStorage.getItem('hsk4-kelas-e-progress-v4:randi')), store);
-  assert.deepEqual(context.readStore(), store);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.readStore())), store);
 });
 
 test('isolates users and safely handles missing or malformed stored JSON', () => {
@@ -48,9 +48,9 @@ test('isolates users and safely handles missing or malformed stored JSON', () =>
     'hsk4-kelas-e-progress-v4:other': '{not-json'
   });
   const context = loadAdapter(localStorage, 'randi');
-  assert.deepEqual(context.readStore(), { score: 10 });
+  assert.deepEqual(JSON.parse(JSON.stringify(context.readStore())), { score: 10 });
   context.currentUsername = 'other';
-  assert.deepEqual(context.readStore(), {});
+  assert.deepEqual(JSON.parse(JSON.stringify(context.readStore())), {});
 });
 
 test('does not throw when browser storage is unavailable or quota-limited', () => {
