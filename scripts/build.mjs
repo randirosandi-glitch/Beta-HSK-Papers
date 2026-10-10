@@ -32,7 +32,8 @@ for (const item of modules) {
   if (end < 0 || html.indexOf(endMarker, end + endMarker.length) >= 0) {
     throw new Error('Expected exactly one end marker for ' + item.path);
   }
-  const nextStart = html.indexOf(prefix, item.markerEnd + 1);
+  const nextStarts = prefixes.map(x => html.indexOf(x.marker, item.markerEnd + 1)).filter(x => x >= 0);
+  const nextStart = nextStarts.length ? Math.min(...nextStarts) : -1;
   if (nextStart >= 0 && nextStart < end) throw new Error('Nested generated module markers are not allowed.');
   const source = (await readFile(resolve(root, item.path), 'utf8')).trimEnd();
   const current = html.slice(item.markerEnd + 1, end).trimEnd();
