@@ -7016,6 +7016,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 <!-- APP DIALOG UI: replace browser confirm/alert with in-app modal -->
 <!-- RESET PROGRESS CONTROLS: package detail + section list -->
 <script id="appDialogV1Script">
+// BEGIN GENERATED MODULE: src/ui/dialogs.js
+/* Source module: app dialog helpers.
+ * Exact extraction from the existing inline script; preserve execution order and globals.
+ */
+
 (function(){
   'use strict';
   let dialogEl=null, dialogResolve=null, dialogDefault='confirm';
@@ -7058,8 +7063,14 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     dialogResolve=()=>{cancel.style.display='';};
   };
 })();
+// END GENERATED MODULE: src/ui/dialogs.js
 </script>
 <script id="progressResetControlsV1Script">
+// BEGIN GENERATED MODULE: src/core/progress-reset-controls.js
+/* Source module: progress reset controls.
+ * Exact extraction from the existing inline script; preserve execution order and globals.
+ */
+
 (function(){
   'use strict';
 
@@ -7188,6 +7199,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     if(route?.screen==='parts')appendSectionReset();
   }
 })();
+// END GENERATED MODULE: src/core/progress-reset-controls.js
 </script>
 <!-- HSK FINAL NAV + ACCURACY REPAIR V10 -->
 <script id="hskAccuracyRepairCLEAN">
@@ -7481,6 +7493,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 </script>
 <!-- V12 FINAL NAV/UI: fixed app top bar + persistent app Back -->
 <script id="universalReadingPassageLoaderV1">
+// BEGIN GENERATED MODULE: src/questions/reading-passage-loader.js
+/* Source module: reading passage loader.
+ * Exact extraction from the existing inline script; preserve execution order and globals.
+ */
+
 (function(){
   'use strict';
 
@@ -7601,11 +7618,17 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   /* Warm the cache in the background; failure is non-blocking. */
   ensureReadingPassages();
 })();
+// END GENERATED MODULE: src/questions/reading-passage-loader.js
 </script>
 <!-- v1.27.1: history percentage is text, never a colored square. -->
 <!-- HSK Papers structural cleanup: post-body runtime/style tail moved inside body; order preserved. -->
 <!-- v1.28: Dashboard dark mode follows the existing mobile/light dashboard proportions. No other dashboard logic/layout is changed. -->
 <script id="questionLoadRecoveryHookV1">
+// BEGIN GENERATED MODULE: src/questions/load-recovery.js
+/* Source module: question load recovery.
+ * Exact extraction from the existing inline script; preserve execution order and globals.
+ */
+
 (function(){
   'use strict';
   function install(){
@@ -7638,6 +7661,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   else install();
   window.addEventListener('hsk:dynamic-catalog-ready',install,{once:true});
 })();
+// END GENERATED MODULE: src/questions/load-recovery.js
 </script>
 
 <!-- HSK Papers v38 — final cascade guard for tablet landscape navbar labels -->
