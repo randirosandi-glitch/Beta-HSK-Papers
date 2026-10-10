@@ -4476,7 +4476,8 @@ function hskAudioFloatToBody(slot){
 function renderHskAudioPlayer(){
  const slot=$('hskAudioPlayerSlot');
  const code=String(route.packageCode||'');
- const target=route.screen==='exercise'&&route.type==='listening'&&/^H[45]\d{4}$/i.test(code);
+ const exerciseScreen=$('exercise');
+ const target=route.screen==='exercise'&&!!exerciseScreen?.classList.contains('active')&&route.type==='listening'&&/^H[45]\d{4}$/i.test(code);
  document.body.classList.toggle('hskListeningAudioActive',target);
  if(!target){
   if(hskAudioPlayerNode){
