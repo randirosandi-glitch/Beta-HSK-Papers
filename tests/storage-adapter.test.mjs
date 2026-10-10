@@ -59,6 +59,6 @@ test('does not throw when browser storage is unavailable or quota-limited', () =
     setItem() { throw new Error('quota exceeded'); }
   };
   const context = loadAdapter(brokenStorage);
-  assert.deepEqual(context.readStore(), {});
+  assert.deepEqual(JSON.parse(JSON.stringify(context.readStore())), {});
   assert.doesNotThrow(() => context.writeStore({ safe: true }));
 });
