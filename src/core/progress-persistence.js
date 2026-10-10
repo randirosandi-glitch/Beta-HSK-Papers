@@ -3,7 +3,7 @@
  * clearing, route-resume metadata, and cloud-sync scheduling.
  * Global declarations remain compatible with the legacy single-file runtime.
  */
-function saveSectionState(code,type,idx,a=answers,c=checked,events){
+function saveSectionState(code,type,idx,a=answers,c=checked,events=answerEvents){
   const st=readStore(); const now=Date.now(); const key=stateKey(code,type,idx); const prev=st[key]||{};
   if(st._progressResets&&typeof st._progressResets==='object'){
     delete st._progressResets[key];
