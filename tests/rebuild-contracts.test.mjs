@@ -10,7 +10,7 @@ const html = await readFile(resolve(here, '../index.html'), 'utf8');
 test('preserves existing identity and local storage contracts', () => {
   assert.match(html, /hsk4-kelas-e-username-v1/);
   assert.match(html, /hsk4-kelas-e-progress-v4:/);
-  assert.match(html, /hsk4-kelas-e-last-route-v1:/);
+  assert.match(html, /const LAST_ROUTE_KEY='hsk4-kelas-e-last-route-v1'/);
   assert.match(html, /function readStore\(/);
   assert.match(html, /function writeStore\(/);
 });
