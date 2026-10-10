@@ -6504,10 +6504,10 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 <script id="databaseAndPackageRuntimeV1">
 (function(){
   'use strict';
-  const REPO='randirosandi-glitch/Beta-HSK-Papers', REF='main';
+  const REPO='randirosandi-glitch/latihanhsk', REF='main';
   const TREE_API='https://api.github.com/repos/'+REPO+'/git/trees/'+encodeURIComponent(REF)+'?recursive=1';
   const RAW_BASE='https://raw.githubusercontent.com/'+REPO+'/'+REF+'/';
-  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v7';
+  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v8';
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const natural=(a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
@@ -6527,7 +6527,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
   function addFile(group,code,path,repo=REPO){
     if(group.files.some(x=>x.code===code))return;
-    const meta={code,name:code+'.json',path,group:group.name,repo,url:repo===REPO?localURL(path):rawURL(path,repo),remoteUrl:rawURL(path,repo)};
+    const meta={code,name:code+'.json',path,group:group.name,repo,url:rawURL(path,repo),remoteUrl:rawURL(path,repo)};
     group.files.push(meta);group.codes.push(code);state.byCode.set(code,meta);
   }
 
