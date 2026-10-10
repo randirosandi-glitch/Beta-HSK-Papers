@@ -7793,7 +7793,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
       try{out=original.apply(this,arguments);}
       catch(e){
         console.error('HSK exercise render failed:',e);
-        window.showExerciseLoadRecovery?.('Soal belum berhasil dimuat','Kesalahan render: '+String(e?.message||e||'penyebab tidak diketahui')+'. Refresh untuk mencoba memuat ulang data soal.');
+        window.showExerciseLoadRecovery?.('Soal belum berhasil dimuat','Kesalahan render: '+String(e?.stack||e?.message||e||'penyebab tidak diketahui').slice(0,700)+'. Refresh untuk mencoba memuat ulang data soal.');
         return undefined;
       }
       try{
@@ -8560,7 +8560,23 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
  /* Activate the unified per-question Listening renderer after the app's real renderer runs. */
  const __hskOriginalRenderExercise=window.renderExercise;
  if(typeof __hskOriginalRenderExercise==='function'&&!__hskOriginalRenderExercise.__hskListeningUnifiedHook){
-  const __hskWrappedRenderExercise=function(){const result=__hskOriginalRenderExercise.apply(this,arguments);if(isSupportedListening())renderListeningShell();return result;};
+  const __hskWrappedRenderExercise=function(){
+   const result=__hskOriginalRenderExercise.apply(this,arguments);
+   if(isSupportedListening()){
+    try{renderListeningShell();}
+    catch(err){
+     console.error('HSK Listening unified renderer failed; preserving native question render:',err);
+     /* Keep the successfully rendered native questions intact if the enhancement fails. */
+     const root=document.getElementById('questions');
+     if(root&&!root.querySelector('.finishCard')&&typeof finishCard==='function'){
+      const savedPage=page;let markup='';
+      try{page=Math.max(0,pageCount()-1);markup=finishCard();}catch(cardErr){console.error('Native finishCard failed:',cardErr)}finally{page=savedPage}
+      if(markup){const host=document.createElement('div');host.innerHTML=markup;const card=host.querySelector('.finishCard');if(card)root.appendChild(card)}
+     }
+    }
+   }
+   return result;
+  };
   __hskWrappedRenderExercise.__hskListeningUnifiedHook=true;
   __hskWrappedRenderExercise.__hskOriginal=__hskOriginalRenderExercise;
   window.renderExercise=__hskWrappedRenderExercise;
