@@ -8507,13 +8507,15 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   var key=code+'|listening|'+String(route.sectionIndex);
   if(key!==listenStateKey){listenStateKey=key;questionsVisible=false;transcriptVisible=false}
   var temp=document.createElement('div');
-  var progressNode=root.querySelector('.sectionProgress'),finishNode=root.querySelector('.finishCard');
+  var progressNode=root.querySelector('.sectionProgress'),finishNode=root.querySelector('#sectionFinishCard,.finishCard');
   var progressMarkup=progressNode?progressNode.outerHTML:'';
   var finishMarkup=finishNode?finishNode.outerHTML:'';
+  /* Listening replaces the normal question renderer, so explicitly preserve the native section-finish card. */
   if(!finishMarkup&&typeof finishCard==='function'){
    var savedFinishPage=page;
    try{page=pageCount()-1;finishMarkup=finishCard();}finally{page=savedFinishPage;}
   }
+  if(!finishMarkup&&typeof renderSectionFinishCard==='function')finishMarkup=renderSectionFinishCard();
   if(typeof window.__hskRenderAllListeningCards==='function')temp.innerHTML=progressMarkup+window.__hskRenderAllListeningCards()+finishMarkup;
   else temp.innerHTML=root.innerHTML;
   temp.querySelectorAll('.listeningNotice,.transcript,button[onclick^="toggleTranscript"],.questionPager').forEach(function(node){node.remove()});
@@ -8590,6 +8592,13 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   var questions=document.createElement('div');
   questions.id='hskListeningQuestionsPanel';
   questions.innerHTML=temp.innerHTML;
+  /* Guarantee one finish card at the end of the unified Listening section. */
+  if(!questions.querySelector('#sectionFinishCard,.finishCard')){
+   var fallback=document.createElement('div');
+   fallback.innerHTML=(typeof finishCard==='function'?finishCard():'')|| (typeof renderSectionFinishCard==='function'?renderSectionFinishCard():'');
+   var card=fallback.firstElementChild;
+   if(card)questions.appendChild(card);
+  }
   root.replaceChildren(questions);
   if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
  }
