@@ -1,0 +1,57 @@
+
+/* Portrait: the bar hugs its items, stays centered, and never stretches across the viewport. */
+@media (max-width:599px),(min-width:600px) and (orientation:portrait){
+  html body .mainNav{
+    position:fixed!important;left:50%!important;right:auto!important;top:auto!important;
+    bottom:calc(10px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;
+    display:flex!important;flex-flow:row nowrap!important;align-items:center!important;justify-content:center!important;
+    width:max-content!important;inline-size:max-content!important;min-width:0!important;max-width:calc(100vw - 24px)!important;
+    height:auto!important;margin:0!important;padding:5px!important;gap:2px!important;box-sizing:border-box!important;
+    border:1px solid rgba(170,180,205,.18)!important;border-radius:9999px!important;
+    background:rgba(31,34,44,.30)!important;background-color:rgba(31,34,44,.30)!important;background-image:none!important;
+    box-shadow:none!important;overflow-x:auto!important;overflow-y:hidden!important;
+    backdrop-filter:blur(16px) saturate(120%)!important;-webkit-backdrop-filter:blur(16px) saturate(120%)!important;
+  }
+  html body .mainNav .navItem,html body .mainNav .navItem:hover,html body .mainNav .navItem:active,
+  html body .mainNav .navItem:focus,html body .mainNav .navItem:focus-visible,
+  html body .mainNav .navItem.active,html body .mainNav .navItem[aria-current="page"]{
+    display:flex!important;flex:0 0 auto!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    width:auto!important;inline-size:auto!important;min-width:54px!important;max-width:76px!important;height:auto!important;min-height:46px!important;
+    margin:0!important;padding:4px 7px!important;gap:3px!important;border:0!important;border-radius:9999px!important;
+    background:transparent!important;background-color:transparent!important;background-image:none!important;
+    box-shadow:none!important;transform:none!important;
+  }
+}
+/* Universal reset: active state must never paint a tile behind the icon, in either theme. */
+html body .mainNav .navItem,
+html body .mainNav .navItem:hover,
+html body .mainNav .navItem:active,
+html body .mainNav .navItem:focus,
+html body .mainNav .navItem:focus-visible,
+html body .mainNav .navItem.active,
+html body .mainNav .navItem[aria-current="page"],
+html body.dark .mainNav .navItem.active,
+html body.dark .mainNav .navItem[aria-current="page"]{
+  background:transparent!important;background-color:transparent!important;background-image:none!important;
+  box-shadow:none!important;border-color:transparent!important;
+}
+html body .mainNav .navItem.active,
+html body .mainNav .navItem[aria-current="page"],
+html body.dark .mainNav .navItem.active,
+html body.dark .mainNav .navItem[aria-current="page"]{
+  color:var(--muted)!important;font-weight:500!important;
+}
+html body .mainNav .navItem.active .ico,
+html body .mainNav .navItem[aria-current="page"] .ico,
+html body.dark .mainNav .navItem.active .ico,
+html body.dark .mainNav .navItem[aria-current="page"] .ico{
+  color:var(--blue)!important;stroke:currentColor!important;fill:none!important;
+  background:transparent!important;background-color:transparent!important;background-image:none!important;
+  box-shadow:none!important;filter:none!important;transform:none!important;
+}
+html body .mainNav .navItem.active .navLabel,
+html body .mainNav .navItem[aria-current="page"] .navLabel,
+html body.dark .mainNav .navItem.active .navLabel,
+html body.dark .mainNav .navItem[aria-current="page"] .navLabel{
+  color:var(--muted)!important;background:transparent!important;font-weight:500!important;
+}
