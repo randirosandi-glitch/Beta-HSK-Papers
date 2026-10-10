@@ -5426,6 +5426,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 // END GENERATED MODULE: src/study-plans/feature.js
 </script>
 <script id="masterReliabilityFix2026">
+// BEGIN GENERATED MODULE: src/core/reliability-fixes.js
+/* Source module: master reliability fixes.
+ * Exact extraction from the existing inline script; preserve execution order and globals.
+ */
+
 (function(){
   'use strict';
 
@@ -6082,8 +6087,14 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 
   MASTER.ready=true;
 })();
+// END GENERATED MODULE: src/core/reliability-fixes.js
 </script>
 <script id="functionalRepairV4">
+// BEGIN GENERATED MODULE: src/core/functional-repair.js
+/* Source module: functional repair layer.
+ * Exact extraction from the existing inline script; preserve execution order and globals.
+ */
+
 (function(){
   'use strict';
 
@@ -6387,6 +6398,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   },true);
 
 })();
+// END GENERATED MODULE: src/core/functional-repair.js
 </script>
 <script id="studyPlanFeatureRestoreV1">
 (function(){
@@ -6957,6 +6969,11 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 // END GENERATED MODULE: src/catalog/runtime.js
 </script>
 <script id="flatHanziPartsRendererV17">
+// BEGIN GENERATED MODULE: src/ui/parts-renderer.js
+/* Source module: parts renderer.
+ * Exact extraction from the existing inline script; preserve execution order and globals.
+ */
+
 (function(){
   'use strict';
   const escV17=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -6982,9 +6999,15 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   }
   window.renderSections=renderSectionsV17;
 })();
+// END GENERATED MODULE: src/ui/parts-renderer.js
 </script>
 <!-- FINAL KAITI UI PASS V23: section titles + package Hanzi -->
 <script id="finalSectionRendererV23">
+// BEGIN GENERATED MODULE: src/ui/section-renderer.js
+/* Source module: section renderer.
+ * Exact extraction from the existing inline script; preserve execution order and globals.
+ */
+
 (function(){
   'use strict';
   const escFinal=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -7012,6 +7035,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{try{if(route&&route.screen==='parts') renderSectionsFinalV23();}catch(e){}});
   else {try{if(route&&route.screen==='parts') renderSectionsFinalV23();}catch(e){}}
 })();
+// END GENERATED MODULE: src/ui/section-renderer.js
 </script>
 <!-- APP DIALOG UI: replace browser confirm/alert with in-app modal -->
 <!-- RESET PROGRESS CONTROLS: package detail + section list -->
