@@ -8399,6 +8399,7 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   var root=document.getElementById('questions');
   if(!root||!isSupportedListening())return;
   var code=String(route.packageCode),section=DB[code].listening[0];
+  if(typeof renderHskAudioPlayer==='function')renderHskAudioPlayer();
   var key=code+'|listening|'+String(route.sectionIndex);
   if(key!==listenStateKey){listenStateKey=key;questionsVisible=false;transcriptVisible=false}
   var temp=document.createElement('div');
