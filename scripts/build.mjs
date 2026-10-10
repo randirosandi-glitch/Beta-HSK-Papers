@@ -6,28 +6,27 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const indexPath = resolve(root, 'index.html');
 const checkOnly = process.argv.includes('--check');
 const html = await readFile(indexPath, 'utf8');
-const startPattern = /^\\/\\/ BEGIN GENERATED MODULE: (src\\/[^\\n]+)$/gm;
-const modules = [...html.matchAll(startPattern)].map(match => ({
-  path: match[1],
-  start: match.index,
-  markerEnd: match.index + match[0].length
-}));
+const prefix = '// BEGIN GENERATED MODULE: ';
+const modules = [];
+let offset = 0;
+for (const line of html.split('\\n')) {
+  if (line.startsWith(prefix)) modules.push({ path: line.slice(prefix.length).trim(), markerEnd: offset + line.length });
+  offset += line.length + 1;
+}
 if (!modules.length) throw new Error('No generated source module markers found in index.html.');
 
 const replacements = [];
 for (const item of modules) {
   const endMarker = '// END GENERATED MODULE: ' + item.path;
-  const end = html.indexOf(endMarker, item.markerEnd);
+  const end = html.indexOf(endMarker, item.markerEnd + 1);
   if (end < 0 || html.indexOf(endMarker, end + endMarker.length) >= 0) {
     throw new Error('Expected exactly one end marker for ' + item.path);
   }
-  const nextStart = html.indexOf('// BEGIN GENERATED MODULE:', item.markerEnd);
+  const nextStart = html.indexOf(prefix, item.markerEnd + 1);
   if (nextStart >= 0 && nextStart < end) throw new Error('Nested generated module markers are not allowed.');
-  const lineEnd = html.indexOf('\\n', item.markerEnd);
-  if (lineEnd < 0 || lineEnd > end) throw new Error('Malformed start marker for ' + item.path);
   const source = (await readFile(resolve(root, item.path), 'utf8')).trimEnd();
-  const current = html.slice(lineEnd + 1, end).trimEnd();
-  replacements.push({ path: item.path, lineEnd, end, source, current });
+  const current = html.slice(item.markerEnd + 1, end).trimEnd();
+  replacements.push({ path: item.path, markerEnd: item.markerEnd, end, source, current });
 }
 
 const mismatches = replacements.filter(x => x.current !== x.source);
@@ -41,8 +40,8 @@ if (checkOnly) {
   }
 } else if (mismatches.length) {
   let output = html;
-  for (const item of replacements.sort((a, b) => b.lineEnd - a.lineEnd)) {
-    output = output.slice(0, item.lineEnd + 1) + item.source + '\\n' + output.slice(item.end);
+  for (const item of replacements.sort((a, b) => b.markerEnd - a.markerEnd)) {
+    output = output.slice(0, item.markerEnd + 1) + item.source + '\\n' + output.slice(item.end);
   }
   await writeFile(indexPath, output, 'utf8');
   console.log('Updated index.html from ' + mismatches.length + ' source module(s).');
