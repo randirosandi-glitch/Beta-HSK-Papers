@@ -53,7 +53,8 @@ Stable is out of scope and has not been modified in this rebuild.
 - tests/study-plan-merge.test.mjs checks deletion tombstones and local/cloud plan conflict resolution.
 - tests/cloud-transport.test.mjs checks minimal Supabase requests, username encoding, request payloads, and HTTP errors.
 - .github/workflows/rebuild-contracts.yml checks module synchronization, reproducible index generation, inline script syntax, and all Node tests.
-- Latest source-contract runs are recorded in GitHub Actions; the combined JavaScript/CSS marker build check passed before the latest auth-flow extraction. Latest full contract run: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38068859044
+- Latest full contract run after the 30-module extraction: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38068983933
+- Latest GitHub Pages deployment for the same runtime index: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38069015163
 
 ## What is not claimed yet
 
