@@ -4770,7 +4770,10 @@ function grade(push=true){
   route={...route,screen:'exercise'};
   loadCurrentSectionState();
   resultState={score,total:currentQuestions.length,answered,checkedAt:Date.now()};
-  renderExercise();
+  /* Listening is unified by the public renderExercise wrapper. The lexical
+     renderExercise() call bypasses that wrapper and drops the inline result card. */
+  if(route.type==='listening'&&typeof window.renderExercise==='function')window.renderExercise();
+  else renderExercise();
   setScreen('exercise',false);
   // After checking the section, bring the assessment card into view.
   // Keep the sticky top bar clear so the score is immediately visible.
