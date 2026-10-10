@@ -4204,6 +4204,11 @@ function recordQuestionAttempt(questionId,correct){
   return updateQuestionActivity(eventId,correct);
 }
 // END GENERATED MODULE: src/core/progress.js
+// BEGIN GENERATED MODULE: src/core/cloud-sync.js
+/* Source module: cloud pull/push orchestration and sync queue.
+ * Preserve current pull cooldown, snapshot freshness, merge ordering, retry limits,
+ * and explicit section-check commit behavior.
+ */
 async function pullCloudStateInternal(force=false){
   if(!currentUsername||!cloudEnabled())return false;
   try{
@@ -4294,6 +4299,7 @@ async function pushCloudState(store){
 function scheduleCloudSync(){clearTimeout(cloudSyncTimer)}
 function flushCloudSync(){clearTimeout(cloudSyncTimer)}
 function syncAfterSectionCheck(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);pushCloudState(readStore())}
+// END GENERATED MODULE: src/core/cloud-sync.js
 function saveUsername(){const v=normalizeUsername($('usernameInput')?.value);const hint=$('usernameHint');if(!validUsername(v)){if(hint)hint.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf kecil, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;setUsernameLocal(v);hideUsernameModal();renderUserPill();renderContext();renderHome();renderScores();renderPackagesScreen();pullCloudState(true)}
 function changeUsername(){if($('usernameInput'))$('usernameInput').value=currentUsername;showUsernameModal()}
 function renderUserPill(){
