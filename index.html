@@ -4300,6 +4300,11 @@ function scheduleCloudSync(){clearTimeout(cloudSyncTimer)}
 function flushCloudSync(){clearTimeout(cloudSyncTimer)}
 function syncAfterSectionCheck(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);pushCloudState(readStore())}
 // END GENERATED MODULE: src/core/cloud-sync.js
+// BEGIN GENERATED MODULE: src/core/auth-flow.js
+/* Source module: username/auth UI flow.
+ * Preserve existing username validation, identity key usage, and cloud initialization order.
+ * Runtime globals and DOM handlers intentionally remain classic-script compatible.
+ */
 function saveUsername(){const v=normalizeUsername($('usernameInput')?.value);const hint=$('usernameHint');if(!validUsername(v)){if(hint)hint.textContent='Username harus 3–24 karakter dan hanya boleh memakai huruf kecil, angka, titik, garis bawah, atau tanda hubung.';return}currentUsername=v;setUsernameLocal(v);hideUsernameModal();renderUserPill();renderContext();renderHome();renderScores();renderPackagesScreen();pullCloudState(true)}
 function changeUsername(){if($('usernameInput'))$('usernameInput').value=currentUsername;showUsernameModal()}
 function renderUserPill(){
@@ -4311,7 +4316,7 @@ function renderUserPill(){
   const l=document.createElement('button');l.id='topLogout';l.className='backTextOnly logoutTop';l.type='button';l.textContent='Keluar';l.onclick=logout;top.appendChild(l);
 }
 async function initUsernameAndCloud(){currentUsername=getUsername();renderUserPill();if(!currentUsername){showUsernameModal();return false}await pullCloudState();return true}
-
+// END GENERATED MODULE: src/core/auth-flow.js
 function svg(k){return {'home':'<span class="material-symbols-rounded ico" aria-hidden="true">home</span>','back':'<span class="material-symbols-rounded ico" aria-hidden="true">arrow_back</span>','sun':'<span class="material-symbols-rounded ico" aria-hidden="true">light_mode</span>','moon':'<span class="material-symbols-rounded ico" aria-hidden="true">dark_mode</span>','check':'<span class="material-symbols-rounded ico" aria-hidden="true">check</span>','listen':'<span class="material-symbols-rounded ico" aria-hidden="true">headphones</span>','read':'<span class="material-symbols-rounded ico" aria-hidden="true">menu_book</span>','write':'<span class="material-symbols-rounded ico" aria-hidden="true">edit</span>','box':'<span class="material-symbols-rounded ico" aria-hidden="true">inventory_2</span>','chart':'<span class="material-symbols-rounded ico" aria-hidden="true">show_chart</span>','file':'<span class="material-symbols-rounded ico" aria-hidden="true">description</span>','headphones':'<span class="material-symbols-rounded ico" aria-hidden="true">headphones</span>','checkSquare':'<span class="material-symbols-rounded ico" aria-hidden="true">check_box</span>','refresh':'<span class="material-symbols-rounded ico" aria-hidden="true">refresh</span>','search':'<span class="material-symbols-rounded ico" aria-hidden="true">search</span>'}[k]}
 let exitFromBack=false;
 function logout(){if(!currentUsername)return;showExit(false)}
