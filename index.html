@@ -8533,17 +8533,24 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   root.replaceChildren(questions);
   /* Final safeguard: after the unified Listening DOM replacement, append the app's
      original finishCard directly if it did not survive. Never create a second scorer. */
-  if(!root.querySelector('.finishCard')&&typeof finishCard==='function'){
+  if(!root.querySelector('.finishCard')){
    var savedFinishPage=page,finalMarkup='';
    try{
     page=Math.max(0,pageCount()-1);
-    finalMarkup=finishCard();
+    if(typeof finishCard==='function')finalMarkup=finishCard();
    }finally{page=savedFinishPage;}
-   if(finalMarkup){
-    var finishHost=document.createElement('div');
-    finishHost.innerHTML=finalMarkup;
-    var nativeCard=finishHost.querySelector('.finishCard');
-    if(nativeCard)root.appendChild(nativeCard);
+   var finishHost=document.createElement('div');
+   finishHost.innerHTML=finalMarkup||'';
+   var nativeCard=finishHost.querySelector('.finishCard');
+   if(nativeCard){
+    root.appendChild(nativeCard);
+   }else{
+    /* Guaranteed fallback using the app's existing grade()/repeat() actions,
+       not a separate scoring implementation. */
+    var fallback=document.createElement('div');
+    fallback.className='finishCard';
+    fallback.innerHTML='<div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">Periksa semua jawaban sekaligus dan lihat nilai bagian ini.</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade()"><span class="material-symbols-rounded ico" aria-hidden="true">check</span><span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div>';
+    root.appendChild(fallback);
    }
   }
   if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
