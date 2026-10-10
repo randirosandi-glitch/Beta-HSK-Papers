@@ -6504,10 +6504,10 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
 <script id="databaseAndPackageRuntimeV1">
 (function(){
   'use strict';
-  const REPO='randirosandi-glitch/Beta-HSK-Papers', FALLBACK_REPO='randirosandi-glitch/latihanhsk', REF='main';
+  const REPO='randirosandi-glitch/Beta-HSK-Papers', REF='main';
   const TREE_API='https://api.github.com/repos/'+REPO+'/git/trees/'+encodeURIComponent(REF)+'?recursive=1';
   const RAW_BASE='https://raw.githubusercontent.com/'+REPO+'/'+REF+'/';
-  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v6';
+  const CATALOG_CACHE_KEY='hsk-dynamic-catalog-v7';
   const $=id=>document.getElementById(id);
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const natural=(a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
@@ -6665,7 +6665,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     let result;
     try{
       const sources=[];
-      for(const repo of [REPO,FALLBACK_REPO]){
+      for(const repo of [REPO]){
         try{sources.push(await fromTree(repo))}catch(e){console.warn('Catalog tree unavailable:',repo,e)}
       }
       if(!sources.length)throw new Error('GitHub trees unavailable');
