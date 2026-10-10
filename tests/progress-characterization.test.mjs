@@ -16,14 +16,12 @@ function between(start, end) {
   return html.slice(a, b).trim();
 }
 
-const mergeSource = between('function mergeStoresLatest(local,remote){', '\nasync function pullCloudStateInternal');
+const mergeSource = between('function progressResetAt(store,key){', '\nasync function pullCloudStateInternal');
 const activitySource = between('function createQuestionActivity(questionId){', '\nfunction ensureQuestionActivity');
 const updateSource = between('function updateQuestionActivity(eventId,correct){', '\nfunction ensureQuestionActivity');
 
 function mergeContext() {
   const context = vm.createContext({
-    progressResetAt: () => 0,
-    resetCoversResume: () => 0,
     stateKey: (code, type, idx) => code + '|' + type + '|' + idx,
     mergePlanArrays: (local = [], remote = [], localDeleted = {}, remoteDeleted = {}) => ({
       out: Array.isArray(local) ? local : Array.isArray(remote) ? remote : [],
@@ -129,4 +127,57 @@ test('attempts without IDs are ignored during cloud/local merge', () => {
     { _attempts: [{ id: '', timestamp: 3 }, event('remote', 4)] }
   ).store._attempts;
   assert.deepEqual(JSON.parse(JSON.stringify(result.map(x => x.id))), ['valid', 'remote']);
+});
+
+test('reset tombstones block stale section snapshots and clear after a newer answer', () => {
+  const context = mergeContext();
+  const key = 'H51001|reading|0';
+  const stale = context.mergeStoresLatest({
+    _progressResets: { 'section:H51001|reading': 100 }
+  }, {
+    [key]: { answers: { '1': 'A' }, updatedAt: 90 }
+  }).store;
+  assert.equal(stale[key], undefined);
+  assert.equal(stale._progressResets['section:H51001|reading'], 100);
+
+  const fresh = context.mergeStoresLatest({
+    _progressResets: { 'section:H51001|reading': 100 }
+  }, {
+    [key]: { answers: { '2': 'B' }, updatedAt: 110 }
+  }).store;
+  assert.deepEqual(JSON.parse(JSON.stringify(fresh[key].answers)), { '2': 'B' });
+  assert.equal(fresh._progressResets, undefined);
+});
+
+test('resume tombstone prevents an older saved route from returning', () => {
+  const context = mergeContext();
+  const merged = context.mergeStoresLatest({
+    _progressResets: { '_resume': 200 },
+    _resume: { code: 'H51001', type: 'reading', sectionIndex: 0, updatedAt: 150 }
+  }, {}).store;
+  assert.equal(merged._resume, undefined);
+  assert.equal(merged._progressResets['_resume'], 200);
+});
+
+test('checking an existing activity updates its status without changing its original event timestamp', () => {
+  const original = event('evt-check', 40, 50, { status: 'answered', correct: null, checkedAt: null });
+  const { context, getStore } = activityContext({
+    _attempts: [original],
+    _lastActivity: { code: 'H51001', type: 'reading', sectionIndex: 0, questionId: '1', updatedAt: 60 }
+  });
+  const returned = context.updateQuestionActivity('evt-check', false);
+  const updated = getStore()._attempts[0];
+  assert.equal(returned, 'evt-check');
+  assert.equal(updated.timestamp, 40);
+  assert.ok(updated.checkedAt > 60);
+  assert.equal(updated.updatedAt, updated.checkedAt);
+  assert.equal(updated.status, 'checked');
+  assert.equal(updated.correct, false);
+});
+
+test('checking an activity that has already fallen out of history returns null', () => {
+  const { context, getStore, events } = activityContext({ _attempts: [] });
+  assert.equal(context.updateQuestionActivity('expired-id', true), null);
+  assert.equal(getStore()._attempts.length, 0);
+  assert.equal(events.length, 0);
 });
