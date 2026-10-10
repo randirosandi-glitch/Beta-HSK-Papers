@@ -8343,6 +8343,13 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
 #hskListeningQuestionsPanel .hskListeningQuestionRevealQuestion,#hskListeningQuestionsPanel .hskListeningQuestionRevealTranscript{margin:0 0 10px!important}
 #hskListeningQuestionsPanel .hskListeningRevealLabel{display:block!important;margin:0 0 2px!important;font-family:inherit!important;font-size:11px!important;line-height:1.5!important;font-weight:800!important;color:var(--muted)!important}
 #hskListeningQuestionsPanel .hskListeningQuestionRevealQuestion>div:last-child,#hskListeningQuestionsPanel .hskListeningQuestionRevealTranscript>div:last-child{white-space:pre-wrap!important}
+
+#hskListeningQuestionsPanel .hskListeningActionRow{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:nowrap!important;margin-top:8px!important}
+#hskListeningQuestionsPanel .hskListeningActionRow>button{flex:1 1 0!important;min-width:0!important;width:0!important;justify-content:center!important}
+#hskListeningQuestionsPanel .hskListeningQuestionRevealToggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;min-height:36px!important;padding:5px 9px!important;border:1px solid var(--line)!important;border-radius:10px!important;background:transparent!important;color:var(--text)!important;font-size:12px!important;font-weight:700!important;box-shadow:none!important;cursor:pointer!important;pointer-events:auto!important;position:relative!important;z-index:2!important}
+#hskListeningQuestionsPanel .hskListeningQuestionRevealContent{position:relative!important;z-index:1!important}
+#hskAudioPlayerSlot{display:block!important;visibility:visible!important;min-height:0!important;margin:0 0 12px!important}
+#hskAudioPlayer[hidden]{display:none!important}
 </style>
 <script id="hskListeningUnifiedUxV1JS">
 (function(){
@@ -8381,6 +8388,13 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   if(!used.size)html+='<p>Transkrip belum tersedia di data paket ini.</p>';
   return html;
  }
+ window.__hskToggleQuestionReveal=function(button){
+  var content=button&&button.closest('article.question')&&button.closest('article.question').querySelector('.hskListeningQuestionRevealContent');
+  if(!button||!content)return;
+  var opening=content.hidden;content.hidden=!opening;button.setAttribute('aria-expanded',String(opening));
+  var label=button.querySelector('span:last-child');if(label)label.textContent=opening?'Sembunyikan transkrip':'Tampilkan transkrip';
+  var icon=button.querySelector('.material-symbols-rounded');if(icon)icon.textContent=opening?'visibility_off':'visibility';
+ };
  function renderListeningShell(){
   var root=document.getElementById('questions');
   if(!root||!isSupportedListening())return;
@@ -8440,8 +8454,11 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
    var transcriptText=String(sourceQ?.[4]??'').trim();
    if(questionText){var qb=document.createElement('div');qb.className='hskListeningQuestionRevealQuestion';qb.innerHTML='<span class="hskListeningRevealLabel">Pertanyaan</span>';var qbody=document.createElement('div');qbody.textContent=questionText;qb.appendChild(qbody);revealContent.appendChild(qb);}
    if(transcriptText){var tb=document.createElement('div');tb.className='hskListeningQuestionRevealTranscript';tb.innerHTML='<span class="hskListeningRevealLabel">Transkrip</span>';var tbody=document.createElement('div');tbody.textContent=transcriptText;tb.appendChild(tbody);revealContent.appendChild(tb);}
-   revealButton.addEventListener('click',function(){var opening=revealContent.hidden;revealContent.hidden=!opening;revealButton.setAttribute('aria-expanded',String(opening));revealButton.querySelector('span:last-child').textContent=opening?'Sembunyikan transkrip':'Tampilkan transkrip';revealButton.querySelector('.material-symbols-rounded').textContent=opening?'visibility_off':'visibility';});
-   reveal.appendChild(revealButton);reveal.appendChild(revealContent);article.appendChild(reveal);
+   revealButton.setAttribute('onclick','window.__hskToggleQuestionReveal(this)');
+   reveal.appendChild(revealButton);reveal.appendChild(revealContent);
+   var actionRow=article.querySelector('.row');
+   if(actionRow){actionRow.classList.add('hskListeningActionRow');actionRow.appendChild(revealButton);}
+   article.appendChild(revealContent);
    if(!part)return;
    var divider=document.createElement('div');
    divider.className='hskListeningPartBreak';
