@@ -44,7 +44,7 @@ test('saving a section preserves schema and clears covered progress-reset tombst
   const store = getStore();
   assert.deepEqual(JSON.parse(JSON.stringify(store['H51001|reading|0'].answers)), { '1': 'A' });
   assert.deepEqual(JSON.parse(JSON.stringify(store['H51001|reading|0'].checked)), { '1': true });
-  assert.deepEqual(JSON.parse(JSON.stringify(store['H51001|reading|0'].answerEvents)), { 'old': 'old-event' });
+  assert.deepEqual(JSON.parse(JSON.stringify(store['H51001|reading|0'].answerEvents)), { 'old': 'old-event', '1': 'event-1' });
   assert.equal(store._progressResets, undefined);
   assert.equal(store._resume.code, 'H51001');
   assert.equal(store._resume.page, 2);
