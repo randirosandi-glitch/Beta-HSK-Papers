@@ -8552,19 +8552,26 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   questions.id='hskListeningQuestionsPanel';
   questions.innerHTML=temp.innerHTML;
   root.replaceChildren(questions);
-  /* Keep the native card captured before root.replaceChildren(). If no native
-     card was available, provide only the existing grade()/repeat() actions. */
-  if(!root.querySelector('.finishCard')){
-   var finishHost=document.createElement('div');
-   finishHost.innerHTML=finishMarkup||'';
-   var nativeCard=finishHost.querySelector('.finishCard');
-   if(nativeCard)root.appendChild(nativeCard);
-   else{
-    var fallback=document.createElement('div');
-    fallback.className='finishCard';
-    fallback.innerHTML='<div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">Periksa semua jawaban sekaligus dan lihat nilai bagian ini.</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade()"><span class="material-symbols-rounded ico" aria-hidden="true">check</span><span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div>';
-    root.appendChild(fallback);
-   }
+  /* Keep the native assessment card as a sibling beneath the unified question
+     panel, never nested inside the panel that gets rebuilt on every render. */
+  var renderedFinish=questions.querySelector('.finishCard');
+  if(renderedFinish)renderedFinish.remove();
+  var finishHost=document.createElement('div');
+  finishHost.innerHTML=finishMarkup||'';
+  var nativeCard=finishHost.querySelector('.finishCard');
+  if(!nativeCard&&typeof window.__hskGetNativeFinishCardMarkup==='function'){
+   try{
+    finishHost.innerHTML=window.__hskGetNativeFinishCardMarkup()||'';
+    nativeCard=finishHost.querySelector('.finishCard');
+   }catch(err){console.error('Could not restore native Listening assessment card:',err);}
+  }
+  if(nativeCard)root.appendChild(nativeCard);
+  else{
+   /* Preserve the native grade()/repeat() actions if native markup is unavailable. */
+   var fallback=document.createElement('div');
+   fallback.className='finishCard';
+   fallback.innerHTML='<div class="finishCardTitle">Sudah selesai mengerjakan?</div><div class="finishCardText">Periksa semua jawaban sekaligus dan lihat nilai bagian ini.</div><div class="finishCardActions"><button class="finishCardBtn" type="button" onclick="grade()"><span class="material-symbols-rounded ico" aria-hidden="true">check</span><span>Periksa &amp; Lihat Nilai</span></button><button class="finishCardBtn finishCardBtnSecondary" type="button" onclick="repeat()"><span class="material-symbols-rounded ico actionRepeat" aria-hidden="true">refresh</span><span>Ulangi Bagian</span></button></div>';
+   root.appendChild(fallback);
   }
   /* Preserve finishCard()'s original inline onclick="grade()" unchanged. */
   if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
