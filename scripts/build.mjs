@@ -4,33 +4,48 @@ import { dirname, resolve } from 'node:path';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const indexPath = resolve(root, 'index.html');
-const modulePath = resolve(root, 'src/core/storage-adapter.js');
-const startMarker = '// BEGIN GENERATED MODULE: src/core/storage-adapter.js';
-const endMarker = '// END GENERATED MODULE: src/core/storage-adapter.js';
 const checkOnly = process.argv.includes('--check');
+const html = await readFile(indexPath, 'utf8');
+const startPattern = /^\\/\\/ BEGIN GENERATED MODULE: (src\\/[^\\n]+)$/gm;
+const modules = [...html.matchAll(startPattern)].map(match => ({
+  path: match[1],
+  start: match.index,
+  markerEnd: match.index + match[0].length
+}));
+if (!modules.length) throw new Error('No generated source module markers found in index.html.');
 
-const [html, moduleSource] = await Promise.all([
-  readFile(indexPath, 'utf8'),
-  readFile(modulePath, 'utf8')
-]);
-const start = html.indexOf(startMarker);
-const end = html.indexOf(endMarker, start + startMarker.length);
-if (start < 0 || end < 0 || html.indexOf(startMarker, start + 1) >= 0 || html.indexOf(endMarker, end + 1) >= 0) {
-  throw new Error('Expected exactly one ordered pair of storage module markers in index.html.');
+const replacements = [];
+for (const item of modules) {
+  const endMarker = '// END GENERATED MODULE: ' + item.path;
+  const end = html.indexOf(endMarker, item.markerEnd);
+  if (end < 0 || html.indexOf(endMarker, end + endMarker.length) >= 0) {
+    throw new Error('Expected exactly one end marker for ' + item.path);
+  }
+  const nextStart = html.indexOf('// BEGIN GENERATED MODULE:', item.markerEnd);
+  if (nextStart >= 0 && nextStart < end) throw new Error('Nested generated module markers are not allowed.');
+  const lineEnd = html.indexOf('\\n', item.markerEnd);
+  if (lineEnd < 0 || lineEnd > end) throw new Error('Malformed start marker for ' + item.path);
+  const source = (await readFile(resolve(root, item.path), 'utf8')).trimEnd();
+  const current = html.slice(lineEnd + 1, end).trimEnd();
+  replacements.push({ path: item.path, lineEnd, end, source, current });
 }
-const startLineEnd = html.indexOf('\n', start + startMarker.length);
-if (startLineEnd < 0 || startLineEnd > end) throw new Error('Malformed storage module start marker.');
-const currentBody = html.slice(startLineEnd + 1, end).trimEnd();
-const expectedBody = moduleSource.trimEnd();
+
+const mismatches = replacements.filter(x => x.current !== x.source);
 if (checkOnly) {
-  if (currentBody !== expectedBody) {
-    console.error('index.html storage adapter is out of sync with src/core/storage-adapter.js. Run: node scripts/build.mjs');
+  if (mismatches.length) {
+    console.error('Generated index module(s) out of sync: ' + mismatches.map(x => x.path).join(', '));
+    console.error('Run: node scripts/build.mjs');
     process.exitCode = 1;
   } else {
-    console.log('Storage adapter build check passed.');
+    console.log('Build check passed for ' + replacements.length + ' source module(s).');
   }
+} else if (mismatches.length) {
+  let output = html;
+  for (const item of replacements.sort((a, b) => b.lineEnd - a.lineEnd)) {
+    output = output.slice(0, item.lineEnd + 1) + item.source + '\\n' + output.slice(item.end);
+  }
+  await writeFile(indexPath, output, 'utf8');
+  console.log('Updated index.html from ' + mismatches.length + ' source module(s).');
 } else {
-  const nextHtml = html.slice(0, startLineEnd + 1) + expectedBody + '\n' + html.slice(end);
-  await writeFile(indexPath, nextHtml, 'utf8');
-  console.log('Updated index.html from src/core/storage-adapter.js.');
+  console.log('index.html already matches all source modules.');
 }
