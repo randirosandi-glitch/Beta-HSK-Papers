@@ -44,7 +44,7 @@ test('saving a section preserves schema and clears covered progress-reset tombst
   const store = getStore();
   assert.deepEqual(JSON.parse(JSON.stringify(store['H51001|reading|0'].answers)), { '1': 'A' });
   assert.deepEqual(JSON.parse(JSON.stringify(store['H51001|reading|0'].checked)), { '1': true });
-  assert.deepEqual(JSON.parse(JSON.stringify(store['H51001|reading|0'].answerEvents)), { 'old': 'old-event', '1': 'event-1' });
+  assert.deepEqual(JSON.parse(JSON.stringify(store['H51001|reading|0'].answerEvents)), { 'old': 'old-event' });
   assert.equal(store._progressResets, undefined);
   assert.equal(store._resume.code, 'H51001');
   assert.equal(store._resume.page, 2);
@@ -81,4 +81,10 @@ test('clearing another section preserves the active resume route', () => {
   });
   context.clearSectionState('H51001', 'reading', 1);
   assert.deepEqual(JSON.parse(JSON.stringify(getStore()._resume)), resume);
+});
+
+test('saving with an explicit answer-event map persists the supplied event IDs', () => {
+  const { context, getStore } = makeContext({ 'H51001|reading|0': { answers: {}, checked: {}, answerEvents: {} } });
+  context.saveSectionState('H51001', 'reading', 0, { '1': 'A' }, { '1': false }, { '1': 'event-1' });
+  assert.deepEqual(JSON.parse(JSON.stringify(getStore()['H51001|reading|0'].answerEvents)), { '1': 'event-1' });
 });
