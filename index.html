@@ -3959,6 +3959,8 @@ let currentUsername='';
 let cloudSyncTimer=null;
 let cloudSyncBusy=false;
 let cloudSyncPending=false;
+let cloudSyncRetryCount=0;
+const CLOUD_SYNC_MAX_RETRIES=3;
 function normalizeUsername(v){return String(v||'').trim().toLowerCase()}
 function validUsername(v){return /^[a-z0-9._-]{3,24}$/.test(v)}
 function cloudEnabled(){return /^https:\/\/[^\s]+$/.test(CLOUD_CONFIG.url)&&CLOUD_CONFIG.anonKey.length>20}
@@ -4165,12 +4167,13 @@ let cloudLastSyncedSnapshot='';
 /* Reuse the latest fetched cloud snapshot for explicit section commits, avoiding
    a full GET before every PATCH. Refresh this snapshot on login/focus pulls. */
 let cloudKnownRemoteUsername='',cloudKnownRemoteStore=null,cloudKnownRemoteLoaded=false,cloudKnownRemoteAt=0;
-const CLOUD_SNAPSHOT_MAX_AGE=60000;
+const CLOUD_PULL_COOLDOWN=15*60*1000;
+const CLOUD_SNAPSHOT_MAX_AGE=15*60*1000;
 function markCloudSnapshotSynced(store){try{cloudLastSyncedSnapshot=JSON.stringify(store??readStore())}catch(e){cloudLastSyncedSnapshot=''}}
 function pullCloudState(force=false){
   if(cloudPullInFlight)return cloudPullInFlight;
   const now=Date.now();
-  if(!force&&now-cloudLastPullAt<60000)return Promise.resolve(false);
+  if(!force&&now-cloudLastPullAt<CLOUD_PULL_COOLDOWN)return Promise.resolve(false);
   cloudLastPullAt=now;
   cloudPullInFlight=pullCloudStateInternal(force).finally(()=>{cloudPullInFlight=null});
   return cloudPullInFlight;
@@ -4203,6 +4206,7 @@ async function pushCloudState(store){
       if(JSON.stringify(afterCreate)!==JSON.stringify(latest)) await cloudUpdateUser(currentUsername,afterCreate);
       cloudKnownRemoteStore=readStore();cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
       markCloudSnapshotSynced(readStore());
+      cloudSyncRetryCount=0;
       return true;
     }
     const remote=remoteStore;
@@ -4212,9 +4216,10 @@ async function pushCloudState(store){
     if(JSON.stringify(merged)!==JSON.stringify(remote)) await cloudUpdateUser(currentUsername,merged);
     cloudKnownRemoteStore=readStore();cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
     markCloudSnapshotSynced(readStore());
+    cloudSyncRetryCount=0;
     return true;
   }catch(e){console.warn('Cloud sync push failed',e);cloudSyncPending=true;return false}
-  finally{cloudSyncBusy=false;if(cloudSyncPending){cloudSyncPending=false;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),1500)}}
+  finally{cloudSyncBusy=false;if(cloudSyncPending){cloudSyncPending=false;clearTimeout(cloudSyncTimer);if(cloudSyncRetryCount<CLOUD_SYNC_MAX_RETRIES){const delay=Math.min(60000,5000*Math.pow(2,cloudSyncRetryCount));cloudSyncRetryCount++;cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),delay)}}}
 }
 /* Local answers/progress are saved immediately, but cloud writes are committed only
    when the learner presses the section-check button (grade()). */
