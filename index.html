@@ -8374,8 +8374,13 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   var partList=Array.isArray(section.parts)?section.parts:[];
   temp.querySelectorAll('article.question').forEach(function(article){
    var label=article.querySelector('.qtop span:first-child')?.textContent||'';
-   var match=label.match(/\d+/),id=match?Number(match[0]):NaN;
+   var match=label.match(/\\d+/),id=match?Number(match[0]):NaN;
    var qtop=article.querySelectorAll('.qtop span');if(qtop[1])qtop[1].textContent=String(id)+'/'+String(section.questions.length);
+   var sourceQ=(section.questions||[]).find(function(q){return Number(q?.[0])===id});
+   var opts=Array.isArray(sourceQ?.[2])?sourceQ[2].map(function(v){return String(v).trim()}):[];
+   var isTrueFalse=opts.length===2&&opts.includes('对')&&opts.includes('错');
+   var prompt=article.querySelector('.qtext');
+   if(prompt&&!isTrueFalse){prompt.classList.add('hskListeningShortPrompt');prompt.hidden=!questionsVisible}
    var part=partList.find(function(p){return Number(p.start)===id});
    if(!part)return;
    var divider=document.createElement('div');
@@ -8388,10 +8393,9 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   });
   var controls=document.createElement('div');
   controls.id='hskListeningControls';
-  controls.innerHTML='<button type="button" class="hskListeningToggle" id="hskListeningQuestionsToggle" onclick="window.__hskToggleListeningQuestions()" aria-expanded="'+String(questionsVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan soal':'Tampilkan soal')+' ('+section.questions.length+')</button><button type="button" class="hskListeningToggle" id="hskListeningTranscriptToggle" onclick="window.__hskToggleListeningTranscript()" aria-expanded="'+String(transcriptVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(transcriptVisible?'visibility_off':'subject')+'</span>'+(transcriptVisible?'Sembunyikan transkrip':'Tampilkan transkrip')+'</button>';
+  controls.innerHTML='<button type="button" class="hskListeningToggle" id="hskListeningQuestionsToggle" onclick="window.__hskToggleListeningQuestions()" aria-expanded="'+String(questionsVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan pertanyaan singkat':'Tampilkan pertanyaan singkat')</button><button type="button" class="hskListeningToggle" id="hskListeningTranscriptToggle" onclick="window.__hskToggleListeningTranscript()" aria-expanded="'+String(transcriptVisible)+'"><span class="material-symbols-rounded" aria-hidden="true">'+(transcriptVisible?'visibility_off':'subject')+'</span>'+(transcriptVisible?'Sembunyikan transkrip':'Tampilkan transkrip')+'</button>';
   var questions=document.createElement('div');
   questions.id='hskListeningQuestionsPanel';
-  questions.hidden=!questionsVisible;
   questions.innerHTML=temp.innerHTML;
   var transcript=document.createElement('div');
   transcript.id='hskListeningTranscriptPanel';
@@ -8403,8 +8407,8 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
  window.__hskToggleListeningQuestions=function(){
   questionsVisible=!questionsVisible;
   var panel=document.getElementById('hskListeningQuestionsPanel'),btn=document.getElementById('hskListeningQuestionsToggle');
-  if(panel)panel.hidden=!questionsVisible;
-  if(btn){btn.setAttribute('aria-expanded',String(questionsVisible));btn.innerHTML='<span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan soal':'Tampilkan soal')+' ('+(DB[route.packageCode]?.listening?.[0]?.questions?.length||0)+')'}
+  if(panel)panel.querySelectorAll('.hskListeningShortPrompt').forEach(function(prompt){prompt.hidden=!questionsVisible});
+  if(btn){btn.setAttribute('aria-expanded',String(questionsVisible));btn.innerHTML='<span class="material-symbols-rounded" aria-hidden="true">'+(questionsVisible?'visibility_off':'visibility')+'</span>'+(questionsVisible?'Sembunyikan pertanyaan singkat':'Tampilkan pertanyaan singkat')'}
  };
  window.__hskToggleListeningTranscript=function(){
   transcriptVisible=!transcriptVisible;
