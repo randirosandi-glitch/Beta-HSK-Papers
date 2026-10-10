@@ -8565,10 +8565,16 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
    button.removeAttribute('onclick');
    button.addEventListener('click',function(event){
     event.preventDefault();
-    /* Match Stable's native assessment-card action: use the app's public grade()
-       entry point so the existing grading/loading wrapper is preserved. */
-    if(typeof window.grade==='function')window.grade();
-    else console.error('HSK grade entry point unavailable');
+    event.stopPropagation();
+    /* Use the same core function called by Stable's native onclick="grade()".
+       Bypass the optional loading wrapper so grading runs directly in this scope. */
+    try{
+     if(typeof grade==='function')grade();
+     else throw new Error('Core grade() function is unavailable');
+    }catch(err){
+     console.error('HSK Listening section check failed:',err);
+     if(typeof appNotice==='function')appNotice('Gagal memeriksa bagian','Terjadi kesalahan saat menghitung nilai. Coba sekali lagi.');
+    }
    });
   });
   if(typeof window.restoreQuestionUI==='function')window.restoreQuestionUI();
