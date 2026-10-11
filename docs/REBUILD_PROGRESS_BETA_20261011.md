@@ -66,14 +66,21 @@ Stable is out of scope and has not been modified in this rebuild.
 - A controlled cleanup is in draft PR [#17](https://github.com/randirosandi-glitch/Beta-HSK-Papers/pull/17), branch `rebuild/css-exact-duplicate-cleanup`; it has not been merged or deployed to `main`.
 - In this pass, `src/styles/canonical.css` was reduced from 275,236 bytes to 242,968 bytes (about 32 KB smaller). It removed 21 exact duplicate rule blocks, repeated identical declarations, superseded declarations, 161 empty rule blocks, and consolidated 19 repeated base-element rule blocks.
 - Responsive media-query whitespace is normalized during the cleanup analysis so equivalent media conditions do not evade duplicate detection. One obsolete mobile `display:none` rule for study-plan actions was removed because a later rule explicitly makes those actions visible.
-- A new test checks exact duplicate CSS blocks and identical declarations within the same cascade context. The latest contract/build/test workflow for this checkpoint passed: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38099973442.
+- A test checks exact duplicate CSS blocks and identical declarations within the same cascade context. The CSS checkpoint passed CI before the later JavaScript consolidation.
 - The pass intentionally retains fallback pairs where a modern value such as `var()`, `color-mix()`, or dynamic viewport units may need a prior supported value. This is not yet a claim that every legacy component style block has been consolidated.
+
+## JavaScript consolidation checkpoint — 2026-10-11
+
+- The study-plan navigation/detail/picker globals had 13 duplicate assignments between `reliability-fixes.js` and `functional-repair.js`. The old assignments were removed from `reliability-fixes.js`; `functional-repair.js` is now the single owner for those globals.
+- Removed the retired picker renderer/state from `reliability-fixes.js` and moved create-plan-card rendering, styling, and package-list refresh behavior into the canonical renderer and `src/styles/study-plans.css`. Two later inline `renderStudyPlans` wrappers were removed.
+- Added `tests/study-plan-single-owner.test.mjs` to prevent duplicate global ownership and regression of the removed wrapper layers.
+- Latest source/build/contract suite passed on branch commit `e90570ece7f4ef27784a413582a5551bb03062fd`: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38102085471.
 
 ## What is not claimed yet
 
 - These are not full browser/end-to-end tests.
 - The app has not yet completed the manual regression matrix across phone, tablet, and desktop. The latest CSS cleanup is still branch-only until that regression pass is completed.
-- The main question/data script (including embedded question data), home-history DOM rendering, canonical grading implementation and its final wrapper, some auth/logout UI, study-plan follow-up patches, and most remaining CSS override blocks remain inline.
+- The main question/data script (including embedded question data), home-history DOM rendering, canonical grading implementation and its final wrapper, some auth/logout UI, remaining renderer wrappers, and most remaining CSS override blocks still need a full ownership/cascade audit.
 
 ## Next migration step
 
