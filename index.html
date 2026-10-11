@@ -2925,7 +2925,7 @@ body.dark,html.dark{background:#000000!important;background-image:none!important
 /* Full-bleed Listening player attached to the fixed top bar. */
 #exercise .listeningAudioDock{
   position:sticky;
-  top:calc(68px + env(safe-area-inset-top,0px));
+  top:calc(var(--app-topbar-h) + 8px + env(safe-area-inset-top,0px));
   z-index:30;
   box-sizing:border-box;
   width:100vw;
@@ -2982,12 +2982,12 @@ body.exercise-focus .mainNav{display:none!important}
 #exercise .listeningAudioRetry{margin-top:8px;min-height:36px}
 @media (min-width:600px) and (orientation:landscape){
   #exercise .listeningAudioDock{
-    top:calc(var(--app-topbar-h) + env(safe-area-inset-top,0px));
     margin-left:calc(50% - 50vw - var(--nav-rail)/2);
   }
 }
 @media(max-width:599px){
   #exercise .listeningAudioDock{
+    top:calc(68px + 8px + env(safe-area-inset-top,0px));
     margin:0 0 14px calc(50% - 50vw);
     padding:8px 16px;
   }
@@ -3090,8 +3090,8 @@ body.exercise-focus .mainNav{display:none!important}
 @media (min-width:600px) and (orientation:landscape){
   :root{--nav-rail:64px!important;--hsk-nav-width:64px!important;--app-topbar-h:76px!important;}
   .mainNav{
-    position:fixed!important;z-index:2200!important;left:0!important;right:auto!important;top:0!important;bottom:0!important;
-    width:64px!important;min-width:64px!important;max-width:64px!important;height:100vh!important;height:100dvh!important;
+    position:fixed!important;z-index:2200!important;left:0!important;right:auto!important;top:calc(var(--app-topbar-h) + 8px)!important;bottom:0!important;
+    width:64px!important;min-width:64px!important;max-width:64px!important;height:calc(100vh - var(--app-topbar-h) - 8px)!important;height:calc(100dvh - var(--app-topbar-h) - 8px)!important;
     margin:0!important;padding:10px 4px!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
     align-items:stretch!important;justify-content:flex-start!important;gap:6px!important;overflow-x:hidden!important;overflow-y:auto!important;
     border:0!important;border-right:1px solid var(--line)!important;border-radius:0!important;
@@ -3113,8 +3113,8 @@ body.exercise-focus .mainNav{display:none!important}
     overflow:visible!important;text-overflow:clip!important;white-space:normal!important;text-align:center!important;color:currentColor!important;
     font-size:8px!important;line-height:1.15!important;font-weight:500!important;letter-spacing:-.1px!important;
   }
-  .top{position:fixed!important;top:0!important;left:64px!important;right:0!important;width:calc(100% - 64px)!important;max-width:none!important;height:auto!important;min-height:0!important;box-sizing:border-box!important;z-index:2000!important;}
-  .topin{width:100%!important;max-width:1180px!important;margin:0 auto!important;padding:10px 24px!important;box-sizing:border-box!important;}
+  .top{position:fixed!important;top:0!important;left:0!important;right:0!important;width:100%!important;max-width:none!important;height:auto!important;min-height:var(--app-topbar-h)!important;box-sizing:border-box!important;z-index:2000!important;}
+  .topin{width:100%!important;max-width:calc(var(--content-max) + var(--nav-rail))!important;margin:0 auto!important;padding:10px 24px 10px calc(var(--nav-rail) + 24px)!important;box-sizing:border-box!important;}
   .toprow{min-height:44px!important;}
   .context{padding-left:24px!important;padding-right:24px!important;box-sizing:border-box!important;}
   main{width:calc(100% - 64px)!important;max-width:none!important;margin:0 0 0 64px!important;box-sizing:border-box!important;padding:94px clamp(18px,2.4vw,32px) 76px!important;}
