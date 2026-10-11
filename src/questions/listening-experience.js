@@ -25,6 +25,9 @@
   let audio=null;
   let audioStatus=null;
   let retryButton=null;
+  let drivePreview=null;
+  let driveFallbackActive=false;
+  let activeAudioFileId='';
   let activeAudioCode='';
   let activeAudioUrl='';
   let sourceMapCode='';
@@ -180,10 +183,19 @@
     audio.hidden=true;
     audio.setAttribute('aria-label','Audio Listening paket');
     audio.addEventListener('error',function(){
-      if(activeAudioCode&&route?.type==='listening'){
-        setAudioMessage('Audio tidak dapat dimuat dari Google Drive. Periksa izin file atau coba lagi.',true,true);
+      if(activeAudioCode&&route?.type==='listening'&&String(route?.packageCode||'')===activeAudioCode){
+        if(activeAudioFileId){
+          showDrivePreview('Pemutar langsung gagal membuka MP3. Gunakan kontrol Google Drive di bawah.',true);
+        }else{
+          setAudioMessage('Audio tidak dapat dimuat dari Google Drive. Periksa izin file atau coba lagi.',true,false);
+        }
       }
     });
+    drivePreview=document.createElement('iframe');
+    drivePreview.className='listeningAudioDrivePreview';
+    drivePreview.title='Pemutar audio Listening Google Drive';
+    drivePreview.loading='lazy';
+    drivePreview.hidden=true;
     audioStatus=document.createElement('div');
     audioStatus.className='listeningAudioStatus';
     audioStatus.setAttribute('role','status');
@@ -195,6 +207,7 @@
     retryButton.hidden=true;
     retryButton.addEventListener('click',function(){window.__hskRetryListeningAudio?.()});
     dock.appendChild(audio);
+    dock.appendChild(drivePreview);
     dock.appendChild(audioStatus);
     dock.appendChild(retryButton);
     exercise.insertBefore(dock,questions);
@@ -204,7 +217,31 @@
     if(!ensureDock())return;
     audioStatus.textContent=String(message||'');
     retryButton.hidden=!showRetry;
+    retryButton.textContent='Coba lagi';
     audio.hidden=!showPlayer;
+    drivePreview.hidden=true;
+  }
+  function stopDrivePreview(){
+    if(drivePreview){
+      drivePreview.hidden=true;
+      drivePreview.removeAttribute('src');
+    }
+    driveFallbackActive=false;
+  }
+  function showDrivePreview(message,showRetry){
+    if(!ensureDock())return;
+    if(!activeAudioFileId){
+      setAudioMessage('Audio tidak dapat dimuat dari Google Drive. Periksa izin file atau coba lagi.',true,false);
+      return;
+    }
+    if(audio){audio.pause();audio.hidden=true}
+    const previewUrl='https://drive.google.com/file/d/'+encodeURIComponent(activeAudioFileId)+'/preview';
+    if(drivePreview.getAttribute('src')!==previewUrl)drivePreview.src=previewUrl;
+    drivePreview.hidden=false;
+    driveFallbackActive=true;
+    audioStatus.textContent=String(message||'Gunakan kontrol Google Drive untuk memutar audio.');
+    retryButton.textContent='Coba audio langsung lagi';
+    retryButton.hidden=!showRetry;
   }
   function jsonp(url,timeout){
     return new Promise(function(resolve,reject){
@@ -248,21 +285,21 @@
     return key?files[key]:null;
   }
   function validatedAudioUrl(entry){
-    if(!entry)return {url:'',message:'Audio untuk paket ini belum terdaftar di Google Drive.'};
+    if(!entry)return {url:'',id:'',message:'Audio untuk paket ini belum terdaftar di Google Drive.'};
     const access=String(entry.sharingAccess||'');
     if(access!=='ANYONE_WITH_LINK'&&access!=='ANYONE'){
-      return {url:'',message:'MP3 ditemukan, tetapi izinnya belum publik. Atur akses Drive ke “Siapa saja yang memiliki link”.'};
+      return {url:'',id:'',message:'MP3 ditemukan, tetapi izinnya belum publik. Atur akses Drive ke “Siapa saja yang memiliki link”.'};
     }
     try{
       const url=new URL(String(entry.url||''));
       const fileId=url.searchParams.get('id');
       if(url.protocol!=='https:'||url.hostname!=='drive.google.com'||url.pathname!=='/uc'||!fileId){
-        return {url:'',message:'Tautan MP3 di indeks tidak valid.'};
+        return {url:'',id:'',message:'Tautan MP3 di indeks tidak valid.'};
       }
-      if(entry.id&&String(entry.id)!==fileId)return {url:'',message:'ID MP3 di indeks tidak cocok dengan tautannya.'};
-      return {url:url.href,message:'Audio siap. Tekan Putar untuk mulai mendengarkan.'};
+      if(entry.id&&String(entry.id)!==fileId)return {url:'',id:'',message:'ID MP3 di indeks tidak cocok dengan tautannya.'};
+      return {url:url.href,id:fileId,message:'Audio siap. Tekan Putar untuk mulai mendengarkan.'};
     }catch(e){
-      return {url:'',message:'Tautan MP3 di indeks tidak valid.'};
+      return {url:'',id:'',message:'Tautan MP3 di indeks tidak valid.'};
     }
   }
   async function loadAudioForPackage(code,force){
@@ -271,11 +308,15 @@
     if(!host)return;
     if(activeAudioCode&&activeAudioCode!==code){
       audio.pause();audio.removeAttribute('src');audio.load();activeAudioUrl='';
+      stopDrivePreview();
+      activeAudioFileId='';
     }
     if(activeAudioUrl&&activeAudioCode===code&&!force){
-      setAudioMessage('Audio siap. Tekan Putar untuk mulai mendengarkan.',false,true);
+      if(driveFallbackActive)showDrivePreview('Gunakan kontrol Google Drive di bawah untuk memutar audio.',true);
+      else setAudioMessage('Audio siap. Tekan Putar untuk mulai mendengarkan.',false,true);
       return;
     }
+    if(force)stopDrivePreview();
     activeAudioCode=code;
     setAudioMessage('Memeriksa indeks audio…',false,false);
     try{
@@ -284,23 +325,33 @@
       const state=validatedAudioUrl(audioEntryFor(index,code));
       if(!state.url){
         if(audio){audio.pause();audio.removeAttribute('src');audio.load();activeAudioUrl=''}
+        activeAudioFileId='';
+        stopDrivePreview();
         setAudioMessage(state.message,true,false);
         return;
       }
+      activeAudioFileId=state.id;
       if(activeAudioUrl!==state.url){
         audio.pause();audio.removeAttribute('src');audio.load();
         audio.src=state.url;
         audio.preload='none';
         activeAudioUrl=state.url;
       }
+      driveFallbackActive=false;
       setAudioMessage(state.message,false,true);
     }catch(error){
       if(route?.type!=='listening'||String(route?.packageCode||'')!==code)return;
+      activeAudioFileId='';
+      stopDrivePreview();
       setAudioMessage((error?.message||'Indeks audio gagal dimuat.')+' Transkrip dan soal tetap tersedia.',true,false);
     }
   }
   window.__hskRetryListeningAudio=function(){
-    if(audio){audio.pause();audio.removeAttribute('src');audio.load();activeAudioUrl=''}
+    driveFallbackActive=false;
+    activeAudioFileId='';
+    if(audio){audio.pause();audio.removeAttribute('src');audio.load()}
+    if(drivePreview){drivePreview.hidden=true;drivePreview.removeAttribute('src')}
+    activeAudioUrl='';
     return loadAudioForPackage(String(route?.packageCode||''),true);
   };
 
@@ -472,7 +523,10 @@
       if(host){
         const visible=String(name)==='exercise'&&route?.type==='listening';
         host.hidden=!visible;
-        if(!visible&&audio)audio.pause();
+        if(!visible){
+          if(audio)audio.pause();
+          stopDrivePreview();
+        }
       }
       return result;
     };

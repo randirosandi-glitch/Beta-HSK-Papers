@@ -4,6 +4,13 @@
 
 (function(){
   'use strict';
+  function database(){
+    try{
+      if(typeof DB!=='undefined'&&DB&&typeof DB==='object')return DB;
+    }catch(e){}
+    const exposed=window.DB;
+    return exposed&&typeof exposed==='object'?exposed:{};
+  }
   function install(){
     if(typeof window.renderExercise!=='function'||window.renderExercise.__hskRecoveryHook)return;
     const original=window.renderExercise;
@@ -18,14 +25,15 @@
       try{
         const r=window.route||{};
         if(r.screen!=='exercise')return out;
+        const db=database();
         if(r.type==='listening'&&Number(r.sectionIndex)===-1){
-          const sections=window.DB?.[r.packageCode]?.listening||[];
+          const sections=db[r.packageCode]?.listening||[];
           const total=sections.reduce((n,section)=>n+(Array.isArray(section?.questions)?section.questions.length:0),0);
           if(total>0)return out;
           window.showExerciseLoadRecovery?.('Soal belum berhasil dimuat','Paket ini terbuka, tetapi soal Listening masih kosong. Refresh untuk mencoba memuat ulang data soal.');
           return out;
         }
-        const sec=window.DB?.[r.packageCode]?.[r.type]?.[r.sectionIndex];
+        const sec=db[r.packageCode]?.[r.type]?.[r.sectionIndex];
         const qs=sec?.questions;
         if(!Array.isArray(qs)||qs.length===0){
           window.showExerciseLoadRecovery?.('Soal belum berhasil dimuat','Bagian ini terbuka, tetapi daftar soal masih kosong. Refresh untuk mencoba memuat ulang data soal.');
