@@ -24,6 +24,21 @@ jobs:
         with:
           persist-credentials: false
       - name: Transfer selected public Drive MP3s to GitHub Releases
+        id: migration
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 .github/scripts/migrate_drive_audio.py .github/audio-migration-mode
+      - name: Set up Node.js for browser playback test
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install Chromium for browser playback test
+        run: |
+          npm install --no-save --package-lock=false playwright@latest
+          npx playwright install --with-deps chromium
+      - name: Verify Release playback and seeking
+        env:
+          AUDIO_CODES: ${{ steps.migration.outputs.codes }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: node .github/scripts/test_release_audio.mjs
+
