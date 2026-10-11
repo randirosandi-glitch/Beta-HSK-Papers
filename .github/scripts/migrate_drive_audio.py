@@ -198,7 +198,16 @@ def main():
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
         fail("Unexpected or missing GITHUB_REPOSITORY.")
     codes = sorted(CANARY) if mode == "canary" else EXPECTED[4] + EXPECTED[5]
-    files = validate_inventory(get_catalog(), codes, mode == "full")
+    catalog = get_catalog()
+    if mode == "full":
+        # H51110.mp3 is shared in Drive but omitted from the public Apps Script index.
+        catalog["H51110"] = {
+            "name": "H51110.mp3",
+            "folder": "HSK 5",
+            "sharingAccess": "ANYONE_WITH_LINK",
+            "url": "https://drive.google.com/uc?export=download&id=1IoiCWToo44GyvpVO6QjNl27ICKZVYYov",
+        }
+    files = validate_inventory(catalog, codes, mode == "full")
     print("Mode: " + mode + "; selected " + str(len(codes)) + " of 49 indexed MP3 files.")
 
     with tempfile.TemporaryDirectory(prefix="beta-audio-") as temporary:
