@@ -43,7 +43,7 @@ function collectRules(source, context = '', baseOffset = 0, out = []) {
       }
       const body = source.slice(i + 1, j - 1);
       if (/^@(media|supports|container|layer|scope)\b/.test(prelude)) {
-        collectRules(body, context + '|' + prelude.replace(/\s+/g, ' ').trim(), baseOffset + i + 1, out);
+        collectRules(body, context + '|' + normalizeAtRule(prelude), baseOffset + i + 1, out);
       } else {
         out.push({ selector: prelude, body, context });
       }
@@ -55,6 +55,12 @@ function collectRules(source, context = '', baseOffset = 0, out = []) {
 }
 
 const normalize = value => value.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').trim();
+
+function normalizeAtRule(prelude) {
+  const collapsed = prelude.replace(/\s+/g, ' ').trim();
+  if (!/^@media\\b/.test(collapsed)) return collapsed;
+  return '@media' + collapsed.slice(6).replace(/^\s*/, '').replace(/\s*\(\s*/g, '(').replace(/\s*\)\s*/g, ')').replace(/\s*:\s*/g, ':');
+}
 
 function declarationsOf(body) {
   const parts = [];
