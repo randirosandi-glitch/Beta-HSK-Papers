@@ -21,8 +21,9 @@ function loadCurrentSectionState(){const st=getSectionState(route.packageCode,ro
 function instructionFor(type,idx){const code=String(route?.packageCode||'');const pkg=getActivePackageData();const id=Number(currentQuestions?.[0]?.[0]?.[0]||currentQuestions?.[0]?.[0]||0);const parts=pkg?.engineRules?.sections?.[type]?.parts||[];const part=parts.find(p=>ruleRangeContains(p.range,id));if(part?.instruction)return part.instruction;if(code==='HSK4-SUSUN-KATA')return 'Susun kata-kata berikut menjadi kalimat Mandarin yang benar. Jawaban dinilai berdasarkan kunci jawaban.';if(code==='HSK4-SUSUN-KALIMAT')return 'Susun kalimat-kalimat berikut menjadi paragraf yang benar dengan memilih urutan yang tepat.';if(type==='listening')return idx===0?'Dengarkan pernyataan lalu pilih apakah kalimat tersebut benar atau salah.':idx===1?'Dengarkan percakapan dengan saksama lalu pilih jawaban yang paling sesuai.':'Dengarkan percakapan lalu tentukan jawaban yang paling tepat berdasarkan informasi yang kamu dengar.';if(type==='reading')return idx===0?'Baca kalimat dan pilihan jawaban, lalu pilih kata atau ungkapan yang paling tepat.':idx===1?'Baca setiap kalimat dan pilih jawaban yang paling sesuai dengan maknanya.':idx===2?'Susun bagian-bagian kalimat menjadi urutan yang benar dengan memilih kombinasi yang tepat.':'Baca teks dengan saksama lalu pilih jawaban yang paling sesuai dengan informasi dalam bacaan.';return idx===0?'Susun kata-kata menjadi kalimat Mandarin yang benar. Kamu bisa klik kata untuk memasukkannya otomatis, atau mengetik langsung di kolom jawaban. Jawaban dinilai berdasarkan kunci jawaban.':'Gunakan kata yang diberikan untuk membuat kalimat Mandarin yang benar, lalu ketik jawabanmu. Jawaban ini tidak dinilai benar atau salah secara otomatis.'}
 function hsk5AutoPaperOptionLayout(){
   const pkg=getActivePackageData();
-  if(!isHsk5Model(pkg) || route.type!=='reading') return;
-  const part=hsk5ReadingPart(currentQuestions);
+  const hsk5=isHsk5Model(pkg),hsk4=isHsk4PaperReading(pkg);
+  if((!hsk5&&!hsk4) || route.type!=='reading') return;
+  const part=hsk5?hsk5ReadingPart(currentQuestions):hsk4PaperPart(currentQuestions);
   document.querySelectorAll('#exercise .hsk5PaperOptions').forEach(container=>{
     if(container.closest('.hsk5PaperPart2')) return;
     const items=[...container.querySelectorAll(':scope > .hsk5PaperOption')];
@@ -30,7 +31,7 @@ function hsk5AutoPaperOptionLayout(){
 
     /* Reading Part 1 + Part 3 follow one deterministic rule:
        <=3 Hanzi => A B C D; >=4 Hanzi in any option => A B / C D. */
-    if((part==='part1' && container.closest('.hsk5PaperPart1')) || (part==='part3' && container.closest('.hsk5PaperPart3'))){
+    if((hsk5&&((part==='part1' && container.closest('.hsk5PaperPart1')) || (part==='part3' && container.closest('.hsk5PaperPart3')))) || (hsk4&&part==='part4'&&container.closest('.hsk4PaperPart4'))){
       const hasLongOption=items.some(el=>{
         const text=el.querySelector('.optText')?.textContent||el.textContent||'';
         const hanzi=(String(text).match(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g)||[]).length;
@@ -73,8 +74,37 @@ function scheduleHsk5AutoPaperOptionLayout(){
     requestAnimationFrame(hsk5AutoPaperOptionLayout);
   });
 }
-function renderExercise(){const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];if(!sec){openSections(route.packageCode,route.type,false);return}currentQuestions=Array.isArray(sec.questions)?sec.questions:[];page=Math.max(0,Math.min(pageCount()-1,Number(window.__hskResumePage||0)));window.__hskResumePage=page;currentMode=route.type==='writing'?'writing':'choice';$('exPkg').textContent=route.packageCode;$('exType').textContent=META[route.type]?.label||route.type;$('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');$('exTitle').textContent=sec.title;let st=sectionStats(route.packageCode,route.type,route.sectionIndex);let instruction=instructionFor(route.type,route.sectionIndex);$('questions').innerHTML=`<div class="instruction"><h2>Petunjuk</h2><p>${esc(instruction)}</p></div><div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>${st.answered}/${st.total} terjawab · ${st.pct}%</span></div><div class="progressBar"><div class="fill" style="width:${st.pct}%"></div></div></div>`+renderQuestionCards();restoreQuestionUI();scheduleHsk5AutoPaperOptionLayout()}
-if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex)){currentQuestions.forEach(q=>refreshWordBank(String(q[0])))}
+function renderExercise(){
+  const sec=DB[route.packageCode]?.[route.type]?.[route.sectionIndex];
+  if(!sec){openSections(route.packageCode,route.type,false);return}
+  currentQuestions=Array.isArray(sec.questions)?sec.questions:[];
+  page=Math.max(0,Math.min(pageCount()-1,Number(window.__hskResumePage||0)));
+  window.__hskResumePage=page;
+  currentMode=route.type==='writing'?'writing':'choice';
+  $('exPkg').textContent=route.packageCode;
+  $('exType').textContent=META[route.type]?.label||route.type;
+  $('exPart').textContent=sec.title.replace(/^.*?·\s*/,'');
+  const isHsk4Paper=isHsk4PaperReading(getActivePackageData());
+  const exTitle=$('exTitle');
+  const exSub=document.querySelector('#exercise .section .sub');
+  if(isHsk4Paper){
+    exTitle.innerHTML=hsk4PaperHeaderHTML(route.sectionIndex);
+    exTitle.classList.add('hsk5PaperSectionHeader');
+    if(exSub)exSub.style.display='none';
+  }else{
+    exTitle.textContent=sec.title;
+    exTitle.classList.remove('hsk5PaperSectionHeader');
+    if(exSub)exSub.style.display='';
+  }
+  const st=sectionStats(route.packageCode,route.type,route.sectionIndex);
+  const instruction=instructionFor(route.type,route.sectionIndex);
+  const prefix=isHsk4Paper?'':('<div class="instruction"><h2>Petunjuk</h2><p>'+esc(instruction)+'</p></div>');
+  $('questions').classList.toggle('hsk4PaperReading',isHsk4Paper);
+  $('questions').innerHTML=prefix+'<div class="sectionProgress"><div class="progressMeta"><strong>Progres bagian</strong><span>'+st.answered+'/'+st.total+' terjawab · '+st.pct+'%</span></div><div class="progressBar"><div class="fill" style="width:'+st.pct+'%"></div></div></div>'+renderQuestionCards();
+  restoreQuestionUI();
+  scheduleHsk5AutoPaperOptionLayout();
+  if(currentMode==='writing'&&isSequenceWriting(route.type,route.sectionIndex))currentQuestions.forEach(q=>refreshWordBank(String(q[0])));
+}
 function wordBankWords(id){const q=currentQuestions.find(x=>String(x[0])===String(id));return q?String(q[1]||'').trim().split(/\s+/).filter(Boolean):[]}
 function getWordChipMap(id){const input=$('w'+id);const words=wordBankWords(id);if(!input)return [];const tokens=String(input.value||'').trim().split(/\s+/).filter(Boolean);const used=new Set();const map=[];tokens.forEach((token,ti)=>{let found=-1;for(let i=0;i<words.length;i++){if(!used.has(i)&&words[i]===token){found=i;break}}if(found>=0){used.add(found);map.push({chipIndex:found,tokenIndex:ti})}});return map}
 function refreshWordBank(id){const used=new Set(getWordChipMap(id).map(x=>x.chipIndex));document.querySelectorAll(`.wordChip[data-q="${id}"]`).forEach(chip=>{const i=Number(chip.dataset.i);const on=used.has(i);chip.classList.toggle('used',on);chip.setAttribute('aria-pressed',on?'true':'false')})}
@@ -146,6 +176,100 @@ function hsk5PaperGroupRange(qs){
   const ids=qs.map(q=>String(q?.[0]??'')).filter(Boolean);
   return ids.length?ids[0]+(ids.length>1?'–'+ids[ids.length-1]:''):'';
 }
+function isHsk4PaperReading(pkg){
+  const code=String(pkg?.code||route?.packageCode||'');
+  return route?.type==='reading'&&!isHsk5Model(pkg)&&(Number(pkg?.level)===4||/^H4\d{3,}/.test(code)||/^HSK4/.test(code));
+}
+function hsk4PaperPart(qs){
+  const ids=qs.map(q=>Number(q?.[0])).filter(Number.isFinite);
+  if(!ids.length)return null;
+  const min=Math.min(...ids),max=Math.max(...ids);
+  if(min>=46&&max<=50)return 'part1';
+  if(min>=51&&max<=55)return 'part2';
+  if(min>=56&&max<=65)return 'part3';
+  if(min>=66&&max<=85)return 'part4';
+  return null;
+}
+function hsk4PaperHeaderHTML(idx){
+  const parts=[
+    {title:'第一部分',range:'46–50',instruction:'选词填空。'},
+    {title:'第二部分',range:'51–55',instruction:'选词填空。'},
+    {title:'第三部分',range:'56–65',instruction:'请排列下列句子的正确顺序。'},
+    {title:'第四部分',range:'66–85',instruction:'请选出正确答案。'}
+  ];
+  const part=parts[Number(idx)]||parts[0];
+  return (Number(idx)===0?'<span class="hsk4PaperOverallTitle">二、阅读</span>':'')+'<span class="hsk5PaperSectionTitle">'+part.title+'</span><span class="hsk5PaperSectionInstruction">第 '+part.range+' 题：'+part.instruction+'</span>';
+}
+function hsk4PaperWordBank(pkg,q){
+  const model=getResolvedQuestionModel(pkg,'reading',route.sectionIndex,q);
+  return '<div class="hsk4PaperWordBank" aria-label="Pilihan kata">'+model.options.map(o=>'<span class="hsk4PaperWord"><b>'+o.label+'</b> '+esc(o.value)+'</span>').join('')+'</div>';
+}
+function hsk4PaperClozePart(pkg,qs,part){
+  if(!qs.length)return '';
+  const bank=hsk4PaperWordBank(pkg,qs[0]);
+  const body=qs.map(q=>{
+    const id=String(q[0]);
+    const prompt=String(q[1]||'').replace(/\s+B:/g,'\nB:');
+    return '<div class="hsk5PaperQuestion hsk4PaperClozeQuestion"><div class="hsk5PaperQNo">'+esc(id)+'.</div><div class="hsk5PaperQBody"><div class="hsk5PaperQText">'+esc(prompt)+'</div><div class="hsk5PaperOptions hsk4PaperClozeOptions">'+hsk5PaperOptionButtons(pkg,q)+'</div>'+hsk5PaperActions(id)+'</div></div>';
+  }).join('');
+  return '<section class="hsk5PaperGroup hsk4PaperPart '+part+'">'+bank+body+'</section>';
+}
+function hsk4PaperPart3(pkg,qs){
+  return '<section class="hsk5PaperGroup hsk4PaperPart hsk4PaperPart3">'+qs.map((q,i)=>{
+    const id=String(q[0]);
+    const lines=(Array.isArray(q[2])?q[2]:[]).map((text,index)=>'<div class="hsk4PaperSentenceLine"><b>'+String.fromCharCode(65+index)+'.</b><span>'+esc(text)+'</span></div>').join('');
+    const input='<div class="hsk4PaperSequenceResponse"><label for="w'+esc(id)+'">Urutan kalimat</label><input class="write writingAnswerField hsk4PaperSequenceInput" id="w'+esc(id)+'" type="text" value="'+esc(answers[id]||'')+'" placeholder="ABC" autocomplete="off" oninput="saveWriting(this)"></div>';
+    const actions='<div class="hsk5PaperActions"><button type="button" class="btn soft" onclick="checkOne(\''+esc(id)+'\');return false;">'+svg('check')+' Periksa</button><button type="button" class="btn" onclick="showReference(\''+esc(id)+'\')">Lihat kunci</button></div><div class="feedback hsk5PaperFeedback" id="f'+esc(id)+'"></div><div class="reference" id="r'+esc(id)+'">Kunci jawaban: '+esc(q[3]||'Tidak tersedia')+'</div>';
+    return '<div class="hsk5PaperQuestion hsk4PaperSequenceQuestion"><div class="hsk5PaperQNo">'+esc(id)+'.</div><div class="hsk5PaperQBody"><div class="hsk4PaperSentenceList">'+lines+'</div>'+input+actions+'</div></div>';
+  }).join('')+'</section>';
+}
+function hsk4PaperPassageKey(pkg,q){
+  const model=getResolvedQuestionModel(pkg,'reading',route.sectionIndex,q);
+  if(model.group?.id)return String(model.group.id);
+  const code=String(pkg?.code||route.packageCode||'');
+  const map=pkg?.reading_passages?.[code]||pkg?.reading_passages?.[String(code)]||READING_PASSAGES?.[code]||{};
+  const id=Number(q?.[0]);
+  for(const key of Object.keys(map)){
+    if(String(key)===String(q?.[0]))return String(key);
+    const match=/^(\d+)\s*[-–—]\s*(\d+)$/.exec(String(key));
+    if(match&&id>=Number(match[1])&&id<=Number(match[2]))return String(key);
+  }
+  return '';
+}
+function renderHsk4PaperPart4(pkg,qs){
+  const map=pkg?.reading_passages?.[pkg.code]||pkg?.reading_passages?.[String(pkg.code)]||READING_PASSAGES?.[pkg.code]||{};
+  const groups=[];let current=null;
+  for(const q of qs){
+    const id=String(q[0]),key=hsk4PaperPassageKey(pkg,q);
+    const groupKey=key||'question-'+id;
+    if(!current||current.key!==groupKey){current={key:groupKey,passageKey:key,qs:[]};groups.push(current)}
+    current.qs.push(q);
+  }
+  return groups.map(group=>{
+    const passageText=group.passageKey?String(map[group.passageKey]||''):'';
+    const media=group.passageKey&&typeof getHsk5PassageMedia==='function'?getHsk5PassageMedia(pkg,group.passageKey):[];
+    const mediaHtml=media.length?'<div class="hsk5PaperPart3Media">'+media.map(m=>'<img src="'+esc(m.source)+'" alt="'+esc(m.alt)+'" loading="lazy" decoding="async">').join('')+'</div>':'';
+    const header=group.passageKey?'<div class="hsk5PaperGroupHeader">'+esc(group.passageKey.replace(/-/g,'–'))+'．</div>':'';
+    const passage=passageText?'<div class="hsk5PaperPassage hsk5PaperPart3PassageText">'+mediaHtml+'<div class="hsk5PaperPassageText">'+esc(passageText)+'</div></div>':'';
+    const body=group.qs.map(q=>{
+      const id=String(q[0]);
+      const qText='<div class="hsk5PaperQText"><span aria-hidden="true" class="hsk4PaperStar">★</span> '+esc(q[1])+'</div>';
+      const model=getResolvedQuestionModel(pkg,'reading',route.sectionIndex,q);
+      const needsTwoRows=model.options.some(o=>{const s=String(o.label||'')+' '+String(o.value||'');return (s.match(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g)||[]).length>=4});
+      const options='<div class="hsk5PaperOptions'+(needsTwoRows?' paperOptionsTwoRows':'')+'">'+hsk5PaperOptionButtons(pkg,q)+'</div>';
+      return '<div class="hsk5PaperQuestion hsk4PaperChoiceQuestion">'+qText+options+hsk5PaperActions(id)+'</div>';
+    }).join('');
+    return '<section class="hsk5PaperGroup hsk4PaperPart hsk4PaperPart4">'+header+passage+body+'</section>';
+  }).join('');
+}
+function renderHsk4PaperExperience(pkg,qs){
+  const part=hsk4PaperPart(qs);
+  if(part==='part1')return hsk4PaperClozePart(pkg,qs,'hsk4PaperPart1');
+  if(part==='part2')return hsk4PaperClozePart(pkg,qs,'hsk4PaperPart2');
+  if(part==='part3')return hsk4PaperPart3(pkg,qs);
+  if(part==='part4')return renderHsk4PaperPart4(pkg,qs);
+  return renderStandardQuestionCards();
+}
 function renderHsk5PaperPart1(pkg,qs){
   const root=pkg?.reading_passages?.[pkg.code]||pkg?.reading_passages?.[String(pkg.code)]||{};
   const groups=[];let current=null;
@@ -215,6 +339,7 @@ function renderHsk5PaperExperience(pkg,qs){
 }
 function renderQuestionCards(){
   const pkg=getActivePackageData();
+  if(isHsk4PaperReading(pkg)) return renderHsk4PaperExperience(pkg,currentQuestions);
   if(isHsk5Model(pkg) && route.type==='reading') return renderHsk5PaperExperience(pkg,currentQuestions);
   return renderStandardQuestionCards();
 }
