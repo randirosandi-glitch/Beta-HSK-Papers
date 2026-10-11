@@ -217,11 +217,17 @@ function hsk4PaperClozePart(pkg,qs,part){
 function hsk4PaperPart3(pkg,qs){
   return '<section class="hsk5PaperGroup hsk4PaperPart hsk4PaperPart3">'+qs.map(q=>{
     const id=String(q[0]);
-    const lines=(Array.isArray(q[2])?q[2]:[]).map((text,index)=>'<div class="hsk4PaperSentenceLine"><b>'+String.fromCharCode(65+index)+'.</b><span>'+esc(text)+'</span></div>').join('');
+    const sentenceLines=String(q[1]||'').split(/\r?\n/).map(line=>/^\s*([ABC])(?:[.．、:]\s*|\s+)(.+)$/.exec(line)).filter(Boolean);
+    const lines=sentenceLines.map(match=>'<div class="hsk4PaperSentenceLine"><b>'+match[1]+'.</b><span>'+esc(match[2])+'</span></div>').join('');
     const selected=hsk4Part3PermutationAnswer(q,answers[id]);
-    const choices=permutations().map((value,index)=>'<button type="button" class="opt hsk5PaperOption hsk4PaperPermutation'+(selected===value?' selected':'')+'" data-q="'+esc(id)+'" data-i="'+index+'" aria-label="Urutan '+value+'" aria-pressed="'+(selected===value?'true':'false')+'" onclick="chooseHsk4Permutation(this)"><span class="optText">'+value+'</span></button>').join('');
+    const options=Array.isArray(q[2])?q[2]:permutations();
+    const choices=options.map(value=>{
+      const permutation=String(value).trim().toUpperCase(),index=permutations().indexOf(permutation);
+      if(index<0)return '';
+      return '<button type="button" class="opt hsk5PaperOption hsk4PaperPermutation'+(selected===permutation?' selected':'')+'" data-q="'+esc(id)+'" data-i="'+index+'" aria-label="Urutan '+permutation+'" aria-pressed="'+(selected===permutation?'true':'false')+'" onclick="chooseHsk4Permutation(this)"><span class="optText">'+esc(permutation)+'</span></button>';
+    }).join('');
     const input='<div class="hsk4PaperPermutations" role="group" aria-label="Pilihan urutan kalimat">'+choices+'</div>';
-    const actions='<div class="hsk5PaperActions"><button type="button" class="btn soft" onclick="checkOne(\''+esc(id)+'\');return false;">'+svg('check')+' Periksa</button><button type="button" class="btn" onclick="showReference(\''+esc(id)+'\')">Lihat kunci</button></div><div class="feedback hsk5PaperFeedback" id="f'+esc(id)+'"></div><div class="reference" id="r'+esc(id)+'">Kunci jawaban: '+esc(q[3]||'Tidak tersedia')+'</div>';
+    const actions='<div class="hsk5PaperActions"><button type="button" class="btn soft" data-q="'+esc(id)+'" onclick="checkOne(this.dataset.q);return false;">'+svg('check')+' Periksa</button><button type="button" class="btn" data-q="'+esc(id)+'" onclick="showReference(this.dataset.q)">Lihat kunci</button></div><div class="feedback hsk5PaperFeedback" id="f'+esc(id)+'"></div><div class="reference" id="r'+esc(id)+'">Kunci jawaban: '+esc(q[3]||'Tidak tersedia')+'</div>';
     return '<div class="hsk5PaperQuestion hsk4PaperSequenceQuestion"><div class="hsk5PaperQNo">'+esc(id)+'.</div><div class="hsk5PaperQBody"><div class="hsk4PaperSentenceList">'+lines+'</div>'+input+actions+'</div></div>';
   }).join('')+'</section>';
 }
