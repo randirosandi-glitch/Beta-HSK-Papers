@@ -3518,29 +3518,6 @@ html body.dark .mainNav .navItem.active .navLabel,html body.dark .mainNav .navIt
 #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle{}
 </style>
 
-<style id="hsk-darkmode-text-visibility-fix-v1">
-/* Dark Mode text-visibility audit: color only; no layout/size changes. */
-body.dark .brand span{
-  color:#ff7658!important;
-}
-body.dark .logoutNav{
-  color:#ff8e86!important;
-}
-body.dark .mark{
-  color:#ff7658!important;
-}
-body.dark .levelChoice.comingSoon small{
-  color:#c2b0ff!important;
-}
-body.dark .comingSoonPanel span{
-  color:#b8a4ff!important;
-}
-body.dark .eyebrow{
-  color:#9fb9ff!important;
-}
-</style>
-
-
 <style id="hsk-darkmode-text-fixed-all-v2">
 /* BEGIN GENERATED MODULE: src/styles/dark-mode-contrast.css */
 
@@ -3672,11 +3649,28 @@ body.dark .brandTitleWrap .brandTitle{
 body.dark .brandTitleWrap .brandSubtitle{
   color:var(--muted)!important;
 }
-/* END GENERATED MODULE: src/styles/dark-mode-contrast.css */
-</style>
 
+/* Additional actual-rendered-ID contrast rules consolidated from the former final cascade. */
+/* Dark Mode text-visibility audit: color only; no layout/size changes. */
+body.dark .brand span{
+  color:#ff7658!important;
+}
+body.dark .logoutNav{
+  color:#ff8e86!important;
+}
+body.dark .mark{
+  color:#ff7658!important;
+}
+body.dark .levelChoice.comingSoon small{
+  color:#c2b0ff!important;
+}
+body.dark .comingSoonPanel span{
+  color:#b8a4ff!important;
+}
+body.dark .eyebrow{
+  color:#9fb9ff!important;
+}
 
-<style id="hsk-darkmode-text-final-v3">
 /* FINAL Dark Mode text cascade repair.
    Targets the actual rendered IDs, not legacy class aliases.
    Color only: no geometry, typography sizing, spacing, JS, or data changes. */
@@ -3754,37 +3748,9 @@ html.dark body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionI
 body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{
   color:#c4ccd8!important;
 }
-/* Beta UX audit: restore visible, flat keyboard focus indicators on onboarding controls. */
-.authChoice:focus-visible,.authBack:focus-visible,.authSubmit:focus-visible,.authThemeToggle:focus-visible{outline:2px solid var(--blue)!important;outline-offset:3px!important;box-shadow:none!important;}
-.authForm .usernameInput:focus-visible{outline:2px solid var(--text)!important;outline-offset:3px!important;box-shadow:none!important;}
-.authForm .usernameInput[aria-invalid="true"]{border-color:var(--red)!important;}
-
-/* Final auth focus contrast: neutral in both themes; reserve red for invalid input. */
-body:not(.dark) .authForm .usernameInput:focus:not([aria-invalid="true"]),
-body:not(.dark) .authForm .usernameInput:focus-visible:not([aria-invalid="true"]),
-body:not(.dark) .usernameBox .usernameInput:focus:not([aria-invalid="true"]),
-body:not(.dark) .usernameBox .usernameInput:focus-visible:not([aria-invalid="true"]){
-  border-color:#17181b!important;
-  outline:2px solid #17181b!important;
-  outline-offset:3px!important;
-}
-body.dark .authForm .usernameInput:focus:not([aria-invalid="true"]),
-body.dark .authForm .usernameInput:focus-visible:not([aria-invalid="true"]),
-body.dark .usernameBox .usernameInput:focus:not([aria-invalid="true"]),
-body.dark .usernameBox .usernameInput:focus-visible:not([aria-invalid="true"]){
-  border-color:#f2f4f8!important;
-  outline:2px solid #f2f4f8!important;
-  outline-offset:3px!important;
-}
-body:not(.dark) .authForm .usernameInput[aria-invalid="true"]:focus,
-body:not(.dark) .authForm .usernameInput[aria-invalid="true"]:focus-visible,
-body.dark .authForm .usernameInput[aria-invalid="true"]:focus,
-body.dark .authForm .usernameInput[aria-invalid="true"]:focus-visible{
-  border-color:var(--red)!important;
-  outline:2px solid var(--red)!important;
-  outline-offset:3px!important;
-}
+/* END GENERATED MODULE: src/styles/dark-mode-contrast.css */
 </style>
+
 
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
@@ -7930,6 +7896,41 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
 #exercise .feedback.show.good::before,#exercise .feedback.show.bad::before{content:"";display:block;flex:0 0 24px;width:24px;height:24px;background:currentColor;-webkit-mask-position:center;-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-position:center;mask-size:contain;mask-repeat:no-repeat}
 #exercise .feedback.show.good::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z' clip-rule='evenodd'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z' clip-rule='evenodd'/%3E%3C/svg%3E")}
 #exercise .feedback.show.bad::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z' clip-rule='evenodd'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z' clip-rule='evenodd'/%3E%3C/svg%3E")}
+</style>
+
+<style id="auth-accessibility-styles">
+/* BEGIN GENERATED MODULE: src/styles/auth-accessibility.css */
+/* Beta UX audit: restore visible, flat keyboard focus indicators on onboarding controls. */
+.authChoice:focus-visible,.authBack:focus-visible,.authSubmit:focus-visible,.authThemeToggle:focus-visible{outline:2px solid var(--blue)!important;outline-offset:3px!important;box-shadow:none!important;}
+.authForm .usernameInput:focus-visible{outline:2px solid var(--text)!important;outline-offset:3px!important;box-shadow:none!important;}
+.authForm .usernameInput[aria-invalid="true"]{border-color:var(--red)!important;}
+
+/* Final auth focus contrast: neutral in both themes; reserve red for invalid input. */
+body:not(.dark) .authForm .usernameInput:focus:not([aria-invalid="true"]),
+body:not(.dark) .authForm .usernameInput:focus-visible:not([aria-invalid="true"]),
+body:not(.dark) .usernameBox .usernameInput:focus:not([aria-invalid="true"]),
+body:not(.dark) .usernameBox .usernameInput:focus-visible:not([aria-invalid="true"]){
+  border-color:#17181b!important;
+  outline:2px solid #17181b!important;
+  outline-offset:3px!important;
+}
+body.dark .authForm .usernameInput:focus:not([aria-invalid="true"]),
+body.dark .authForm .usernameInput:focus-visible:not([aria-invalid="true"]),
+body.dark .usernameBox .usernameInput:focus:not([aria-invalid="true"]),
+body.dark .usernameBox .usernameInput:focus-visible:not([aria-invalid="true"]){
+  border-color:#f2f4f8!important;
+  outline:2px solid #f2f4f8!important;
+  outline-offset:3px!important;
+}
+body:not(.dark) .authForm .usernameInput[aria-invalid="true"]:focus,
+body:not(.dark) .authForm .usernameInput[aria-invalid="true"]:focus-visible,
+body.dark .authForm .usernameInput[aria-invalid="true"]:focus,
+body.dark .authForm .usernameInput[aria-invalid="true"]:focus-visible{
+  border-color:var(--red)!important;
+  outline:2px solid var(--red)!important;
+  outline-offset:3px!important;
+}
+/* END GENERATED MODULE: src/styles/auth-accessibility.css */
 </style>
 
 </body>
