@@ -3,43 +3,43 @@
 ## Scope and safety
 
 - Repository: `randirosandi-glitch/Beta-HSK-Papers`
-- Branch: `main` (Beta only)
-- Runtime file: `index.html`
-- Stable was not modified.
-- This is a source-code traffic audit. Supabase dashboard metrics were not accessible through the connected tools, so the actual service-level egress source remains unconfirmed.
+- Scope: Beta only; the separate rebuild repository is untouched.
+- Runtime file: `index.html`, synchronized from the tracked source modules.
+- This is a source-code audit. Supabase dashboard metrics are not connected, so the exact egress source and measured savings are unknown.
 
-## Findings from the source
+## Current behavior
 
-1. The app stores learner progress in local storage and uses Supabase table `namasiswa`, column `data`, for cloud sync.
-2. `cloudFindUser()` issues a GET selecting only `data`. That response can grow with the user's saved progress.
-3. `cloudCreateUser()` and `cloudUpdateUser()` use `Prefer: return=minimal`, avoiding a full database row in successful write responses. This is already a good egress-saving measure.
-4. `pullCloudState()` is called on both `visibilitychange` to visible and window focus. Previously, the shared throttle was only 60 seconds, so returning to the app could trigger repeated full `data` downloads.
-5. `pushCloudState()` can reuse a recent remote snapshot and skips PATCH if the merged JSON is identical. However, the remote snapshot freshness window was only 60 seconds, allowing more GETs during long sessions.
-6. Failed pushes set a pending flag and the `finally` block retried after 1.5 seconds without a retry limit. Persistent failures could therefore create repeated network requests.
+- Learner progress is written to browser local storage immediately.
+- The first unsynced local change starts a 12-hour pending window. Later changes join the same batch and do not restart the clock.
+- When the pending batch is at least 12 hours old, an online app session can merge it with the latest cloud state and push it. If the app is closed or offline, it waits until a later active/online session.
+- Cloud pulls are limited to once per 12 hours for each username on each device. The first pull on a device remains available immediately so existing cloud progress can load.
+- A due push can fetch the latest remote state before updating it when the cached snapshot is stale. This protects the existing cross-device merge behavior.
+- Successful writes still use `Prefer: return=minimal`, so they do not return the full database row.
 
-## Runtime changes applied
+## Egress impact
 
-- Increase the shared automatic cloud-pull cooldown from 60 seconds to 15 minutes. A forced pull during login/recovery still bypasses this cooldown.
-- Increase the reusable remote-snapshot freshness window from 60 seconds to 15 minutes. This reduces GET-before-PATCH lookups during a session.
-- Bound automatic retries to at most three scheduled retries, with 5s, 10s, and 20s delays. A successful push resets the retry counter. This prevents an unbounded rapid retry loop when Supabase is unavailable.
-- Preserve local-first writes, existing user keys, cloud table/column, merge functions, and minimal write responses.
+The monthly and yearly dashboard summaries were calculated in the browser from locally stored attempt history. Removing those calculations reduces page code and local work, but by itself it does not materially reduce Supabase egress.
 
-## Trade-off
+The 12-hour local-first batch is the part expected to reduce Supabase traffic: it limits repeat cloud reads and combines multiple progress changes into fewer sync cycles. Exact egress savings cannot be guaranteed from source inspection alone. Each due sync may still read the full progress `data` column, and a larger accumulated progress record can make that response larger. Confirm the change against Supabase Usage and request logs over comparable time windows.
 
-Cross-device changes may take longer to appear automatically—up to the 15-minute refresh window in ordinary foreground/background activity. Login still forces a pull, and a stale snapshot is refreshed before a cloud write. This is an intentional trade-off for the user's stated priority of minimizing traffic. It does not guarantee that egress will fall below quota, because the dashboard's per-service breakdown is not yet known.
+## Trade-offs
 
-## Verification checklist
+- Progress remains on the current device until its batch syncs. Clearing browser storage or losing the device before the next successful sync can lose that unsynced batch.
+- Updates made on another device may take up to 12 hours to appear on this device, depending on when its last successful pull occurred.
+- An app that stays closed or offline beyond the 12-hour mark syncs when opened or brought online later; it does not run a background job.
 
-- [ ] Log in on a device with existing cloud progress; verify the progress is loaded.
-- [ ] Navigate between screens and switch app focus repeatedly; confirm there is no more than one ordinary cloud pull per 15-minute cooldown.
-- [ ] Check a section twice with no new local changes; verify identical snapshots do not trigger a PATCH.
-- [ ] Change an answer and check the section; verify local progress persists and cloud sync succeeds.
-- [ ] Simulate offline/cloud failure; verify retries are bounded and local progress remains.
-- [ ] Restore network and trigger a manual user action/section check; verify sync can recover.
-- [ ] Test two devices with distinct section progress and confirm merge behavior after refresh/login.
-- [ ] Confirm username identity, study plans, reset behavior, and account `test` exclusions remain intact.
-- [ ] Compare Supabase Egress and request counts before/after using the same observation window.
+## Verification
 
-## Dashboard follow-up needed
+- [ ] First login on a device loads the existing cloud progress.
+- [ ] Reopening or focusing the app before 12 hours does not cause repeated cloud pulls.
+- [ ] Answer and grading changes appear in local storage immediately and remain queued before 12 hours.
+- [ ] Later local edits join the original pending window rather than restarting it.
+- [ ] At the 12-hour boundary, an online foreground session merges and uploads the local batch.
+- [ ] A due batch remains queued while offline and syncs after connectivity returns.
+- [ ] Two devices retain disjoint progress and merge it after their eligible syncs.
+- [ ] Account test continues to make no Supabase requests.
+- [ ] Compare Supabase Egress and request counts before and after using the same observation window.
 
-In Supabase Usage, inspect the egress breakdown by service (Database, Storage, Auth, Realtime, and any other enabled services) and compare it with request/log counts. If Database Egress is not the dominant source, do not assume this code change addresses the primary cause; investigate the service responsible before further architecture changes.
+## Dashboard follow-up
+
+In Supabase Usage, inspect egress by service (Database, Storage, Auth, Realtime, and other enabled services) and compare it with request/log counts. If Database Egress is not the dominant source, investigate the service responsible before making further sync changes.
