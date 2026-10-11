@@ -3964,11 +3964,12 @@ async function pullCloudStateInternal(force=false){
     return true;
   }catch(e){console.warn('Cloud sync pull failed',e);return false}
 }
-let cloudPullInFlight=null,cloudLastPullAt=0,cloudLastPullUsername='';
+let cloudPullInFlight=null,cloudLastPullAt=0,cloudLastPullUsername='',cloudLastPullAttemptAt=0,cloudLastPullAttemptUsername='';
 let cloudLastSyncedSnapshot='';
 let cloudKnownRemoteUsername='',cloudKnownRemoteStore=null,cloudKnownRemoteLoaded=false,cloudKnownRemoteAt=0;
 const CLOUD_SYNC_INTERVAL=12*60*60*1000;
 const CLOUD_PULL_COOLDOWN=CLOUD_SYNC_INTERVAL;
+const CLOUD_PULL_FAILURE_COOLDOWN=5*60*1000;
 const CLOUD_SNAPSHOT_MAX_AGE=15*60*1000;
 const CLOUD_SYNC_META_PREFIX='hsk4-kelas-e-cloud-sync-v1:';
 function cloudSyncStorageKey(kind,username=currentUsername){return CLOUD_SYNC_META_PREFIX+kind+':'+String(username||'')}
@@ -4011,9 +4012,17 @@ function pullCloudState(force=false){
     flushPendingCloudSync();
     return Promise.resolve(false);
   }
-  cloudLastPullUsername=username;cloudLastPullAt=now;
+  const lastAttempt=cloudLastPullAttemptUsername===username?cloudLastPullAttemptAt:0;
+  if(lastAttempt&&now-lastAttempt<CLOUD_PULL_FAILURE_COOLDOWN){
+    flushPendingCloudSync();
+    return Promise.resolve(false);
+  }
+  cloudLastPullAttemptUsername=username;cloudLastPullAttemptAt=now;
   cloudPullInFlight=pullCloudStateInternal(force).then(result=>{
-    if(result&&currentUsername===username)writeCloudTimestamp('pull',Date.now(),username);
+    if(result&&currentUsername===username){
+      cloudLastPullUsername=username;cloudLastPullAt=Date.now();
+      writeCloudTimestamp('pull',cloudLastPullAt,username);
+    }
     return result;
   }).finally(()=>{
     cloudPullInFlight=null;
@@ -4621,7 +4630,7 @@ function renderHome(){
   const resume=last.resume&&last.resume.type&&last.resume.sectionIndex!=null?DB[code]?.[last.resume.type]?.[Number(last.resume.sectionIndex)]:null;
   const resumeLabel=resume?(META[last.resume.type]?.label||last.resume.type)+' · '+String(resume.title||'').replace(/^.*?·\s*/,''):'';
   sub.textContent='';
-  el.innerHTML=`<div class="homeContinue"><div class="homeContinueHead"><div><div class="homeContinueTitle">Paket ${esc(code)}</div><div class="homeContinueMeta">${resumeLabel?esc(resumeLabel)+' · ':''}${st.answered}/${st.total} soal terjawab · ${st.score} benar</div></div><div class="homeContinuePct">${pct}%</div></div>${progressHTML({answered:st.answered,total:st.total,pct},'Progres paket')}<div class="homeContinueActions"><button class="homeContinueBtn" type="button" onclick="continueLastPackage('${esc(code)}')">${pct>=100?'Lihat paket':'Lanjut belajar'} <span class="material-symbols-rounded ico actionArrow" aria-hidden="true">arrow_forward</span></button></div><div class="syncStatus ${cloudEnabled()?'':'warn'}"><strong>${cloudEnabled()?'Tersimpan lokal':'Tersimpan di perangkat'}</strong>${cloudEnabled()?' · sinkronisasi cloud otomatis tiap 12 jam':' · sinkronisasi cloud belum dikonfigurasi'}</div></div>`;
+  el.innerHTML=`<div class="homeContinue"><div class="homeContinueHead"><div><div class="homeContinueTitle">Paket ${esc(code)}</div><div class="homeContinueMeta">${resumeLabel?esc(resumeLabel)+' · ':''}${st.answered}/${st.total} soal terjawab · ${st.score} benar</div></div><div class="homeContinuePct">${pct}%</div></div>${progressHTML({answered:st.answered,total:st.total,pct},'Progres paket')}<div class="homeContinueActions"><button class="homeContinueBtn" type="button" onclick="continueLastPackage('${esc(code)}')">${pct>=100?'Lihat paket':'Lanjut belajar'} <span class="material-symbols-rounded ico actionArrow" aria-hidden="true">arrow_forward</span></button></div><div class="syncStatus ${cloudEnabled()?'':'warn'}"><strong>${cloudEnabled()?'Tersimpan lokal':'Tersimpan di perangkat'}</strong>${cloudEnabled()?' · sinkronisasi cloud tiap 12 jam saat app aktif':' · sinkronisasi cloud belum dikonfigurasi'}</div></div>`;
   renderHomeHistory(history);
 }
 async function continueLastActivity(){
