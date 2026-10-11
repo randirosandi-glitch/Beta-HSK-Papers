@@ -102,3 +102,103 @@
   #exercise .hsk5PaperPart3 .hsk5PaperOptions:not(.paperOptionsTwoRows) .hsk5PaperOption{width:auto!important;}
   #exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows .hsk5PaperOption{width:100%!important;}
 }
+
+/* Reading Part 2 header typography. */
+#exercise .section h2#exTitle.hsk5PaperSectionHeader{
+  margin:0!important;
+  padding:0!important;
+  text-align:center!important;
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-weight:400!important;
+  letter-spacing:0!important;
+  line-height:1.12!important;
+}
+#exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle{
+  display:block!important;
+  margin:0!important;
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:clamp(40px,8vw,58px)!important;
+  line-height:1.12!important;
+  font-weight:400!important;
+  letter-spacing:0!important;
+}
+#exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{
+  display:block!important;
+  margin:28px 0 0!important;
+  text-align:left!important;
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:clamp(20px,4.2vw,31px)!important;
+  line-height:1.65!important;
+  font-weight:400!important;
+  letter-spacing:0!important;
+}
+@media(max-width:599px){
+  #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle{font-size:44px!important;}
+  #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{margin-top:22px!important;font-size:21px!important;line-height:1.7!important;}
+}
+
+/* C5: HSK 5 Reading Part 2 — PDF-style numbering/content alignment. */
+#exercise .hsk5PaperPart2 .hsk5PaperQuestion{
+  display:grid!important;
+  grid-template-columns:clamp(34px,5.2vw,68px) minmax(0,1fr)!important;
+  column-gap:6px!important;
+  align-items:start!important;
+  padding:8px 0 15px!important;
+  margin:0!important;
+}
+#exercise .hsk5PaperPart2 .hsk5PaperQNo{
+  display:block!important;
+  padding-top:1px!important;
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:16px!important;
+  line-height:1.7!important;
+  font-weight:700!important;
+  color:var(--text)!important;
+  text-align:left!important;
+}
+#exercise .hsk5PaperPart2 .hsk5PaperQBody{
+  min-width:0!important;
+}
+#exercise .hsk5PaperPart2 .hsk5PaperQText{
+  margin:0 0 6px!important;
+  font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
+  font-size:16px!important;
+  line-height:1.7!important;
+  font-weight:650!important;
+  color:var(--text)!important;
+  white-space:pre-wrap!important;
+}
+#exercise .hsk5PaperPart2 .hsk5PaperOptions{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:0!important;
+  margin:0!important;
+}
+#exercise .hsk5PaperPart2 .hsk5PaperOption{
+  width:100%!important;
+  justify-self:stretch!important;
+}
+#exercise .hsk5PaperPart2 .hsk5PaperActions,
+#exercise .hsk5PaperPart2 .hsk5PaperFeedback{
+  margin-left:0!important;
+}
+@media(max-width:720px){
+  #exercise .hsk5PaperPart2 .hsk5PaperQuestion{
+    grid-template-columns:34px minmax(0,1fr)!important;
+    column-gap:6px!important;
+    padding:7px 0 14px!important;
+  }
+  #exercise .hsk5PaperPart2 .hsk5PaperQNo{
+    font-size:15px!important;
+    line-height:1.65!important;
+  }
+  #exercise .hsk5PaperPart2 .hsk5PaperQText{
+    font-size:15px!important;
+    line-height:1.65!important;
+    margin-bottom:5px!important;
+  }
+  #exercise .hsk5PaperPart2 .hsk5PaperOption.opt{
+    font-size:14px!important;
+    line-height:1.5!important;
+  }
+}
