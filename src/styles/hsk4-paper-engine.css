@@ -24,6 +24,10 @@
   line-height:1.7!important;
   color:var(--text)!important;
 }
+#exercise .hsk4PaperPart .hsk5PaperOption.opt,
+#exercise .hsk4PaperPart .hsk5PaperOption.opt.selected,
+#exercise .hsk4PaperPart .hsk5PaperOption.opt.correct,
+#exercise .hsk4PaperPart .hsk5PaperOption.opt.wrong{font-weight:600!important;}
 #exercise .hsk4PaperWord{white-space:nowrap!important;}
 #exercise .hsk4PaperWord b{margin-right:3px!important;}
 #exercise .hsk4PaperClozeQuestion{
