@@ -6,7 +6,7 @@ Scope: Beta main only. Stable is explicitly out of scope.
 
 From a local checkout with Node.js installed:
 
-    node --test tests/rebuild-contracts.test.mjs
+    node --test
 
 The initial automated gate is a source-contract test, not a browser test. It catches accidental removal of critical interfaces while the monolith is being decomposed. Passing it does not prove the app works in a real browser.
 
@@ -21,10 +21,10 @@ The initial automated gate is a source-contract test, not a browser test. It cat
 - [ ] Listening options stay visible; question/transcript visibility follows the current HSK-specific rules; no duplicate audio players.
 - [ ] Study-plan add/remove/rename/delete survives refresh and cloud merge; deleted plans do not reappear.
 - [ ] Cached catalog renders first, then refreshes in the background; opening a package loads its JSON.
-- [ ] Offline use does not erase progress; reconnect merges local/cloud changes.
+- [ ] Offline use does not erase progress; pending changes stay queued and merge after the 12-hour window when the app is active and online.
 - [ ] Username identity, progress keys, study plans, reset tombstones, resume metadata, and attempt IDs remain compatible.
 - [ ] Account test makes no Supabase requests, per the existing project rule.
-- [ ] Supabase GET/POST/PATCH behavior remains minimal and does not add requests for ordinary navigation or each answer.
+- [ ] Cloud pulls are limited to one per 12 hours per username/device after the initial pull; local changes queue for at least 12 hours and are not uploaded per answer.
 - [ ] No horizontal overflow; Light Mode remains the layout master; Dark Mode changes colors only; no new shadows or heavy blur.
 - [ ] Landscape cards remain compact.
 - [ ] Activity tests cover 4,999, 5,000, 5,001, and 10,000 events, duplicate IDs, out-of-order timestamps, and local/cloud merge.
