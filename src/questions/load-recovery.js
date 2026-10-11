@@ -18,6 +18,13 @@
       try{
         const r=window.route||{};
         if(r.screen!=='exercise')return out;
+        if(r.type==='listening'&&Number(r.sectionIndex)===-1){
+          const sections=window.DB?.[r.packageCode]?.listening||[];
+          const total=sections.reduce((n,section)=>n+(Array.isArray(section?.questions)?section.questions.length:0),0);
+          if(total>0)return out;
+          window.showExerciseLoadRecovery?.('Soal belum berhasil dimuat','Paket ini terbuka, tetapi soal Listening masih kosong. Refresh untuk mencoba memuat ulang data soal.');
+          return out;
+        }
         const sec=window.DB?.[r.packageCode]?.[r.type]?.[r.sectionIndex];
         const qs=sec?.questions;
         if(!Array.isArray(qs)||qs.length===0){

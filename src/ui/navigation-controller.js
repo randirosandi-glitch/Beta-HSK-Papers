@@ -22,6 +22,17 @@
   window.__hskNavigationControllerV10=true;
   window.__hskNavigationController=true;
 
+  if(!window.__hskRouteBridgeV1){
+    try{
+      const routeDescriptor=Object.getOwnPropertyDescriptor(window,'route');
+      if(!routeDescriptor||routeDescriptor.configurable){
+        const routeGetter=function(){return route};
+        routeGetter.__hskRouteBridgeV1=true;
+        Object.defineProperty(window,'route',{configurable:true,enumerable:true,get:routeGetter,set:function(value){if(value&&typeof value==='object')route=value}});
+      }
+      window.__hskRouteBridgeV1=true;
+    }catch(e){console.warn('HSK route bridge unavailable:',e)}
+  }
   const APP='__hskAppV10';
   let internalChange=false;
   let initialized=false;
@@ -55,7 +66,11 @@
   }
 
   async function render(r){
-    r=norm(r); window.route=r;
+    r=norm(r);
+    if(r.type==='listening'&&(r.screen==='parts'||r.screen==='exercise'||r.screen==='result')){
+      r={...r,screen:'exercise',sectionIndex:-1};
+    }
+    window.route=r;
     try{
       await ensurePackageForRoute(r);
       if(r.screen==='home'){if(typeof renderHome==='function')renderHome();setScreen('home',false);return true;}
@@ -83,7 +98,9 @@
       case 'studyPlanDetail': return {screen:'studyPlans',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
       case 'package': return r.studyPlanId?{screen:'studyPlanDetail',packageCode:null,type:null,sectionIndex:null,studyPlanId:r.studyPlanId}:{screen:'packages',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
       case 'parts': return {screen:'package',packageCode:r.packageCode,type:null,sectionIndex:null,studyPlanId:r.studyPlanId};
-      case 'exercise': return {screen:'parts',packageCode:r.packageCode,type:r.type,sectionIndex:null,studyPlanId:r.studyPlanId};
+      case 'exercise': return r.type==='listening'
+        ? {screen:'package',packageCode:r.packageCode,type:null,sectionIndex:null,studyPlanId:r.studyPlanId}
+        : {screen:'parts',packageCode:r.packageCode,type:r.type,sectionIndex:null,studyPlanId:r.studyPlanId};
       case 'result': return {screen:'exercise',packageCode:r.packageCode,type:r.type,sectionIndex:r.sectionIndex,studyPlanId:r.studyPlanId};
       case 'packages': return {screen:'levels',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
       case 'levels': case 'scores': case 'studyPlans': return home();
