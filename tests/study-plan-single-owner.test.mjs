@@ -22,6 +22,8 @@ const canonicalFunctionalOwners = [
 ];
 
 test('study-plan navigation and picker globals have one repair-layer owner', () => {
+  assert.doesNotMatch(reliability, /MASTER\\.planState|planState|renderStudyPlanPickerMaster|materialOptionsMaster/,
+    'legacy picker state and renderer must be removed from reliability-fixes.js');
   for (const name of canonicalFunctionalOwners) {
     const assignment = new RegExp('window\\.' + name + '\\s*=(?!=)', 'g');
     assert.equal([...reliability.matchAll(assignment)].length, 0,

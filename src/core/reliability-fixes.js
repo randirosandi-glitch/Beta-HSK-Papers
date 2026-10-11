@@ -84,30 +84,6 @@
     return allMaterials().find(m=>m.key===key) || null;
   }
 
-  function defaultMaterialKey(){
-    const all=allMaterials();
-    return all.find(m=>m.key==='hsk:4')?.key || all[0]?.key || 'hsk:4';
-  }
-
-  function codesForMaterial(key){
-    return materialForKey(key)?.codes.slice() || [];
-  }
-
-  function packageDescription(code){
-    const d=DB[code]||{};
-    const total=packageStats(code)?.total||0;
-    const parts=Object.entries(META||{})
-      .filter(([t])=>(d[t]||[]).length>0)
-      .map(([t,m])=>m.label);
-    if(parts.length) return `${total} soal · ${parts.join(' · ')}`;
-    return 'Belum ada soal interaktif';
-  }
-
-  function packageStatus(code){
-    const st=packageStats(code),pct=st.pct||0;
-    return pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';
-  }
-
   /* ---------- Package / level navigation ---------- */
 
   /* ---------- Scores: only available materials ---------- */
@@ -186,16 +162,6 @@
 
   /* ---------- Study plans ---------- */
 
-  const planState=MASTER.planState || {
-    mode:'plan',
-    planId:null,
-    code:null,
-    source:defaultMaterialKey(),
-    query:'',
-    pendingCode:null
-  };
-  MASTER.planState=planState;
-
   function plansStoreMaster(){
     try{
       const s=readStore();
@@ -224,111 +190,6 @@
       if(st.total && st.answered>=st.total) done++;
     });
     return {total:codes.length,done,answered,questions,pct:codes.length?Math.round(done/codes.length*100):0};
-  }
-
-  function materialOptionsMaster(){
-    const all=allMaterials();
-    return [
-      {value:'all',label:'Semua materi',codes:all.flatMap(m=>m.codes)},
-      ...all.map(m=>({value:m.key,label:m.label,codes:m.codes}))
-    ];
-  }
-
-  function sourceCodesMaster(source){
-    const opts=materialOptionsMaster();
-    return opts.find(o=>o.value===source)?.codes.slice() || [];
-  }
-
-  function sourceLabelMaster(source){
-    return materialOptionsMaster().find(o=>o.value===source)?.label || 'Semua materi';
-  }
-
-  function renderSourceOptionsMaster(){
-    const sel=has('studyPlanPickerSource');
-    if(!sel)return;
-    const opts=materialOptionsMaster();
-    const hsk=opts.filter(o=>o.value.startsWith('hsk:'));
-    const wb=opts.filter(o=>o.value.startsWith('wb:'));
-    let html='<option value="all">Semua materi</option>';
-    if(hsk.length) html+='<optgroup label="HSK">'+hsk.map(o=>`<option value="${escHtml(o.value)}">${escHtml(o.label)}</option>`).join('')+'</optgroup>';
-    if(wb.length) html+='<optgroup label="Workbook">'+wb.map(o=>`<option value="${escHtml(o.value)}">${escHtml(o.label)}</option>`).join('')+'</optgroup>';
-    sel.innerHTML=html;
-    if(!opts.some(o=>o.value===planState.source)){
-      planState.source=opts.find(o=>o.value===defaultMaterialKey())?.value || 'all';
-    }
-    sel.value=planState.source;
-  }
-
-  function renderStudyPlanPickerMaster(){
-    const modal=has('studyPlanPickerModal');
-    const list=has('studyPlanPickerList');
-    const input=has('studyPlanPickerSearchInput');
-    if(!list)return;
-
-    if(planState.mode==='package'){
-      if(has('studyPlanPickerSourceWrap')) has('studyPlanPickerSourceWrap').hidden=true;
-      if(has('studyPlanPickerPackage')) has('studyPlanPickerPackage').textContent='Pilih rencana untuk '+(DB[planState.code]?.title||('Paket '+planState.code));
-      if(input){
-        input.placeholder='Cari rencana...';
-        input.value=planState.query||'';
-      }
-      const q=String(planState.query||'').trim().toLowerCase();
-      const plans=plansStoreMaster().filter(p=>
-        !q || String(p.name||'').toLowerCase().includes(q) || String(p.description||'').toLowerCase().includes(q)
-      );
-      if(!plans.length){
-        list.innerHTML=`<div class="studyPlanPickerEmpty">${q?'Rencana yang kamu cari tidak ditemukan.':'Belum ada rencana. Buat rencana dari menu Rencana.'}</div>`;
-        return;
-      }
-      list.innerHTML=plans.map(p=>{
-        const hasCode=Array.isArray(p.packageCodes)&&p.packageCodes.includes(planState.code);
-        const st=planStatsMaster(p);
-        return `<button class="studyPlanPick ${hasCode?'isAdded':''}" type="button"
-          aria-pressed="${hasCode?'true':'false'}"
-          onclick="togglePackageInStudyPlan('${escHtml(p.id)}','${escHtml(planState.code)}')">
-          <div class="studyPlanPickIcon">☷</div>
-          <div class="studyPlanPickMain"><strong>${escHtml(p.name)}</strong><span>${st.total} paket · ${st.pct}% selesai</span></div>
-          <span class="studyPlanPickState">${hasCode?'✓ Ditambahkan':'＋ Tambahkan'}</span>
-        </button>`;
-      }).join('');
-      return;
-    }
-
-    if(has('studyPlanPickerSourceWrap')) has('studyPlanPickerSourceWrap').hidden=false;
-    renderSourceOptionsMaster();
-    if(has('studyPlanPickerPackage')) has('studyPlanPickerPackage').textContent='Pilih paket untuk ditambahkan ke '+(getPlanMaster(planState.planId)?.name||'rencana ini');
-    if(input){
-      input.placeholder='Cari paket...';
-      input.value=planState.query||'';
-    }
-
-    const q=String(planState.query||'').trim().toLowerCase();
-    const codes=sourceCodesMaster(planState.source).filter(code=>{
-      const d=DB[code]||{};
-      return !q || code.toLowerCase().includes(q)
-        || String(d.title||'').toLowerCase().includes(q)
-        || String(d.meta?.lessonTitle||'').toLowerCase().includes(q);
-    });
-
-    if(!codes.length){
-      list.innerHTML=`<div class="studyPlanPickerEmpty">${q?'Paket yang kamu cari tidak ditemukan.':`Belum ada paket tersedia untuk ${escHtml(sourceLabelMaster(planState.source))}.`}</div>`;
-      return;
-    }
-
-    const p=getPlanMaster(planState.planId);
-    list.innerHTML=codes.map(code=>{
-      const st=packageStats(code);
-      const d=DB[code]||{};
-      const hasCode=Array.isArray(p?.packageCodes)&&p.packageCodes.includes(code);
-      const title=d.title||('Paket '+code);
-      return `<button class="studyPlanPick ${hasCode?'isAdded':''}" type="button"
-        aria-pressed="${hasCode?'true':'false'}"
-        onclick="addPackageDirectlyToStudyPlan('${escHtml(p?.id||'')}','${escHtml(code)}')">
-        <div class="studyPlanPickIcon">☷</div>
-        <div class="studyPlanPickMain"><strong>${escHtml(title)}</strong><span>${st.answered}/${st.total} soal terjawab · ${st.pct||0}%</span></div>
-        <span class="studyPlanPickState">${hasCode?'✓ Ditambahkan':'＋ Tambahkan'}</span>
-      </button>`;
-    }).join('');
   }
 
   window.renderStudyPlans=function(){
