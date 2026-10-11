@@ -60,12 +60,21 @@ test('records the current attempt-history retention behavior until a separate te
   assert.match(html, /function getProgressHistory\(/);
 });
 
-test('keeps traffic safeguards bounded and avoids frequent automatic pulls', () => {
-  assert.match(html, /const CLOUD_PULL_COOLDOWN=15\*60\*1000/);
+test('keeps cloud traffic to a 12-hour local-first cadence', () => {
+  assert.match(html, /const CLOUD_SYNC_INTERVAL=12\*60\*60\*1000/);
+  assert.match(html, /const CLOUD_PULL_COOLDOWN=CLOUD_SYNC_INTERVAL/);
   assert.match(html, /const CLOUD_SNAPSHOT_MAX_AGE=15\*60\*1000/);
   assert.match(html, /const CLOUD_SYNC_MAX_RETRIES=3/);
+  assert.match(html, /function markCloudPending\(/);
+  assert.match(html, /function flushPendingCloudSync\(/);
   assert.match(html, /cloudSyncRetryCount<CLOUD_SYNC_MAX_RETRIES/);
   assert.doesNotMatch(html, /setTimeout\(\(\)=>pushCloudState\(readStore\(\)\),1500\)/);
+});
+
+test('keeps only the weekly progress dashboard', () => {
+  assert.match(html, /id="weeklyDashboard"/);
+  assert.doesNotMatch(html, /id="monthlyDetail"|id="yearlyDetail"|id="monthlyStats"|id="yearlyStats"/);
+  assert.doesNotMatch(html, /renderPeriod\(|toggleDashboardPeriod|periodGrid|periodItem/);
 });
 
 test('retains the main question and UI structures', () => {
