@@ -217,11 +217,11 @@ body.dark .feedback.good,html.dark body .feedback.good,body.dark .opt.correct,ht
 
 @media (min-width:600px) and (orientation:landscape){main,.appFooter{margin-left:72px!important;}.appFooter{padding-left:0!important;}}.appFooter{min-height:0!important;height:auto!important;padding-top:5px!important;padding-bottom:5px!important;}
 
-@media (min-width:600px) and (orientation:landscape){main{width:calc(100% - 84px)!important;max-width:none!important;margin-left:84px!important;margin-right:0!important;padding:0 32px 88px!important;box-sizing:border-box!important;}main>.screen.active,main>section.screen.active{width:100%!important;max-width:1180px!important;margin-left:auto!important;margin-right:auto!important;}.appFooter{width:calc(100% - 84px)!important;max-width:none!important;margin-left:84px!important;margin-right:0!important;padding:8px 32px 10px!important;box-sizing:border-box!important;min-height:0!important;height:auto!important;font-size:10px!important;}}.appFooter{min-height:0!important;height:auto!important;padding-top:6px!important;padding-bottom:8px!important;}
+@media (min-width:600px) and (orientation:landscape){body:not(.exercise-focus) main{width:calc(100% - 84px)!important;max-width:none!important;margin-left:84px!important;margin-right:0!important;padding:0 32px 88px!important;box-sizing:border-box!important;}main>.screen.active,main>section.screen.active{width:100%!important;max-width:1180px!important;margin-left:auto!important;margin-right:auto!important;}.appFooter{width:calc(100% - 84px)!important;max-width:none!important;margin-left:84px!important;margin-right:0!important;padding:8px 32px 10px!important;box-sizing:border-box!important;min-height:0!important;height:auto!important;font-size:10px!important;}}.appFooter{min-height:0!important;height:auto!important;padding-top:6px!important;padding-bottom:8px!important;}
 
 
 
-@media (min-width:600px) and (orientation:landscape){main{width:calc(100% - 84px)!important;margin-left:84px!important;margin-right:0!important;box-sizing:border-box!important;}.appFooter{width:calc(100% - 84px)!important;margin-left:84px!important;margin-right:0!important;box-sizing:border-box!important;}}body{font-synthesis:none!important;}
+@media (min-width:600px) and (orientation:landscape){body:not(.exercise-focus) main{width:calc(100% - 84px)!important;margin-left:84px!important;margin-right:0!important;box-sizing:border-box!important;}.appFooter{width:calc(100% - 84px)!important;margin-left:84px!important;margin-right:0!important;box-sizing:border-box!important;}}body{font-synthesis:none!important;}
 
 .appFooter span{color:inherit!important;opacity:1!important;}.appFooter span+span{color:#7b8798!important;opacity:1!important;}body.dark .appFooter{color:#aab5c7!important;background:transparent!important;}body.dark .appFooter span{color:#aab5c7!important;}body.dark .appFooter span+span{color:#8f9bad!important;}
 
@@ -2032,6 +2032,7 @@ body.home-route main{padding-top:18px!important;}
     padding:calc(var(--app-topbar-h) + 22px) var(--content-gutter) 120px!important;
   }
   body.home-route main{padding-top:22px!important;}
+  body.exercise-focus main{width:100%!important;margin-left:0!important;margin-right:0!important;}
   .screen{width:min(100%,var(--content-max))!important;max-width:var(--content-max)!important;margin-inline:auto!important;}
 
   /* Home / package / level grids use the second dimension of the tablet. */
@@ -2074,7 +2075,7 @@ body.home-route main{padding-top:18px!important;}
 @media (min-width:600px) and (orientation:landscape){
   :root{--content-gutter:clamp(24px,2.8vw,38px);}
 
-  main{
+  body:not(.exercise-focus) main{
     width:calc(100% - var(--nav-rail))!important;
     max-width:none!important;
     margin-left:var(--nav-rail)!important;
@@ -2939,7 +2940,7 @@ body.exercise-focus .mainNav{display:none!important}
 #exercise .listeningAudioRetry{margin-top:8px;min-height:36px}
 @media (min-width:600px) and (orientation:landscape){
   #exercise .listeningAudioDock{
-    margin-left:calc(50% - 50vw - var(--nav-rail)/2);
+    margin-left:calc(50% - 50vw);
   }
 }
 @media(max-width:599px){
