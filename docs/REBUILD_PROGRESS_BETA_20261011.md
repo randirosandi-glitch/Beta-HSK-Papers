@@ -84,3 +84,11 @@ Progress merge/activity, statistics, recent history, section persistence, study-
 - Preserve username identity, existing storage key prefixes, stored data shape, study plans, reset tombstones, route restoration, package cache-first/background-refresh behavior, and the single canonical grading path.
 - Keep Supabase traffic minimal by design, but do not let traffic optimization replace the rebuild objective.
 - Do not claim a behavioral fix from source checks alone.
+
+## Repository housekeeping — 2026-10-11
+
+- A docs-only PR adds a root guide and a documentation index; it does not change runtime files.
+- A housekeeping PR removes the unreferenced `beta-scroll-optimization-v1.html` snapshot and redundant `.gitkeep` markers from data directories that already contain tracked content.
+- The recovery snapshot remains until a newer rebuild checkpoint has been verified and deliberately retained elsewhere.
+- Both housekeeping PRs are open and unmerged. The app runtime remains unchanged while they are under review.
+- The next runtime migration work still requires a focused browser regression pass before it can be called complete. The owner plans to perform the final app test after the rebuild is ready.
