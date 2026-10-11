@@ -1,7 +1,7 @@
 function isSequenceReadingQuestion(id){const pkg=getActivePackageData();if(getPackageEngineRules(pkg))return false;const code=String(route?.packageCode||'');return route&&route.type==='reading'&&(Number(id)>=56&&Number(id)<=65||((code.startsWith('WB4A')||code.startsWith('WB4B'))&&Number(route.sectionIndex)===2)||code==='HSK4-SUSUN-KALIMAT');}
 function resolvedQuestionSectionIndex(q,type,idx){const requested=idx===undefined?route?.sectionIndex:idx;if(type==='listening'&&Number(requested)===-1){const source=window.__hskListeningSourceIndex?.(q?.[0]);return source===null||source===undefined?0:Number(source)}return requested}
 function correctIndex(q,type,idx=route?.sectionIndex){const sourceIndex=resolvedQuestionSectionIndex(q,type,idx);const model=getResolvedQuestionModel(getActivePackageData(),type,sourceIndex,q);const key=String(q?.[3]??"").trim();if(model.type==="sentence_ordering"||model.type==="guided_writing"||model.type==="picture_writing")return -1;if(/^[A-F]$/i.test(key))return key.toUpperCase().charCodeAt(0)-65;const opts=q?.[2]||[];const direct=opts.findIndex(o=>norm(o)===norm(key));if(direct>=0)return direct;if(key==="√"){const i=opts.findIndex(o=>norm(o)==="对");if(i>=0)return i}if(key==="×"){const i=opts.findIndex(o=>norm(o)==="错");if(i>=0)return i}return -1}
-function isCorrect(q,u,type,idx=route?.sectionIndex){const sourceIndex=resolvedQuestionSectionIndex(q,type,idx);const model=getResolvedQuestionModel(getActivePackageData(),type,sourceIndex,q);if(model.type==="sentence_ordering"||model.type==="sequence")return isSequenceAnswerCorrect(q,u);if(model.type==="guided_writing"||model.type==="picture_writing")return false;const ci=correctIndex(q,type,sourceIndex);return Number(u)===ci}
+function isCorrect(q,u,type,idx=route?.sectionIndex){const sourceIndex=resolvedQuestionSectionIndex(q,type,idx);const model=getResolvedQuestionModel(getActivePackageData(),type,sourceIndex,q);if(model.type==="sentence_ordering"||model.type==="sequence")return isSequenceAnswerCorrect(q,hsk4Part3PermutationAnswer(q,u));if(model.type==="guided_writing"||model.type==="picture_writing")return false;const ci=correctIndex(q,type,sourceIndex);return Number(u)===ci}
 
 
 
@@ -215,13 +215,34 @@ function hsk4PaperClozePart(pkg,qs,part){
   return '<section class="hsk5PaperGroup hsk4PaperPart '+part+'">'+bank+body+'</section>';
 }
 function hsk4PaperPart3(pkg,qs){
-  return '<section class="hsk5PaperGroup hsk4PaperPart hsk4PaperPart3">'+qs.map((q,i)=>{
+  return '<section class="hsk5PaperGroup hsk4PaperPart hsk4PaperPart3">'+qs.map(q=>{
     const id=String(q[0]);
     const lines=(Array.isArray(q[2])?q[2]:[]).map((text,index)=>'<div class="hsk4PaperSentenceLine"><b>'+String.fromCharCode(65+index)+'.</b><span>'+esc(text)+'</span></div>').join('');
-    const input='<div class="hsk4PaperSequenceResponse"><label for="w'+esc(id)+'">Urutan kalimat</label><input class="write writingAnswerField hsk4PaperSequenceInput" id="w'+esc(id)+'" type="text" value="'+esc(answers[id]||'')+'" placeholder="ABC" autocomplete="off" oninput="saveWriting(this)"></div>';
+    const selected=hsk4Part3PermutationAnswer(q,answers[id]);
+    const choices=permutations().map((value,index)=>'<button type="button" class="opt hsk5PaperOption hsk4PaperPermutation'+(selected===value?' selected':'')+'" data-q="'+esc(id)+'" data-i="'+index+'" aria-label="Urutan '+value+'" aria-pressed="'+(selected===value?'true':'false')+'" onclick="chooseHsk4Permutation(this)"><span class="optText">'+value+'</span></button>').join('');
+    const input='<div class="hsk4PaperPermutations" role="group" aria-label="Pilihan urutan kalimat">'+choices+'</div>';
     const actions='<div class="hsk5PaperActions"><button type="button" class="btn soft" onclick="checkOne(\''+esc(id)+'\');return false;">'+svg('check')+' Periksa</button><button type="button" class="btn" onclick="showReference(\''+esc(id)+'\')">Lihat kunci</button></div><div class="feedback hsk5PaperFeedback" id="f'+esc(id)+'"></div><div class="reference" id="r'+esc(id)+'">Kunci jawaban: '+esc(q[3]||'Tidak tersedia')+'</div>';
     return '<div class="hsk5PaperQuestion hsk4PaperSequenceQuestion"><div class="hsk5PaperQNo">'+esc(id)+'.</div><div class="hsk5PaperQBody"><div class="hsk4PaperSentenceList">'+lines+'</div>'+input+actions+'</div></div>';
   }).join('')+'</section>';
+}
+function hsk4Part3PermutationAnswer(q,value){
+  const code=String(route?.packageCode||'');
+  if(!code.startsWith('H410')||Number(route?.sectionIndex)!==2||!Array.isArray(q?.[2])||q[2].length!==3)return String(value??'').trim().toUpperCase();
+  const answer=String(value??'').trim().toUpperCase();
+  if(/^[1-6]$/.test(answer))return permutations()[Number(answer)-1];
+  return answer;
+}
+function chooseHsk4Permutation(btn){
+  const id=String(btn.dataset.q),value=permutations()[Number(btn.dataset.i)];
+  if(!value)return;
+  resumeQuestionId=id;resultState=null;
+  const changed=String(answers[id]??'')!==value;
+  answers[id]=value;checked[id]=false;
+  if(changed)answerEvents[id]=createQuestionActivity(id);
+  document.querySelectorAll(`.hsk4PaperPermutation[data-q="${id}"]`).forEach(option=>{option.classList.remove('selected','correct','wrong');option.setAttribute('aria-pressed','false')});
+  btn.classList.add('selected');btn.setAttribute('aria-pressed','true');
+  const feedback=$('f'+id);if(feedback)feedback.className='feedback';
+  saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress();
 }
 function hsk4PaperPassageKey(pkg,q){
   const model=getResolvedQuestionModel(pkg,'reading',route.sectionIndex,q);
@@ -357,7 +378,7 @@ function saveWritingAnswer(id){resultState=null;const e=$('w'+id);const v=e?e.va
 
 
 function checkOne(id,silent=false,restoreOnly=false){const q=currentQuestions.find(x=>String(x[0])===String(id))||((DB[route?.packageCode]?.[route?.type]?.[route?.sectionIndex]?.questions)||[]).find(x=>String(x[0])===String(id));if(!q)return;const model=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);
-if(model.type==="sentence_ordering"||model.type==="sequence"){const e=$('w'+id);const v=e?e.value.trim():String(answers[id]??'');if(!v){if(!silent)appNotice('Jawaban belum dipilih','Pilih atau ketik susunan jawaban terlebih dahulu.');return}answers[id]=v;const ok=isSequenceAnswerCorrect(q,v);checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — periksa kembali urutan kata atau lihat kunci jawaban.'}const input=$('w'+id);if(input){input.classList.remove('answer-correct','answer-wrong');input.classList.add(ok?'answer-correct':'answer-wrong')}if(!restoreOnly){saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress()}return}
+if(model.type==="sentence_ordering"||model.type==="sequence"){const e=$('w'+id);const v=hsk4Part3PermutationAnswer(q,e?e.value.trim():String(answers[id]??''));if(!v){if(!silent)appNotice('Jawaban belum dipilih','Pilih salah satu urutan kalimat terlebih dahulu.');return}answers[id]=v;const ok=isSequenceAnswerCorrect(q,v);checked[id]=true;const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — periksa kembali urutan kata atau lihat kunci jawaban.'}const input=$('w'+id);if(input){input.classList.remove('answer-correct','answer-wrong');input.classList.add(ok?'answer-correct':'answer-wrong')}document.querySelectorAll(`.hsk4PaperPermutation[data-q="${id}"]`).forEach(option=>{option.classList.remove('selected','correct','wrong');option.setAttribute('aria-pressed','false');if(option.textContent.trim()===v)option.classList.add(ok?'correct':'wrong')});if(!restoreOnly){saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress()}return}
 if(model.type==="guided_writing"||model.type==="picture_writing"){if(restoreOnly){const f=$('f'+id);if(f&&String(answers[id]??'').trim()){f.className='feedback show good';f.textContent='✓ Jawaban tersimpan. Silakan periksa kembali kalimatmu sendiri.'}return}saveWritingAnswer(id);return}
 if(answers[id]===undefined){const selectedOption=Array.from(document.querySelectorAll('.opt[data-q]')).find(el=>String(el.dataset.q)===String(id)&&el.classList.contains('selected'));if(selectedOption)answers[id]=selectedOption.dataset.i}if(answers[id]===undefined){if(!silent)appNotice('Jawaban belum dipilih','Pilih jawaban terlebih dahulu.');return}const ci=correctIndex(q,route.type),chosen=Number(answers[id]),ok=chosen===ci;checked[id]=true;const correctModel=getResolvedQuestionModel(getActivePackageData(),route.type,route.sectionIndex,q);const correctOpt=correctModel.options?.[ci];const answerLabel=correctOpt?String(correctOpt.value):(/^[A-F]$/i.test(String(q?.[3]??'').trim())?String(q[3]).trim().toUpperCase():'Tidak tersedia');const f=$('f'+id);if(f){f.className='feedback show '+(ok?'good':'bad');f.textContent=ok?'Benar':'Salah — jawaban yang benar: '+answerLabel}document.querySelectorAll(`.opt[data-q="${id}"],.hsk5ClozeOpt[data-q="${id}"]`).forEach(b=>{b.classList.remove('selected','correct','wrong');const i=Number(b.dataset.i);if(i===chosen)b.classList.add(ok?'correct':'wrong')});if(!restoreOnly){saveSectionState(route.packageCode,route.type,route.sectionIndex);recordQuestionAttempt(id,ok);refreshCurrentProgress()}}
 function repeatOne(id){const q=currentQuestions.find(x=>String(x[0])===String(id));if(!q)return;resumeQuestionId=String(id);delete answers[id];delete checked[id];delete answerEvents[String(id)];if(currentMode==='writing'){const e=$('w'+id);if(e){e.value='';e.dispatchEvent(new Event('input',{bubbles:true}));}if(isSequenceWriting(route.type,route.sectionIndex))refreshWordBank(id)}else{document.querySelectorAll(`.opt[data-q="${id}"]`).forEach(b=>b.classList.remove('selected','correct','wrong'));}const f=$('f'+id);if(f)f.className='feedback';const r=$('r'+id);if(r)r.className='reference';const t=$('t'+id);if(t)t.classList.remove('show');saveSectionState(route.packageCode,route.type,route.sectionIndex);refreshCurrentProgress()}
