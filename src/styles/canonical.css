@@ -2882,19 +2882,18 @@ body.dark,html.dark{background:#000000!important;background-image:none!important
 /* Full-bleed Listening player attached to the fixed top bar. */
 #exercise .listeningAudioDock{
   position:sticky;
-  top:calc(68px + env(safe-area-inset-top,0px));
+  top:calc(var(--app-topbar-h) + 8px + env(safe-area-inset-top,0px));
   z-index:30;
   box-sizing:border-box;
   width:100vw;
   margin:0 0 16px calc(50% - 50vw);
   padding:8px max(24px,calc((100vw - var(--app-max))/2 + 24px));
   border:0;
-  border-bottom:1px solid var(--line);
   border-radius:0;
-  background:var(--top);
+  background:transparent;
   color:var(--text);
-  -webkit-backdrop-filter:blur(18px);
-  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
 }
 #exercise .listeningAudioDock[hidden],
 #exercise .listeningAudioControls[hidden],
@@ -2940,12 +2939,12 @@ body.exercise-focus .mainNav{display:none!important}
 #exercise .listeningAudioRetry{margin-top:8px;min-height:36px}
 @media (min-width:600px) and (orientation:landscape){
   #exercise .listeningAudioDock{
-    top:calc(var(--app-topbar-h) + env(safe-area-inset-top,0px));
     margin-left:calc(50% - 50vw - var(--nav-rail)/2);
   }
 }
 @media(max-width:599px){
   #exercise .listeningAudioDock{
+    top:calc(68px + 8px + env(safe-area-inset-top,0px));
     margin:0 0 14px calc(50% - 50vw);
     padding:8px 16px;
   }
@@ -2972,4 +2971,3 @@ body.exercise-focus .mainNav{display:none!important}
 @media(max-width:599px){
   #exercise .listeningPartDivider{margin:21px 0 10px}
 }
-
