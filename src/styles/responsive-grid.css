@@ -1,0 +1,28 @@
+/* Responsive grid contract: viewport width controls columns, not orientation. */
+/* v26 canonical responsive grid contract
+   Grid column count is determined by CSS viewport width, never orientation.
+   Orientation remains responsible only for navigation/viewport chrome. */
+@media (max-width:599px){
+  .grid,
+  #packagesGrid,#sections,#parts,
+  #package>.grid,#package #parts,#partsScreen #sections,
+  .scoreLevelGrid,.scorePackagesGrid,.studyPlansGrid{
+    grid-template-columns:repeat(1,minmax(0,1fr))!important;
+  }
+}
+@media (min-width:600px) and (max-width:1199px){
+  .grid,
+  #packagesGrid,#sections,#parts,
+  #package>.grid,#package #parts,#partsScreen #sections,
+  .scoreLevelGrid,.scorePackagesGrid,.studyPlansGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+@media (min-width:1200px){
+  .grid,
+  #packagesGrid,#sections,#parts,
+  #package>.grid,#package #parts,#partsScreen #sections,
+  .scoreLevelGrid,.scorePackagesGrid,.studyPlansGrid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
