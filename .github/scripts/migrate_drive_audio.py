@@ -229,6 +229,10 @@ def main():
             if not expected_names.issubset(actual_names):
                 fail("Release verification failed for " + tag + ".")
             print("Verified " + str(len(expected_names)) + " requested asset(s) in " + tag + ".")
+    output_path = os.environ.get("GITHUB_OUTPUT")
+    if output_path:
+        with open(output_path, "a", encoding="utf-8") as output:
+            output.write("codes=" + json.dumps(codes, separators=(",", ":")) + "\n")
     print("Migration stage " + mode + " completed successfully.")
 
 
