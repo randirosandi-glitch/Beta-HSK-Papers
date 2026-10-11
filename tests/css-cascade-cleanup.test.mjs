@@ -58,7 +58,7 @@ const normalize = value => value.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g
 
 function normalizeAtRule(prelude) {
   const collapsed = prelude.replace(/\s+/g, ' ').trim();
-  if (!/^@media\\b/.test(collapsed)) return collapsed;
+  if (!/^@media\b/.test(collapsed)) return collapsed;
   return '@media' + collapsed.slice(6).replace(/^\s*/, '').replace(/\s*\(\s*/g, '(').replace(/\s*\)\s*/g, ')').replace(/\s*:\s*/g, ':');
 }
 
