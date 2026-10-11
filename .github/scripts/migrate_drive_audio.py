@@ -54,41 +54,43 @@ def get_catalog():
     return catalog["files"]
 
 
-def validate_inventory(files):
-    expected_all = set()
+def validate_inventory(files, codes, full):
     selected = {}
-    for level, codes in EXPECTED.items():
-        expected_all.update(codes)
-        level_folder = "HSK " + str(level)
-        found = {
-            code for code, item in files.items()
-            if isinstance(item, dict) and item.get("folder") == level_folder
-            and re.match(r"^H" + str(level) + r"\d{4}[A-Z]?$", code)
-        }
-        if found != set(codes):
-            missing = sorted(set(codes) - found)
-            unexpected = sorted(found - set(codes))
-            fail(
-                level_folder + " inventory changed; missing=" + str(missing)
-                + ", unexpected=" + str(unexpected) + ". No assets were uploaded."
-            )
-        for code in codes:
-            item = files.get(code)
-            if not isinstance(item, dict):
-                fail("Missing Drive index entry for " + code + ".")
-            if item.get("name") != code + ".mp3":
-                fail("Unexpected Drive filename for " + code + ": " + str(item.get("name")))
-            sharing = str(item.get("sharingAccess", "")).upper()
-            if sharing not in ("ANYONE_WITH_LINK", "ANYONE"):
-                fail(code + " is not publicly readable from Drive (sharingAccess=" + sharing + ").")
-            download_url = item.get("url")
-            if not isinstance(download_url, str) or not download_url.startswith("https://"):
-                fail("Drive index has no HTTPS download URL for " + code + ".")
-            selected[code] = item
-    if len(expected_all) != 49:
-        fail("Internal inventory error: expected 49 unique MP3 files.")
-    return selected
+    if full:
+        for level, expected_codes in EXPECTED.items():
+            level_folder = "HSK " + str(level)
+            found = {
+                code for code, item in files.items()
+                if isinstance(item, dict) and item.get("folder") == level_folder
+                and re.match(r"^H" + str(level) + r"\d{4}[A-Z]?$", code)
+            }
+            if found != set(expected_codes):
+                missing = sorted(set(expected_codes) - found)
+                unexpected = sorted(found - set(expected_codes))
+                fail(
+                    level_folder + " inventory changed; missing=" + str(missing)
+                    + ", unexpected=" + str(unexpected) + ". No assets were uploaded."
+                )
+        if sum(len(items) for items in EXPECTED.values()) != 49:
+            fail("Internal inventory error: expected 49 unique MP3 files.")
 
+    for code in codes:
+        level = int(code[1])
+        item = files.get(code)
+        if not isinstance(item, dict):
+            fail("Missing Drive index entry for " + code + ".")
+        if item.get("folder") != "HSK " + str(level):
+            fail(code + " is listed under the wrong Drive folder.")
+        if item.get("name") != code + ".mp3":
+            fail("Unexpected Drive filename for " + code + ": " + str(item.get("name")))
+        sharing = str(item.get("sharingAccess", "")).upper()
+        if sharing not in ("ANYONE_WITH_LINK", "ANYONE"):
+            fail(code + " is not publicly readable from Drive (sharingAccess=" + sharing + ").")
+        download_url = item.get("url")
+        if not isinstance(download_url, str) or not download_url.startswith("https://"):
+            fail("Drive index has no HTTPS download URL for " + code + ".")
+        selected[code] = item
+    return selected
 
 def download_mp3(code, item, directory):
     request = urllib.request.Request(
@@ -195,8 +197,8 @@ def main():
     repository = os.environ.get("GITHUB_REPOSITORY", "")
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
         fail("Unexpected or missing GITHUB_REPOSITORY.")
-    files = validate_inventory(get_catalog())
     codes = sorted(CANARY) if mode == "canary" else EXPECTED[4] + EXPECTED[5]
+    files = validate_inventory(get_catalog(), codes, mode == "full")
     print("Mode: " + mode + "; selected " + str(len(codes)) + " of 49 indexed MP3 files.")
 
     with tempfile.TemporaryDirectory(prefix="beta-audio-") as temporary:
