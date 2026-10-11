@@ -3199,7 +3199,7 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
     width:max-content!important;inline-size:max-content!important;min-width:0!important;max-width:calc(100vw - 24px)!important;
     height:auto!important;margin:0!important;padding:5px!important;gap:2px!important;box-sizing:border-box!important;
     border:1px solid rgba(170,180,205,.18)!important;border-radius:9999px!important;
-    background:rgba(31,34,44,.30)!important;background-color:rgba(31,34,44,.30)!important;background-image:none!important;
+    background:transparent!important;background-color:transparent!important;background-image:none!important;
     box-shadow:none!important;overflow-x:auto!important;overflow-y:hidden!important;
     backdrop-filter:blur(16px) saturate(120%)!important;-webkit-backdrop-filter:blur(16px) saturate(120%)!important;
   }
@@ -3286,8 +3286,15 @@ html body .mainNav .navItem.active .navLabel,html body .mainNav .navItem[aria-cu
 html body.dark .mainNav .navItem.active .navLabel,html body.dark .mainNav .navItem[aria-current="page"] .navLabel{
   color:var(--muted)!important;background:transparent!important;font-weight:500!important;
 }
-.mainNav.authLocked,body.auth-active .mainNav,html.auth-page .mainNav{display:none!important;visibility:hidden!important;pointer-events:none!important;}
+/* Navbar icons use one solid currentColor treatment in both themes. */
+.mainNav .navItem .heroicon-solid,.mainNav .navItem.active .heroicon-solid,.mainNav .navItem[aria-current="page"] .heroicon-solid{
+  display:block;width:22px!important;height:22px!important;flex:0 0 22px!important;
+  fill:currentColor!important;stroke:none!important;filter:none!important;opacity:1!important;color:inherit!important;
+}
+.mainNav .navItem .heroicon-solid path{fill:currentColor!important;stroke:none!important;}
+@media(max-width:599px),(orientation:portrait){.mainNav .navItem .heroicon-solid{width:22px!important;height:22px!important;flex-basis:22px!important;}}
 
+.mainNav.authLocked,body.auth-active .mainNav,html.auth-page .mainNav{display:none!important;visibility:hidden!important;pointer-events:none!important;}
 /* END GENERATED MODULE: src/styles/responsive-navigation.css */
 </style>
 
@@ -7917,40 +7924,6 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
 </style>
 
 
-<style id="heroicons-solid-navbar-v1">
-/* Heroicons Solid navbar: preserve currentColor theme behavior. */
-.mainNav .navItem .heroicon-solid{display:block;width:22px!important;height:22px!important;flex:0 0 22px!important;fill:currentColor!important;stroke:none!important}
-@media(max-width:599px),(orientation:portrait){.mainNav .navItem .heroicon-solid{width:22px!important;height:22px!important;flex-basis:22px!important}}
-</style>
-
-
-<style id="heroicons-filled-active-state-v2">
-/* Heroicons remain solid when active; selection changes color only. */
-.mainNav .navItem .heroicon-solid,
-.mainNav .navItem.active .heroicon-solid,
-.mainNav .navItem[aria-current="page"] .heroicon-solid{
-  fill:currentColor!important;
-  stroke:none!important;
-  filter:none!important;
-  opacity:1!important;
-}
-.mainNav .navItem .heroicon-solid path{
-  fill:currentColor!important;
-  stroke:none!important;
-}
-.mainNav .navItem.active,
-.mainNav .navItem[aria-current="page"]{
-  color:var(--navItemAccent,var(--blue))!important;
-}
-.mainNav .navItem.active .heroicon-solid,
-.mainNav .navItem[aria-current="page"] .heroicon-solid{
-  color:inherit!important;
-}
-</style>
-
-
-
-
 <style id="answer-feedback-heroicons-v2">
 /* Result icons belong in the feedback message, not beside answer choices. */
 #exercise .feedback.show.good,#exercise .feedback.show.bad{display:flex!important;align-items:center!important;gap:9px!important}
@@ -7959,25 +7932,6 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
 #exercise .feedback.show.bad::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z' clip-rule='evenodd'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z' clip-rule='evenodd'/%3E%3C/svg%3E")}
 </style>
 
-<style id="portrait-navbar-transparency-v1">
-/* Portrait floating navbar: no color tint in either theme; preserve existing blur. */
-@media (orientation:portrait) {
-  .mainNav{background:transparent!important;background-color:transparent!important;}
-  body.dark .mainNav{background:transparent!important;background-color:transparent!important;}
-}
-</style>
-<style id="portrait-navbar-clear-glass-v2">
-/* Portrait only: keep the dark-mode glass blur in both themes, with absolutely no surface tint. */
-@media (max-width:599px),(min-width:600px) and (orientation:portrait){
-  html body .mainNav{
-    background:transparent!important;
-    background-color:transparent!important;
-    background-image:none!important;
-    backdrop-filter:blur(16px) saturate(120%)!important;
-    -webkit-backdrop-filter:blur(16px) saturate(120%)!important;
-  }
-}
-</style>
 </body>
 </html>
 
