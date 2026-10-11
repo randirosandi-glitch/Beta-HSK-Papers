@@ -62,7 +62,7 @@ def validate_inventory(files, codes, full):
             found = {
                 code for code, item in files.items()
                 if isinstance(item, dict) and item.get("folder") == level_folder
-                and re.match(r"^H" + str(level) + r"\\d{4}[A-Z]?$", code)
+                and re.match(r"^H" + str(level) + r"\d{4}[A-Z]?$", code)
             }
             if found != set(expected_codes):
                 missing = sorted(set(expected_codes) - found)
