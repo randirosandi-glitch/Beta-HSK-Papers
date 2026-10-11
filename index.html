@@ -4679,14 +4679,16 @@ function hsk4PaperClozePart(pkg,qs,part){
   return '<section class="hsk5PaperGroup hsk4PaperPart '+part+'">'+bank+body+'</section>';
 }
 function hsk4PaperPart3(pkg,qs){
+  const validPermutations=permutations();
   return '<section class="hsk5PaperGroup hsk4PaperPart hsk4PaperPart3">'+qs.map(q=>{
     const id=String(q[0]);
-    const sentenceLines=String(q[1]||'').split(/\r?\n/).map(line=>/^\s*([ABC])(?:[.．、:]\s*|\s+)(.+)$/.exec(line)).filter(Boolean);
-    const lines=sentenceLines.map(match=>'<div class="hsk4PaperSentenceLine"><b>'+match[1]+'.</b><span>'+esc(match[2])+'</span></div>').join('');
+    const promptLines=String(q[1]||'').split(/\\r?\\n/).map(line=>/^\\s*([ABC])(?:[.．、:]\\s*|\\s+)(.+)$/.exec(line)).filter(Boolean);
+    const items=promptLines.length===3?promptLines.map(match=>[match[1],match[2]]):(Array.isArray(q[2])&&q[2].length===3?q[2].map((text,index)=>[String.fromCharCode(65+index),String(text)]):[]);
+    const lines=items.map(([label,text])=>'<div class="hsk4PaperSentenceLine"><b>'+label+'.</b><span>'+esc(text)+'</span></div>').join('');
     const selected=hsk4Part3PermutationAnswer(q,answers[id]);
-    const options=Array.isArray(q[2])?q[2]:permutations();
-    const choices=options.map(value=>{
-      const permutation=String(value).trim().toUpperCase(),index=permutations().indexOf(permutation);
+    const storedOptions=Array.isArray(q[2])&&q[2].length===6&&q[2].every(value=>validPermutations.includes(String(value).trim().toUpperCase()))?q[2]:validPermutations;
+    const choices=storedOptions.map(value=>{
+      const permutation=String(value).trim().toUpperCase(),index=validPermutations.indexOf(permutation);
       if(index<0)return '';
       return '<button type="button" class="opt hsk5PaperOption hsk4PaperPermutation'+(selected===permutation?' selected':'')+'" data-q="'+esc(id)+'" data-i="'+index+'" aria-label="Urutan '+permutation+'" aria-pressed="'+(selected===permutation?'true':'false')+'" onclick="chooseHsk4Permutation(this)"><span class="optText">'+esc(permutation)+'</span></button>';
     }).join('');
