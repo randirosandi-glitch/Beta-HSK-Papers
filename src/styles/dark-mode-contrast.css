@@ -127,3 +127,102 @@ body.dark .brandTitleWrap .brandTitle{
 body.dark .brandTitleWrap .brandSubtitle{
   color:var(--muted)!important;
 }
+
+/* Additional actual-rendered-ID contrast rules consolidated from the former final cascade. */
+/* Dark Mode text-visibility audit: color only; no layout/size changes. */
+body.dark .brand span{
+  color:#ff7658!important;
+}
+body.dark .logoutNav{
+  color:#ff8e86!important;
+}
+body.dark .mark{
+  color:#ff7658!important;
+}
+body.dark .levelChoice.comingSoon small{
+  color:#c2b0ff!important;
+}
+body.dark .comingSoonPanel span{
+  color:#b8a4ff!important;
+}
+body.dark .eyebrow{
+  color:#9fb9ff!important;
+}
+
+/* FINAL Dark Mode text cascade repair.
+   Targets the actual rendered IDs, not legacy class aliases.
+   Color only: no geometry, typography sizing, spacing, JS, or data changes. */
+
+html.dark body.dark #packagesScreen .packagePageHead #packagePageTitle,
+html.dark body.dark #packagesScreen .packagePageHead h2,
+body.dark #packagesScreen .packagePageHead #packagePageTitle,
+body.dark #packagesScreen .packagePageHead h2{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #packagesScreen .packagePageHead #packagePageSub,
+body.dark #packagesScreen .packagePageHead #packagePageSub{
+  color:#aeb8c8!important;
+}
+
+html.dark body.dark #package #pkgTitle,
+html.dark body.dark #package .section h2,
+body.dark #package #pkgTitle,
+body.dark #package .section h2{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #package .section .sub,
+body.dark #package .section .sub{
+  color:#aeb8c8!important;
+}
+
+html.dark body.dark #partsScreen #partsTitle,
+html.dark body.dark #partsScreen .section h2,
+body.dark #partsScreen #partsTitle,
+body.dark #partsScreen .section h2{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #partsScreen #partsTitle .partsTitleHanzi,
+html.dark body.dark #partsScreen #partsTitle .kaiti-ui-hanzi,
+body.dark #partsScreen #partsTitle .partsTitleHanzi,
+body.dark #partsScreen #partsTitle .kaiti-ui-hanzi{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #partsScreen .section .sub,
+body.dark #partsScreen .section .sub{
+  color:#aeb8c8!important;
+}
+
+/* Exercise context and title: actual IDs used by renderExercise(). */
+html.dark body.dark #exercise #exPkg,
+html.dark body.dark #exercise #exType,
+html.dark body.dark #exercise #exPart,
+body.dark #exercise #exPkg,
+body.dark #exercise #exType,
+body.dark #exercise #exPart{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #exercise #exTitle:not(.hsk5PaperSectionHeader),
+body.dark #exercise #exTitle:not(.hsk5PaperSectionHeader){
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #exercise .section > .sub,
+body.dark #exercise .section > .sub{
+  color:#aeb8c8!important;
+}
+
+/* HSK 5 paper section header — keep Hanzi/instruction readable. */
+html.dark body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle,
+body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle{
+  color:#f3f6fa!important;
+}
+
+html.dark body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction,
+body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{
+  color:#c4ccd8!important;
+}
