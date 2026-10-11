@@ -63,9 +63,9 @@ Stable is out of scope and has not been modified in this rebuild.
 - tests/cloud-transport.test.mjs checks minimal Supabase requests, username encoding, request payloads, and HTTP errors.
 - .github/workflows/rebuild-contracts.yml checks module synchronization, reproducible index generation, inline script syntax, and all Node tests.
 - Earlier full contract run after the 30-module extraction: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38068983933
-- Latest source contract run after question-engine and patch extraction: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38105623903 (success, 39 tests pass).
-- Latest GitHub Pages deployment after the runtime update: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38105623520 (success).
-- Latest GitHub Pages deployment for the same runtime index: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38069015163
+- Contract run after question-engine and patch extraction: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38105623903 (success, 39 tests pass).
+- GitHub Pages deployment after the PR #20 runtime update: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38105623520 (success).
+- Earlier GitHub Pages deployment for the same runtime index: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38069015163
 
 ## CSS cascade cleanup checkpoint — 2026-10-11
 
