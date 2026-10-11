@@ -331,17 +331,6 @@
     }).join('');
   }
 
-  window.openStudyPlans=function(push=true){
-    route={screen:'studyPlans',packageCode:null,type:null,sectionIndex:null,studyPlanId:null};
-    planState.mode='plan';
-    planState.planId=null;
-    planState.code=null;
-    planState.query='';
-    window.renderStudyPlans();
-    setScreen('studyPlans',push);
-    window.scrollTo({top:0,left:0,behavior:'auto'});
-  };
-
   window.renderStudyPlans=function(){
     const el=has('studyPlansGrid');
     if(!el)return;
@@ -368,129 +357,9 @@
     }).join('');
   };
 
-  window.openStudyPlan=function(id,push=true){
-    const p=getPlanMaster(id);
-    if(!p){window.openStudyPlans(push);return}
-    route={screen:'studyPlanDetail',packageCode:null,type:null,sectionIndex:null,studyPlanId:p.id};
-    planState.mode='plan';
-    planState.planId=p.id;
-    planState.code=null;
-    planState.query='';
-    window.renderStudyPlanDetail();
-    setScreen('studyPlanDetail',push);
-    window.scrollTo({top:0,left:0,behavior:'auto'});
-  };
-
-  window.renderStudyPlanDetail=function(){
-    const p=getPlanMaster(route.studyPlanId||planState.planId);
-    const head=has('studyPlanDetailHead'),list=has('studyPlanPackages');
-    if(!p||!head||!list){window.openStudyPlans(false);return}
-    planState.planId=p.id;
-    const st=planStatsMaster(p);
-    if(has('studyPlanDetailCrumb')) has('studyPlanDetailCrumb').textContent=p.name;
-    head.innerHTML=`<div class="studyPlanDetailTop"><div>
-      <div class="sectionKicker">RENCANA BELAJAR</div>
-      <div class="studyPlanDetailTitle">${escHtml(p.name)}</div>
-      <div class="studyPlanDetailDesc">${escHtml(p.description||'Susun paket sesuai target belajarmu.')}</div>
-      <div class="studyPlanContextBadge">${st.total} paket · ${st.done} selesai · ${st.pct}%</div>
-    </div><div class="studyPlanDetailActions">
-      <button class="btn" type="button" onclick="openStudyPlanAddPicker('${escHtml(p.id)}')">＋ Tambah paket</button>
-      <button class="btn" type="button" onclick="openStudyPlanEdit('${escHtml(p.id)}')">✎ Edit</button>
-      <button class="btn primary" type="button" onclick="continueStudyPlan('${escHtml(p.id)}')">▶ Lanjutkan</button>
-    </div></div><div class="studyPlanBar" style="margin-top:19px"><i style="width:${st.pct}%"></i></div>`;
-
-    const codes=Array.isArray(p.packageCodes)?p.packageCodes:[];
-    if(!codes.length){
-      list.innerHTML=`<div class="studyPlanAddHint">Belum ada paket di rencana ini.</div>
-        <button type="button" class="studyPlanAddHint studyPlanAddButton" onclick="openStudyPlanAddPicker('${escHtml(p.id)}')">＋ Tambahkan paket ke rencana ini</button>`;
-      return;
-    }
-
-    list.innerHTML=codes.map((code,i)=>{
-      const x=packageStats(code);
-      const status=x.total&&x.answered>=x.total?'Selesai':x.answered?'Sedang berjalan':'Belum dimulai';
-      return `<div class="studyPlanPackage" role="button" tabindex="0"
-        onclick="openPackage('${escHtml(code)}')"
-        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openPackage('${escHtml(code)}')}">
-        <div class="studyPlanPackageNum">${String(i+1).padStart(2,'0')}</div>
-        <div class="studyPlanPackageMain"><strong>${escHtml(DB[code]?.title||('Paket '+code))}</strong><span>${x.answered}/${x.total} soal terjawab · ${status}</span></div>
-        <span class="studyPlanPackagePct">${x.pct||0}%</span>
-        <div class="studyPlanPackageActions">
-          <button type="button" onclick="event.stopPropagation();openPackage('${escHtml(code)}')" title="Buka paket">→</button>
-          <button type="button" onclick="event.stopPropagation();removePackageFromStudyPlan('${escHtml(p.id)}','${escHtml(code)}')" title="Hapus dari rencana">×</button>
-        </div>
-      </div>`;
-    }).join('')+`<button type="button" class="studyPlanAddHint studyPlanAddButton" onclick="openStudyPlanAddPicker('${escHtml(p.id)}')">＋ Tambahkan paket ke rencana ini</button>`;
-  };
-
-  window.openStudyPlanAddPicker=function(planId){
-    const p=getPlanMaster(planId);
-    if(!p)return;
-    planState.mode='plan';
-    planState.planId=p.id;
-    planState.code=null;
-    planState.query='';
-    planState.source=materialForKey(defaultMaterialKey())?.key||'all';
-    renderStudyPlanPickerMaster();
-    const modal=has('studyPlanPickerModal');
-    if(modal){modal.classList.add('show');modal.setAttribute('aria-hidden','false');}
-  };
-
-  window.openStudyPlanPicker=function(code){
-    if(!DB[code])return;
-    planState.mode='package';
-    planState.code=code;
-    planState.planId=null;
-    planState.query='';
-    renderStudyPlanPickerMaster();
-    const modal=has('studyPlanPickerModal');
-    if(modal){modal.classList.add('show');modal.setAttribute('aria-hidden','false');}
-  };
-
-  window.renderStudyPlanPicker=renderStudyPlanPickerMaster;
-  window.renderStudyPlanAddPicker=renderStudyPlanPickerMaster;
-
-  window.selectStudyPlanPickerSource=function(source){
-    const opts=materialOptionsMaster();
-    const value=String(source||'all');
-    planState.source=opts.some(o=>o.value===value)?value:'all';
-    planState.query='';
-    renderStudyPlanPickerMaster();
-  };
-
-  window.filterStudyPlanPicker=function(value){
-    planState.query=String(value||'');
-    renderStudyPlanPickerMaster();
-  };
-
-  window.addPackageDirectlyToStudyPlan=function(id,code){
-    const p=getPlanMaster(id);
-    if(!p||!DB[code])return;
-    if(!Array.isArray(p.packageCodes))p.packageCodes=[];
-    const exists=p.packageCodes.includes(code);
-    p.packageCodes=exists?p.packageCodes.filter(x=>x!==code):[...p.packageCodes,code];
-    p.updatedAt=Date.now();
-    savePlansMaster(plansStoreMaster());
-    renderStudyPlanPickerMaster();
-    window.renderStudyPlans();
-    if(route.screen==='studyPlanDetail' && String(route.studyPlanId)===String(id)) window.renderStudyPlanDetail();
-  };
-
-  window.togglePackageInStudyPlan=function(id,code){
-    window.addPackageDirectlyToStudyPlan(id,code);
-  };
-
-  window.closeStudyPlanPicker=function(){
-    const modal=has('studyPlanPickerModal');
-    if(modal){modal.classList.remove('show');modal.setAttribute('aria-hidden','true');}
-    planState.mode='plan';
-    planState.planId=null;
-    planState.code=null;
-    planState.query='';
-  };
-
   window.openStudyPlanCreator=function(){
-    planState.pendingCode=planState.mode==='package'?planState.code:null;
+    const picker=window.__functionalRepairV4?.picker;
+    MASTER.pendingCode=picker?.mode==='package'?picker.code:null;
     window.closeStudyPlanPicker();
     const m=has('studyPlanCreatorModal');
     if(!m)return;
@@ -517,23 +386,13 @@
       return;
     }
     const p={id:'sp_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),name,description:desc,packageCodes:[],createdAt:Date.now(),updatedAt:Date.now()};
-    if(planState.pendingCode && DB[planState.pendingCode])p.packageCodes.push(planState.pendingCode);
+    if(MASTER.pendingCode && DB[MASTER.pendingCode])p.packageCodes.push(MASTER.pendingCode);
     plans.push(p);
     savePlansMaster(plans);
-    planState.pendingCode=null;
+    MASTER.pendingCode=null;
     window.closeStudyPlanCreator();
     if(route.screen==='studyPlanDetail') window.renderStudyPlanDetail();
     window.renderStudyPlans();
-  };
-
-  window.continueStudyPlan=function(id){
-    const p=getPlanMaster(id);
-    if(!p||!p.packageCodes?.length)return;
-    const target=p.packageCodes.find(code=>{
-      const st=packageStats(code);
-      return !st.total || st.answered<st.total;
-    })||p.packageCodes[0];
-    window.openPackage(target);
   };
 
   window.openStudyPlanEdit=function(id){
