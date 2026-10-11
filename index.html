@@ -4171,6 +4171,7 @@ function saveSectionState(code,type,idx,a=answers,c=checked,events=answerEvents)
 }
 function clearSectionState(code,type,idx){const st=readStore();delete st[stateKey(code,type,idx)];if(st._resume&&st._resume.code===code&&st._resume.type===type&&Number(st._resume.sectionIndex)===Number(idx))delete st._resume;writeStore(st);scheduleCloudSync()}
 // END GENERATED MODULE: src/core/progress-persistence.js
+// BEGIN GENERATED MODULE: src/questions/engine.js
 function isSequenceReadingQuestion(id){const pkg=getActivePackageData();if(getPackageEngineRules(pkg))return false;const code=String(route?.packageCode||'');return route&&route.type==='reading'&&(Number(id)>=56&&Number(id)<=65||((code.startsWith('WB4A')||code.startsWith('WB4B'))&&Number(route.sectionIndex)===2)||code==='HSK4-SUSUN-KALIMAT');}
 function correctIndex(q,type){const model=getResolvedQuestionModel(getActivePackageData(),type,route?.sectionIndex,q);const key=String(q?.[3]??"").trim();if(model.type==="sentence_ordering"||model.type==="guided_writing"||model.type==="picture_writing")return -1;if(/^[A-F]$/i.test(key))return key.toUpperCase().charCodeAt(0)-65;const opts=q?.[2]||[];const direct=opts.findIndex(o=>norm(o)===norm(key));if(direct>=0)return direct;if(key==="√"){const i=opts.findIndex(o=>norm(o)==="对");if(i>=0)return i}if(key==="×"){const i=opts.findIndex(o=>norm(o)==="错");if(i>=0)return i}return -1}
 function isCorrect(q,u,type,idx){const model=getResolvedQuestionModel(getActivePackageData(),type,idx,q);if(model.type==="sentence_ordering"||model.type==="sequence")return isSequenceAnswerCorrect(q,u);if(model.type==="guided_writing"||model.type==="picture_writing")return false;const ci=correctIndex(q,type);return Number(u)===ci}
@@ -4491,6 +4492,7 @@ function openScoreLevel(level){
   el.innerHTML=`<div class="scoreBackRow"><button class="btn" type="button" onclick="renderScores()">← Kembali ke level</button></div><div class="scoreLevelTitle"><div class="sectionKicker">HSK 4</div><h3>Nilai HSK 4</h3><p>Pilih paket untuk melihat rincian nilainya.</p></div>${cards||'<div class="notice">Belum ada paket latihan.</div>'}`;
   window.scrollTo({top:0,left:0,behavior:'smooth'});
 }
+// END GENERATED MODULE: src/questions/engine.js
 // BEGIN GENERATED MODULE: src/core/progress-history.js
 /* Source module: recent package progress-history selection.
  * Read-only model helpers; preserve existing store schema and UI-facing return shape.
