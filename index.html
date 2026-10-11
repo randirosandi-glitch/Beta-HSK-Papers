@@ -2922,25 +2922,79 @@ html{margin:0;min-height:100dvh!important;width:100%;max-width:100%;overflow-x:h
 body{background:#ffffff!important;background-image:none!important;color:var(--text)!important;}
 body.dark,html.dark{background:#000000!important;background-image:none!important;color:var(--text)!important;}
 
-/* Combined Listening screen and sticky, native audio controls. */
+/* Full-bleed Listening player attached to the fixed top bar. */
 #exercise .listeningAudioDock{
   position:sticky;
   top:calc(68px + env(safe-area-inset-top,0px));
   z-index:30;
-  margin:10px 0 16px;
-  padding:10px 12px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:var(--surface);
+  box-sizing:border-box;
+  width:100vw;
+  margin:0 0 16px calc(50% - 50vw);
+  padding:8px max(24px,calc((100vw - var(--app-max))/2 + 24px));
+  border:0;
+  border-bottom:1px solid var(--line);
+  border-radius:0;
+  background:var(--top);
   color:var(--text);
+  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
 }
 #exercise .listeningAudioDock[hidden],
+#exercise .listeningAudioControls[hidden],
 #exercise .listeningAudioDock audio[hidden],
 #exercise .listeningAudioRetry[hidden]{display:none!important}
-#exercise .listeningAudioDock audio{display:block;width:100%;max-width:100%;height:42px}
+#exercise .listeningAudioControls{
+  display:flex;
+  align-items:center;
+  width:100%;
+  min-width:0;
+  gap:2px;
+}
+#exercise .listeningAudioSeek{
+  display:grid;
+  place-items:center;
+  flex:0 0 42px;
+  width:42px;
+  height:42px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:inherit;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#exercise .listeningAudioSeek:hover{background:var(--surface2)}
+#exercise .listeningAudioSeek:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+#exercise .listeningAudioSeek .material-symbols-rounded{font-size:25px;line-height:1}
+#exercise .listeningAudioDock audio{
+  display:block;
+  flex:1 1 auto;
+  min-width:0;
+  width:100%;
+  max-width:100%;
+  height:42px;
+  color-scheme:dark;
+}
+body.dark #exercise .listeningAudioDock audio{color-scheme:light}
+body.exercise-focus .mainNav{display:none!important}
 #exercise .listeningAudioStatus{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45}
-#exercise .listeningAudioDock audio:not([hidden])+.listeningAudioStatus{margin-top:6px}
+#exercise .listeningAudioStatus:empty{display:none}
 #exercise .listeningAudioRetry{margin-top:8px;min-height:36px}
+@media (min-width:600px) and (orientation:landscape){
+  #exercise .listeningAudioDock{
+    top:calc(var(--app-topbar-h) + env(safe-area-inset-top,0px));
+    margin-left:calc(50% - 50vw - var(--nav-rail)/2);
+  }
+}
+@media(max-width:599px){
+  #exercise .listeningAudioDock{
+    margin:0 0 14px calc(50% - 50vw);
+    padding:8px 16px;
+  }
+  #exercise .listeningAudioSeek{flex-basis:40px;width:40px;height:40px}
+  #exercise .listeningAudioDock audio{height:40px}
+}
 #exercise .listeningPartDivider{
   display:grid;
   grid-template-columns:minmax(20px,1fr) auto minmax(20px,1fr);
@@ -2959,8 +3013,6 @@ body.dark,html.dark{background:#000000!important;background-image:none!important
 #exercise .listeningPartDivider.is-first::after{display:none}
 #exercise .listeningPartDivider.is-first span{grid-column:1/-1}
 @media(max-width:599px){
-  #exercise .listeningAudioDock{margin:8px 0 14px;padding:9px 10px}
-  #exercise .listeningAudioDock audio{height:40px}
   #exercise .listeningPartDivider{margin:21px 0 10px}
 }
 /* END GENERATED MODULE: src/styles/canonical.css */
@@ -7967,8 +8019,11 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
     repeatOne:window.repeatOne
   };
   let dock=null;
+  let audioControls=null;
   let audio=null;
   let audioStatus=null;
+  let rewindButton=null;
+  let forwardButton=null;
   let retryButton=null;
   let activeAudioCode='';
   let activeAudioUrl='';
@@ -8129,6 +8184,30 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
         setAudioMessage('Audio gagal dimuat dari GitHub Releases. Periksa koneksi atau tekan Coba lagi. Soal tetap tersedia.',true,false);
       }
     });
+    audioControls=document.createElement('div');
+    audioControls.className='listeningAudioControls';
+    rewindButton=document.createElement('button');
+    rewindButton.type='button';
+    rewindButton.className='listeningAudioSeek';
+    rewindButton.setAttribute('aria-label','Mundur 10 detik');
+    rewindButton.title='Mundur 10 detik';
+    const rewindIcon=document.createElement('span');
+    rewindIcon.className='material-symbols-rounded';
+    rewindIcon.setAttribute('aria-hidden','true');
+    rewindIcon.textContent='replay_10';
+    rewindButton.appendChild(rewindIcon);
+    rewindButton.addEventListener('click',function(){seekAudio(-10)});
+    forwardButton=document.createElement('button');
+    forwardButton.type='button';
+    forwardButton.className='listeningAudioSeek';
+    forwardButton.setAttribute('aria-label','Maju 10 detik');
+    forwardButton.title='Maju 10 detik';
+    const forwardIcon=document.createElement('span');
+    forwardIcon.className='material-symbols-rounded';
+    forwardIcon.setAttribute('aria-hidden','true');
+    forwardIcon.textContent='forward_10';
+    forwardButton.appendChild(forwardIcon);
+    forwardButton.addEventListener('click',function(){seekAudio(10)});
     audioStatus=document.createElement('div');
     audioStatus.className='listeningAudioStatus';
     audioStatus.setAttribute('role','status');
@@ -8139,17 +8218,29 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
     retryButton.textContent='Coba lagi';
     retryButton.hidden=true;
     retryButton.addEventListener('click',function(){window.__hskRetryListeningAudio?.()});
-    dock.appendChild(audio);
+    audioControls.appendChild(rewindButton);
+    audioControls.appendChild(audio);
+    audioControls.appendChild(forwardButton);
+    dock.appendChild(audioControls);
     dock.appendChild(audioStatus);
     dock.appendChild(retryButton);
     exercise.insertBefore(dock,questions);
     return dock;
+  }
+  function seekAudio(offset){
+    if(!audio||audio.hidden||!activeAudioUrl)return;
+    const current=Number(audio.currentTime)||0;
+    const duration=Number(audio.duration);
+    let target=Math.max(0,current+Number(offset||0));
+    if(Number.isFinite(duration)&&duration>=0)target=Math.min(duration,target);
+    try{audio.currentTime=target}catch(_error){}
   }
   function setAudioMessage(message,showRetry,showPlayer){
     if(!ensureDock())return;
     audioStatus.textContent=String(message||'');
     retryButton.hidden=!showRetry;
     retryButton.textContent='Coba lagi';
+    audioControls.hidden=!showPlayer;
     audio.hidden=!showPlayer;
   }
   function releaseAudioForPackage(code){
@@ -8158,7 +8249,7 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
     const level=match[1];
     return {
       url:RELEASE_DOWNLOAD_BASE+level+'/'+encodeURIComponent(code)+'.mp3',
-      message:'Audio siap di GitHub Releases. Tekan Putar untuk mulai mendengarkan.'
+      message:''
     };
   }
   function loadAudioForPackage(code,force){
@@ -8172,7 +8263,7 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
       activeAudioCode=code;
     }
     if(activeAudioUrl&&activeAudioCode===code&&!force){
-      setAudioMessage('Audio siap di GitHub Releases. Tekan Putar untuk mulai mendengarkan.',false,true);
+      setAudioMessage('',false,true);
       return;
     }
     if(force){
@@ -8198,7 +8289,7 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
       audio.preload='none';
       activeAudioUrl=state.url;
     }
-    setAudioMessage(state.message,false,true);
+    setAudioMessage('',false,true);
   }
   window.__hskRetryListeningAudio=function(){
     if(route?.type!=='listening')return;
@@ -8377,7 +8468,6 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
         host.hidden=!visible;
         if(!visible){
           if(audio)audio.pause();
-          stopDrivePreview();
         }
       }
       return result;
