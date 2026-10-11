@@ -20,8 +20,11 @@
     repeatOne:window.repeatOne
   };
   let dock=null;
+  let audioControls=null;
   let audio=null;
   let audioStatus=null;
+  let rewindButton=null;
+  let forwardButton=null;
   let retryButton=null;
   let activeAudioCode='';
   let activeAudioUrl='';
@@ -182,6 +185,30 @@
         setAudioMessage('Audio gagal dimuat dari GitHub Releases. Periksa koneksi atau tekan Coba lagi. Soal tetap tersedia.',true,false);
       }
     });
+    audioControls=document.createElement('div');
+    audioControls.className='listeningAudioControls';
+    rewindButton=document.createElement('button');
+    rewindButton.type='button';
+    rewindButton.className='listeningAudioSeek';
+    rewindButton.setAttribute('aria-label','Mundur 10 detik');
+    rewindButton.title='Mundur 10 detik';
+    const rewindIcon=document.createElement('span');
+    rewindIcon.className='material-symbols-rounded';
+    rewindIcon.setAttribute('aria-hidden','true');
+    rewindIcon.textContent='replay_10';
+    rewindButton.appendChild(rewindIcon);
+    rewindButton.addEventListener('click',function(){seekAudio(-10)});
+    forwardButton=document.createElement('button');
+    forwardButton.type='button';
+    forwardButton.className='listeningAudioSeek';
+    forwardButton.setAttribute('aria-label','Maju 10 detik');
+    forwardButton.title='Maju 10 detik';
+    const forwardIcon=document.createElement('span');
+    forwardIcon.className='material-symbols-rounded';
+    forwardIcon.setAttribute('aria-hidden','true');
+    forwardIcon.textContent='forward_10';
+    forwardButton.appendChild(forwardIcon);
+    forwardButton.addEventListener('click',function(){seekAudio(10)});
     audioStatus=document.createElement('div');
     audioStatus.className='listeningAudioStatus';
     audioStatus.setAttribute('role','status');
@@ -192,17 +219,29 @@
     retryButton.textContent='Coba lagi';
     retryButton.hidden=true;
     retryButton.addEventListener('click',function(){window.__hskRetryListeningAudio?.()});
-    dock.appendChild(audio);
+    audioControls.appendChild(rewindButton);
+    audioControls.appendChild(audio);
+    audioControls.appendChild(forwardButton);
+    dock.appendChild(audioControls);
     dock.appendChild(audioStatus);
     dock.appendChild(retryButton);
     exercise.insertBefore(dock,questions);
     return dock;
+  }
+  function seekAudio(offset){
+    if(!audio||audio.hidden||!activeAudioUrl)return;
+    const current=Number(audio.currentTime)||0;
+    const duration=Number(audio.duration);
+    let target=Math.max(0,current+Number(offset||0));
+    if(Number.isFinite(duration)&&duration>=0)target=Math.min(duration,target);
+    try{audio.currentTime=target}catch(_error){}
   }
   function setAudioMessage(message,showRetry,showPlayer){
     if(!ensureDock())return;
     audioStatus.textContent=String(message||'');
     retryButton.hidden=!showRetry;
     retryButton.textContent='Coba lagi';
+    audioControls.hidden=!showPlayer;
     audio.hidden=!showPlayer;
   }
   function releaseAudioForPackage(code){
@@ -211,7 +250,7 @@
     const level=match[1];
     return {
       url:RELEASE_DOWNLOAD_BASE+level+'/'+encodeURIComponent(code)+'.mp3',
-      message:'Audio siap di GitHub Releases. Tekan Putar untuk mulai mendengarkan.'
+      message:''
     };
   }
   function loadAudioForPackage(code,force){
@@ -225,7 +264,7 @@
       activeAudioCode=code;
     }
     if(activeAudioUrl&&activeAudioCode===code&&!force){
-      setAudioMessage('Audio siap di GitHub Releases. Tekan Putar untuk mulai mendengarkan.',false,true);
+      setAudioMessage('',false,true);
       return;
     }
     if(force){
@@ -251,7 +290,7 @@
       audio.preload='none';
       activeAudioUrl=state.url;
     }
-    setAudioMessage(state.message,false,true);
+    setAudioMessage('',false,true);
   }
   window.__hskRetryListeningAudio=function(){
     if(route?.type!=='listening')return;
@@ -430,7 +469,6 @@
         host.hidden=!visible;
         if(!visible){
           if(audio)audio.pause();
-          stopDrivePreview();
         }
       }
       return result;
