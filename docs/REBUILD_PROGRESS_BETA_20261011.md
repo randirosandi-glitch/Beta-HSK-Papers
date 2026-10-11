@@ -91,4 +91,5 @@ Progress merge/activity, statistics, recent history, section persistence, study-
 - A housekeeping PR removes the unreferenced `beta-scroll-optimization-v1.html` snapshot and redundant `.gitkeep` markers from data directories that already contain tracked content.
 - The recovery snapshot remains until a newer rebuild checkpoint has been verified and deliberately retained elsewhere.
 - Both housekeeping PRs are open and unmerged. The app runtime remains unchanged while they are under review.
+- A separate markup cleanup PR removes one extra closing `</style>` tag without changing CSS declarations or script order.
 - The next runtime migration work still requires a focused browser regression pass before it can be called complete. The owner plans to perform the final app test after the rebuild is ready.
