@@ -54,3 +54,9 @@ Minimum fixture families:
 ## Rebuild rule
 
 Extract one responsibility at a time. Run the automated gate after every extraction. Run the relevant browser tests before promoting that checkpoint. Do not combine an architectural move with a storage schema change or a visual redesign.
+## Current checkpoint — 2026-10-11
+
+- The build synchronization check passed for all 42 source modules; all 40 Node tests passed in [workflow run #152](https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38106661763).
+- The public Beta dashboard (HSK Papers v1.31) loaded after the cleanup; the runtime deployment completed in [Pages run #411](https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38106690395).
+- The phone/tablet/desktop manual matrix above is still pending. The unchecked items remain release checks for the owner.
+- The broader CSS cleanup draft was closed without merge because it changed effective keyframe and responsive rules. PR #21 only removed four audited duplicate blocks; keep wider CSS consolidation behind the browser matrix.
