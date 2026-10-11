@@ -1274,7 +1274,7 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
 #home .weekBadge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:11px;font-weight:750;color:var(--muted);white-space:nowrap}
 #home .weekDot{width:7px;height:7px;border-radius:50%;background:var(--blue)}
 #home .weeklyPrimaryGrid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.9fr);gap:16px;margin-top:24px}
-#home .weekTargetCard,#home .weeklySummaryCard,#home .weeklyTargetItem,#home .performanceItem,#home .periodItem{border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:20px}
+#home .weekTargetCard,#home .weeklySummaryCard,#home .weeklyTargetItem,#home .performanceItem{border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:20px}
 #home .cardEyebrow{font-size:10px;letter-spacing:1.8px;font-weight:850;color:var(--muted)}
 #home .weekTargetTop{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-top:12px}.weekTargetTop strong{display:block;font-size:42px;line-height:1;letter-spacing:-1.8px}.weekTargetTop span{display:block;color:var(--muted);font-size:12px;margin-top:6px}.weekTargetPct{font-size:24px;font-weight:850;color:var(--blue)}
 #home .weekProgressTrack{height:9px;background:var(--surface2);border-radius:999px;overflow:hidden;margin-top:20px}.weekProgressFill{height:100%;width:0;background:var(--blue);border-radius:999px;transition:width .25s ease}
@@ -1283,10 +1283,10 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
 #home .skillRows{display:grid;gap:15px;margin-top:16px}.skillRow{display:grid;grid-template-columns:92px minmax(0,1fr) 42px;align-items:center;gap:10px}.skillName{font-size:12px;font-weight:750}.skillTrack{height:7px;border-radius:999px;background:var(--surface2);overflow:hidden}.skillFill{height:100%;width:0;background:var(--blue);border-radius:999px}.skillValue{text-align:right;font-size:11px;color:var(--muted);font-weight:750}.weeklyAccuracy{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:15px;margin-top:18px;color:var(--muted);font-size:11px}.weeklyAccuracy strong{font-size:20px;color:var(--text)}
 #home .weeklySection{margin-top:34px}.weeklySectionHead{display:flex;justify-content:space-between;align-items:end;margin-bottom:14px}.weeklySectionHead h2{margin:4px 0 0;font-size:25px;letter-spacing:-.7px}.weeklySectionHead .sub{margin-top:5px}
 #home .homeContinue{border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:18px}.homeContinueHead{display:flex;justify-content:space-between;gap:14px}.homeContinueTitle{font-size:17px;font-weight:800}.homeContinueMeta{font-size:11px;color:var(--muted);margin-top:5px}.homeContinuePct{font-size:20px;font-weight:850;color:var(--blue)}.homeContinue .progressWrap{margin-top:14px}.homeContinueActions{display:flex;justify-content:flex-end;margin-top:14px}.homeContinueBtn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:12px;padding:10px 14px;font-weight:750;cursor:pointer}.homeContinueBtn:hover{border-color:var(--blue)}.homeEmpty{border:1px dashed var(--line);border-radius:18px;padding:20px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:16px}.homeEmpty strong{color:var(--text)}
-#home .weeklyTargets,#home .performanceGrid,#home .periodGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.weeklyTargetItem,.performanceItem,.periodItem{display:flex;flex-direction:column;gap:7px}.weeklyTargetItem strong,.performanceItem strong,.periodItem strong{font-size:22px;letter-spacing:-.5px}.weeklyTargetItem span,.performanceItem span,.periodItem span{font-size:11px;color:var(--muted)}.targetStatus{color:var(--green)!important;font-weight:750}.targetPending{color:var(--muted)!important}
-#home .collapsibleSection{border-top:1px solid var(--line);padding-top:4px}.collapseHead{width:100%;border:0;background:transparent;color:var(--text);padding:18px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;text-align:left}.collapseHead>span:first-child{display:flex;flex-direction:column;gap:4px}.collapseHead strong{font-size:21px}.collapseHead .ico{color:var(--muted);transition:transform .18s}.collapseHead[aria-expanded="true"] .ico{transform:rotate(180deg)}.collapseBody{padding-bottom:4px}.periodGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important}.periodItem small{font-size:10px;color:var(--muted)}
-@media (orientation:landscape) and (min-width:600px){#home .homeCornerLogo{width:170px;max-height:64px;margin-bottom:20px}#home .weeklyDashboard{padding-top:28px}#home .weeklyHero{gap:22px;padding-bottom:22px}#home .weeklyHero h1{font-size:clamp(30px,3.2vw,42px)}#home .weeklyHeroMain{min-width:0}#home .weeklyPrimaryGrid{grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:14px;margin-top:20px}#home .weekTargetCard,#home .weeklySummaryCard,#home .weeklyTargetItem,#home .performanceItem,#home .periodItem{padding:17px}#home .weekTargetTop strong{font-size:36px}#home .weeklyTargets,#home .performanceGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#home .periodGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px}}@media(max-width:900px){#home .weeklyPrimaryGrid{grid-template-columns:1fr}.periodGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
-@media(max-width:599px){#home .homeCornerLogo{width:180px;max-height:68px;margin-bottom:22px}#home .weeklyDashboard{padding:24px 0 112px}#home .weeklyHero{display:block;padding-bottom:22px}.weekBadge{margin-top:16px}.weeklyHero h1{font-size:31px!important}.weeklyHero p{font-size:13px}.weeklyPrimaryGrid{gap:12px!important;margin-top:18px!important}.weekTargetCard,.weeklySummaryCard,.weeklyTargetItem,.performanceItem,.periodItem{border-radius:17px;padding:16px}.weekTargetTop strong{font-size:36px}.weekActivity{gap:5px!important}.weekDayBar{height:38px}.skillRow{grid-template-columns:78px minmax(0,1fr) 34px}.weeklyTargets,.performanceGrid{grid-template-columns:1fr!important}.periodGrid{grid-template-columns:1fr 1fr!important}.weeklySection{margin-top:28px!important}.weeklySectionHead h2{font-size:22px}.homeContinue{padding:16px}.homeEmpty{display:block}.homeEmpty .homeContinueBtn{margin-top:12px}}
+#home .weeklyTargets,#home .performanceGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.weeklyTargetItem,.performanceItem{display:flex;flex-direction:column;gap:7px}.weeklyTargetItem strong,.performanceItem strong{font-size:22px;letter-spacing:-.5px}.weeklyTargetItem span,.performanceItem span{font-size:11px;color:var(--muted)}.targetStatus{color:var(--green)!important;font-weight:750}.targetPending{color:var(--muted)!important}
+
+@media (orientation:landscape) and (min-width:600px){#home .homeCornerLogo{width:170px;max-height:64px;margin-bottom:20px}#home .weeklyDashboard{padding-top:28px}#home .weeklyHero{gap:22px;padding-bottom:22px}#home .weeklyHero h1{font-size:clamp(30px,3.2vw,42px)}#home .weeklyHeroMain{min-width:0}#home .weeklyPrimaryGrid{grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:14px;margin-top:20px}#home .weekTargetCard,#home .weeklySummaryCard,#home .weeklyTargetItem,#home .performanceItem{padding:17px}#home .weekTargetTop strong{font-size:36px}#home .weeklyTargets,#home .performanceGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}@media(max-width:900px){#home .weeklyPrimaryGrid{grid-template-columns:1fr}}
+@media(max-width:599px){#home .homeCornerLogo{width:180px;max-height:68px;margin-bottom:22px}#home .weeklyDashboard{padding:24px 0 112px}#home .weeklyHero{display:block;padding-bottom:22px}.weekBadge{margin-top:16px}.weeklyHero h1{font-size:31px!important}.weeklyHero p{font-size:13px}.weeklyPrimaryGrid{gap:12px!important;margin-top:18px!important}.weekTargetCard,.weeklySummaryCard,.weeklyTargetItem,.performanceItem{border-radius:17px;padding:16px}.weekTargetTop strong{font-size:36px}.weekActivity{gap:5px!important}.weekDayBar{height:38px}.skillRow{grid-template-columns:78px minmax(0,1fr) 34px}.weeklyTargets,.performanceGrid{grid-template-columns:1fr!important}.weeklySection{margin-top:28px!important}.weeklySectionHead h2{font-size:22px}.homeContinue{padding:16px}.homeEmpty{display:block}.homeEmpty .homeContinueBtn{margin-top:12px}}
 
 /* === end: weeklyGlobalDashboardV1 === */
 
@@ -2921,8 +2921,6 @@ html{margin:0;min-height:100dvh!important;width:100%;max-width:100%;overflow-x:h
 /* Canonical canvas colors: white in Light Mode and pure black in Dark Mode. */
 body{background:#ffffff!important;background-image:none!important;color:var(--text)!important;}
 body.dark,html.dark{background:#000000!important;background-image:none!important;color:var(--text)!important;}
-
-
 /* END GENERATED MODULE: src/styles/canonical.css */
 </style>
 <style id="responsive-grid-contract">
@@ -3644,14 +3642,6 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
 <div class="weeklySectionHead"><div><div class="sectionKicker">PERFORMA</div><h2>Minggu ini vs minggu lalu</h2></div></div>
 <div class="performanceGrid" id="weeklyPerformance"></div>
 </section>
-<section class="weeklySection collapsibleSection">
-<button aria-controls="monthlyDetail" aria-expanded="false" class="collapseHead" onclick="toggleDashboardPeriod('monthlyDetail',this)" type="button"><span><span class="sectionKicker">RIWAYAT</span><strong>Bulanan</strong></span><span class="material-symbols-rounded ico">expand_more</span></button>
-<div class="collapseBody" hidden="" id="monthlyDetail"><div class="periodGrid" id="monthlyStats"></div></div>
-</section>
-<section class="weeklySection collapsibleSection">
-<button aria-controls="yearlyDetail" aria-expanded="false" class="collapseHead" onclick="toggleDashboardPeriod('yearlyDetail',this)" type="button"><span><span class="sectionKicker">RIWAYAT</span><strong>Tahunan</strong></span><span class="material-symbols-rounded ico">expand_more</span></button>
-<div class="collapseBody" hidden="" id="yearlyDetail"><div class="periodGrid" id="yearlyStats"></div></div>
-</section>
 </div>
 </section>
 <section class="screen" id="scores">
@@ -3946,22 +3936,21 @@ function recordQuestionAttempt(questionId,correct){
 }
 // END GENERATED MODULE: src/core/progress.js
 // BEGIN GENERATED MODULE: src/core/cloud-sync.js
-/* Source module: cloud pull/push orchestration and sync queue.
- * Preserve current pull cooldown, snapshot freshness, merge ordering, retry limits,
- * and explicit section-check commit behavior.
+/* Source module: local-first cloud synchronization.
+ * Progress stays in local storage immediately and is batch-synced after it has
+ * remained pending for 12 hours. Pulls are also limited to one per 12 hours.
  */
 async function pullCloudStateInternal(force=false){
   if(!currentUsername||!cloudEnabled())return false;
   try{
-    /* Read after the network lookup, not before it: the learner may answer while
-       cloudFindUser is in flight. Merging a pre-request snapshot can roll back
-       that newer local answer when the response arrives. */
+    /* Read after the network lookup: the learner may answer while cloudFindUser
+       is in flight. Merging a pre-request snapshot can roll back newer progress. */
     const row=await cloudFindUser(currentUsername);
     const local=readStore();
     if(!row){
-      /* Remember that this username has no cloud row yet. Do not create it until
-         the learner explicitly checks a section. */
+      /* Do not create an empty cloud row, but keep pre-existing local progress queued. */
       cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=null;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
+      if(hasSyncableProgress(local))markCloudPending();
       renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
       return true;
     }
@@ -3969,27 +3958,67 @@ async function pullCloudStateInternal(force=false){
     cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=remote;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
     const merged=mergeStoresLatest(local,remote).store;
     writeStore(merged);
-    /* Pulls may merge cloud data into local storage, but never write back to cloud.
-       Cloud progress is committed only by syncAfterSectionCheck(). */
+    if(JSON.stringify(merged)!==JSON.stringify(remote))markCloudPending();
     markCloudSnapshotSynced(remote);
     renderHome();renderScores();renderPackagesScreen();refreshCurrentProgress();
     return true;
   }catch(e){console.warn('Cloud sync pull failed',e);return false}
 }
-let cloudPullInFlight=null,cloudLastPullAt=0;
+let cloudPullInFlight=null,cloudLastPullAt=0,cloudLastPullUsername='';
 let cloudLastSyncedSnapshot='';
-/* Reuse the latest fetched cloud snapshot for explicit section commits, avoiding
-   a full GET before every PATCH. Refresh this snapshot on login/focus pulls. */
 let cloudKnownRemoteUsername='',cloudKnownRemoteStore=null,cloudKnownRemoteLoaded=false,cloudKnownRemoteAt=0;
-const CLOUD_PULL_COOLDOWN=15*60*1000;
+const CLOUD_SYNC_INTERVAL=12*60*60*1000;
+const CLOUD_PULL_COOLDOWN=CLOUD_SYNC_INTERVAL;
 const CLOUD_SNAPSHOT_MAX_AGE=15*60*1000;
-function markCloudSnapshotSynced(store){try{cloudLastSyncedSnapshot=JSON.stringify(store??readStore())}catch(e){cloudLastSyncedSnapshot=''}}
+const CLOUD_SYNC_META_PREFIX='hsk4-kelas-e-cloud-sync-v1:';
+function cloudSyncStorageKey(kind,username=currentUsername){return CLOUD_SYNC_META_PREFIX+kind+':'+String(username||'')}
+function readCloudTimestamp(kind,username=currentUsername){
+  try{const value=Number(localStorage.getItem(cloudSyncStorageKey(kind,username)));return Number.isFinite(value)&&value>0?value:0}catch(e){return 0}
+}
+function writeCloudTimestamp(kind,value,username=currentUsername){
+  try{localStorage.setItem(cloudSyncStorageKey(kind,username),String(value));return true}catch(e){return false}
+}
+function cloudPendingSince(){return readCloudTimestamp('pending')}
+function markCloudPending(){
+  if(!currentUsername||!cloudEnabled())return 0;
+  const existing=cloudPendingSince();
+  if(existing)return existing;
+  const now=Date.now();
+  return writeCloudTimestamp('pending',now)?now:0;
+}
+function clearCloudPending(){
+  try{localStorage.removeItem(cloudSyncStorageKey('pending'))}catch(e){}
+}
+function hasSyncableProgress(store){
+  return !!store&&Object.keys(store).some(key=>key!=='_syncMeta');
+}
+function markCloudSnapshotSynced(store){
+  try{cloudLastSyncedSnapshot=JSON.stringify(store??readStore())}catch(e){cloudLastSyncedSnapshot=''}
+}
+function flushPendingCloudSync(){
+  if(!currentUsername||!cloudEnabled()||typeof navigator!=='undefined'&&navigator.onLine===false)return false;
+  const since=cloudPendingSince();
+  if(!since||Date.now()-since<CLOUD_SYNC_INTERVAL)return false;
+  clearTimeout(cloudSyncTimer);cloudSyncTimer=null;
+  return pushCloudState(readStore());
+}
 function pullCloudState(force=false){
   if(cloudPullInFlight)return cloudPullInFlight;
-  const now=Date.now();
-  if(!force&&now-cloudLastPullAt<CLOUD_PULL_COOLDOWN)return Promise.resolve(false);
-  cloudLastPullAt=now;
-  cloudPullInFlight=pullCloudStateInternal(force).finally(()=>{cloudPullInFlight=null});
+  const now=Date.now(),username=currentUsername;
+  const persistedAt=readCloudTimestamp('pull',username);
+  const lastAt=cloudLastPullUsername===username?Math.max(cloudLastPullAt,persistedAt):persistedAt;
+  if(lastAt&&now-lastAt<CLOUD_PULL_COOLDOWN){
+    flushPendingCloudSync();
+    return Promise.resolve(false);
+  }
+  cloudLastPullUsername=username;cloudLastPullAt=now;
+  cloudPullInFlight=pullCloudStateInternal(force).then(result=>{
+    if(result&&currentUsername===username)writeCloudTimestamp('pull',Date.now(),username);
+    return result;
+  }).finally(()=>{
+    cloudPullInFlight=null;
+    flushPendingCloudSync();
+  });
   return cloudPullInFlight;
 }
 async function pushCloudState(store){
@@ -3998,48 +4027,65 @@ async function pushCloudState(store){
   const snapshotBeforeRequest=readStore();
   let localSnapshot='';
   try{localSnapshot=JSON.stringify(snapshotBeforeRequest)}catch(e){}
-  /* If this exact local snapshot was already synced, avoid another GET entirely.
-     Cross-device updates are still checked by the throttled pull on focus/visibility. */
-  if(localSnapshot&&localSnapshot===cloudLastSyncedSnapshot)return true;
+  if(localSnapshot&&localSnapshot===cloudLastSyncedSnapshot){
+    clearCloudPending();
+    return true;
+  }
+  let pendingSince=cloudPendingSince();
+  if(!pendingSince)pendingSince=markCloudPending();
+  if(!pendingSince||Date.now()-pendingSince<CLOUD_SYNC_INTERVAL)return false;
   cloudSyncBusy=true;
+  let syncPayload=null;
   try{
-    /* Only fetch when no current-user snapshot is known. Section checks reuse
-       the latest snapshot fetched at login/focus, reducing repeated full-row GETs. */
-    let remoteKnown=cloudKnownRemoteLoaded&&cloudKnownRemoteUsername===currentUsername&&Date.now()-cloudKnownRemoteAt<CLOUD_SNAPSHOT_MAX_AGE;
+    /* Only fetch when no fresh current-user snapshot is known. */
+    const remoteKnown=cloudKnownRemoteLoaded&&cloudKnownRemoteUsername===currentUsername&&Date.now()-cloudKnownRemoteAt<CLOUD_SNAPSHOT_MAX_AGE;
     let remoteStore=remoteKnown?cloudKnownRemoteStore:null;
     if(!remoteKnown){
       const row=await cloudFindUser(currentUsername);
-      remoteKnown=true;remoteStore=row?(row.data||{}):null;
+      remoteStore=row?(row.data||{}):null;
       cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteStore=remoteStore;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
     }
-    /* Use the newest local snapshot after any network lookup. */
     const latest=readStore();
     if(remoteStore===null){
       await cloudCreateUser(currentUsername,latest);
+      syncPayload=latest;
       const afterCreate=readStore();
-      if(JSON.stringify(afterCreate)!==JSON.stringify(latest)) await cloudUpdateUser(currentUsername,afterCreate);
-      cloudKnownRemoteStore=readStore();cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
-      markCloudSnapshotSynced(readStore());
-      cloudSyncRetryCount=0;
-      return true;
+      if(JSON.stringify(afterCreate)!==JSON.stringify(latest)){
+        await cloudUpdateUser(currentUsername,afterCreate);
+        syncPayload=afterCreate;
+      }
+    }else{
+      const merged=mergeStoresLatest(latest,remoteStore).store;
+      writeStore(merged);
+      syncPayload=merged;
+      if(JSON.stringify(merged)!==JSON.stringify(remoteStore))await cloudUpdateUser(currentUsername,merged);
     }
-    const remote=remoteStore;
-    const merged=mergeStoresLatest(latest,remote).store;
-    writeStore(merged);
-    /* Skip a full-row PATCH when the merged cloud snapshot is already identical. */
-    if(JSON.stringify(merged)!==JSON.stringify(remote)) await cloudUpdateUser(currentUsername,merged);
-    cloudKnownRemoteStore=readStore();cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
-    markCloudSnapshotSynced(readStore());
+    cloudKnownRemoteStore=syncPayload;cloudKnownRemoteUsername=currentUsername;cloudKnownRemoteLoaded=true;cloudKnownRemoteAt=Date.now();
+    markCloudSnapshotSynced(syncPayload);
+    if(JSON.stringify(readStore())===JSON.stringify(syncPayload))clearCloudPending();
+    else cloudSyncPending=true;
     cloudSyncRetryCount=0;
     return true;
   }catch(e){console.warn('Cloud sync push failed',e);cloudSyncPending=true;return false}
-  finally{cloudSyncBusy=false;if(cloudSyncPending){cloudSyncPending=false;clearTimeout(cloudSyncTimer);if(cloudSyncRetryCount<CLOUD_SYNC_MAX_RETRIES){const delay=Math.min(60000,5000*Math.pow(2,cloudSyncRetryCount));cloudSyncRetryCount++;cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),delay)}}}
+  finally{
+    cloudSyncBusy=false;
+    if(cloudSyncPending){
+      cloudSyncPending=false;clearTimeout(cloudSyncTimer);
+      if(cloudSyncRetryCount<CLOUD_SYNC_MAX_RETRIES){
+        const delay=Math.min(60000,5000*Math.pow(2,cloudSyncRetryCount));
+        cloudSyncRetryCount++;
+        cloudSyncTimer=setTimeout(()=>pushCloudState(readStore()),delay);
+      }
+    }
+  }
 }
-/* Local answers/progress are saved immediately, but cloud writes are committed only
-   when the learner presses the section-check button (grade()). */
-function scheduleCloudSync(){clearTimeout(cloudSyncTimer)}
-function flushCloudSync(){clearTimeout(cloudSyncTimer)}
-function syncAfterSectionCheck(){if(!currentUsername||!cloudEnabled())return;clearTimeout(cloudSyncTimer);pushCloudState(readStore())}
+function scheduleCloudSync(){
+  if(!currentUsername||!cloudEnabled())return;
+  markCloudPending();
+  flushPendingCloudSync();
+}
+function flushCloudSync(){return flushPendingCloudSync()}
+function syncAfterSectionCheck(){scheduleCloudSync()}
 // END GENERATED MODULE: src/core/cloud-sync.js
 // BEGIN GENERATED MODULE: src/core/auth-flow.js
 /* Source module: username/auth UI flow.
@@ -4062,7 +4108,6 @@ function svg(k){return {'home':'<span class="material-symbols-rounded ico" aria-
 let exitFromBack=false;
 function logout(){if(!currentUsername)return;showExit(false)}
 function performLogout(){
-  flushCloudSync();
   clearTimeout(cloudSyncTimer);
   try{localStorage.removeItem(USERNAME_KEY)}catch(e){}
   try{window.__hskClearPersistedRoute?.()}catch(e){}
@@ -4576,7 +4621,7 @@ function renderHome(){
   const resume=last.resume&&last.resume.type&&last.resume.sectionIndex!=null?DB[code]?.[last.resume.type]?.[Number(last.resume.sectionIndex)]:null;
   const resumeLabel=resume?(META[last.resume.type]?.label||last.resume.type)+' · '+String(resume.title||'').replace(/^.*?·\s*/,''):'';
   sub.textContent='';
-  el.innerHTML=`<div class="homeContinue"><div class="homeContinueHead"><div><div class="homeContinueTitle">Paket ${esc(code)}</div><div class="homeContinueMeta">${resumeLabel?esc(resumeLabel)+' · ':''}${st.answered}/${st.total} soal terjawab · ${st.score} benar</div></div><div class="homeContinuePct">${pct}%</div></div>${progressHTML({answered:st.answered,total:st.total,pct},'Progres paket')}<div class="homeContinueActions"><button class="homeContinueBtn" type="button" onclick="continueLastPackage('${esc(code)}')">${pct>=100?'Lihat paket':'Lanjut belajar'} <span class="material-symbols-rounded ico actionArrow" aria-hidden="true">arrow_forward</span></button></div><div class="syncStatus ${cloudEnabled()?'':'warn'}"><strong>${cloudEnabled()?'Tersinkron ke cloud':'Tersimpan di perangkat'}</strong>${cloudEnabled()?' · progres mengikuti username @'+esc(currentUsername):' · sinkronisasi cloud belum dikonfigurasi'}</div></div>`;
+  el.innerHTML=`<div class="homeContinue"><div class="homeContinueHead"><div><div class="homeContinueTitle">Paket ${esc(code)}</div><div class="homeContinueMeta">${resumeLabel?esc(resumeLabel)+' · ':''}${st.answered}/${st.total} soal terjawab · ${st.score} benar</div></div><div class="homeContinuePct">${pct}%</div></div>${progressHTML({answered:st.answered,total:st.total,pct},'Progres paket')}<div class="homeContinueActions"><button class="homeContinueBtn" type="button" onclick="continueLastPackage('${esc(code)}')">${pct>=100?'Lihat paket':'Lanjut belajar'} <span class="material-symbols-rounded ico actionArrow" aria-hidden="true">arrow_forward</span></button></div><div class="syncStatus ${cloudEnabled()?'':'warn'}"><strong>${cloudEnabled()?'Tersimpan lokal':'Tersimpan di perangkat'}</strong>${cloudEnabled()?' · sinkronisasi cloud otomatis tiap 12 jam':' · sinkronisasi cloud belum dikonfigurasi'}</div></div>`;
   renderHomeHistory(history);
 }
 async function continueLastActivity(){
@@ -4748,7 +4793,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const TARGET=100;
   const DAY=['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
   const skillLabel={listening:'Listening',reading:'Reading',writing:'Writing'};
-  const isoDay=d=>{const x=new Date(Number(d)||d);return new Date(x.getFullYear(),x.getMonth(),x.getDate()).getTime()};
   const mondayOf=d=>{const x=new Date(d);x.setHours(0,0,0,0);const day=x.getDay();x.setDate(x.getDate()+(day===0?-6:1-day));return x};
   const rangeFor=offset=>{const s=mondayOf(new Date());s.setDate(s.getDate()+offset*7);const e=new Date(s);e.setDate(e.getDate()+6);e.setHours(23,59,59,999);return {start:s,end:e}};
   function attempts(){try{const st=typeof readStore==='function'?readStore():{};return Array.isArray(st._attempts)?st._attempts.filter(x=>x&&Number(x.timestamp)>0):[]}catch(e){return[]}}
@@ -4770,10 +4814,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const skills=document.getElementById('weeklySkillRows');if(skills)skills.innerHTML=Object.keys(skillLabel).map(k=>{const v=a.skill[k]||0,width=a.answered?Math.round(v/a.answered*100):0;return '<div class="skillRow"><span class="skillName">'+skillLabel[k]+'</span><div class="skillTrack"><div class="skillFill" style="width:'+width+'%"></div></div><span class="skillValue">'+v+'</span></div>'}).join('');
     const targets=document.getElementById('weeklyTargets');if(targets)targets.innerHTML='<div class="weeklyTargetItem"><span>Soal</span><strong>'+a.answered+'/'+TARGET+'</strong><span class="'+(a.answered>=TARGET?'targetStatus':'targetPending')+'">'+(a.answered>=TARGET?'Target tercapai':'Tersisa '+Math.max(0,TARGET-a.answered)+' soal')+'</span></div><div class="weeklyTargetItem"><span>Hari latihan</span><strong>'+a.activeDays+'/3</strong><span class="'+(a.activeDays>=3?'targetStatus':'targetPending')+'">'+(a.activeDays>=3?'Target tercapai':'Tersisa '+Math.max(0,3-a.activeDays)+' hari')+'</span></div><div class="weeklyTargetItem"><span>Akurasi</span><strong>'+(a.graded?a.accuracy+'%':'—')+'</strong><span class="targetPending">Target 70%</span></div>';
     const perf=document.getElementById('weeklyPerformance');if(perf){const delta=(x,y)=>y?Math.round((x-y)/y*100):x?100:0,change=v=>v>0?'↑ '+v+'%':v<0?'↓ '+Math.abs(v)+'%':'Tidak berubah',point=(x,y)=>{if(x==null&&y==null)return 'Belum ada data';if(x==null)return 'Belum ada data';if(y==null)return x>0?'↑ '+x+' poin':'Tidak berubah';const d=x-y;return d>0?'↑ '+d+' poin':d<0?'↓ '+Math.abs(d)+' poin':'Tidak berubah'};perf.innerHTML='<div class="performanceItem"><span>Soal dikerjakan</span><strong>'+a.answered+'</strong><span>'+change(delta(a.answered,p.answered))+' dari minggu lalu ('+p.answered+')</span></div><div class="performanceItem"><span>Hari aktif</span><strong>'+a.activeDays+'</strong><span>'+change(delta(a.activeDays,p.activeDays))+' dari minggu lalu ('+p.activeDays+')</span></div><div class="performanceItem"><span>Akurasi</span><strong>'+(a.graded?a.accuracy+'%':'—')+'</strong><span>'+point(a.accuracy,p.accuracy)+' dari minggu lalu ('+(p.graded?p.accuracy+'%':'—')+')</span></div>'}
-    renderPeriod('monthlyStats',false);renderPeriod('yearlyStats',true);
   }
-  function renderPeriod(id,year){const el=document.getElementById(id);if(!el)return;const now=new Date(),ev=attempts().filter(e=>{const d=new Date(Number(e.timestamp));return year?d.getFullYear()===now.getFullYear():(d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth())}),days=new Set(ev.map(e=>isoDay(e.timestamp))).size;el.innerHTML='<div class="periodItem"><span>'+(year?'Tahun '+now.getFullYear():new Intl.DateTimeFormat('id-ID',{month:'long',year:'numeric'}).format(now))+'</span><strong>'+ev.length+'</strong><small>soal dikerjakan</small></div><div class="periodItem"><span>Hari aktif</span><strong>'+days+'</strong><small>hari</small></div>'}
-  window.toggleDashboardPeriod=function(id,btn){const panel=document.getElementById(id);if(!panel||!btn)return;const isOpen=btn.getAttribute('aria-expanded')==='true';btn.setAttribute('aria-expanded',String(!isOpen));panel.hidden=isOpen;};
   window.__renderWeeklyDashboard=render;
   window.addEventListener('load',()=>setTimeout(render,0));
   const oldRender=window.renderHome;if(typeof oldRender==='function'){window.renderHome=function(){const r=oldRender.apply(this,arguments);render();return r}}
