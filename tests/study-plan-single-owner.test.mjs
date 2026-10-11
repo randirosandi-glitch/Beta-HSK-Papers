@@ -23,7 +23,7 @@ const canonicalFunctionalOwners = [
 
 test('study-plan navigation and picker globals have one repair-layer owner', () => {
   for (const name of canonicalFunctionalOwners) {
-    const assignment = new RegExp('window\\\\.' + name + '\\\\s*=', 'g');
+    const assignment = new RegExp('window\\.' + name + '\\s*=', 'g');
     assert.equal([...reliability.matchAll(assignment)].length, 0,
       name + ' must not be reassigned by reliability-fixes.js');
     assert.equal([...functional.matchAll(assignment)].length, 1,
