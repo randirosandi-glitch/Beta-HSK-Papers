@@ -1,8 +1,10 @@
-# HSK Papers — Google Drive Audio and Admin Upload
+# HSK Papers — Google Drive Audio Archive
+
+> **Status (11 October 2026):** Beta Listening playback now uses GitHub Releases only. The 49 MP3 assets are in the `beta-audio-hsk4` and `beta-audio-hsk5` releases. Google Drive is retained as the source archive; the app no longer reads the Drive index or embeds a Drive player.
 
 ## Existing audio index
 
-The Beta app reads the public Apps Script /exec endpoint to discover MP3 files under the **HSK Papers Audio** root folder:
+The following Apps Script endpoint and Drive upload instructions are retained for archive reference. They are not used by Beta Listening playback:
 
 https://drive.google.com/drive/folders/1AkMW158u30P7Kf8HoncKGx-PFXR_pcsH
 
