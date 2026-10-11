@@ -98,7 +98,8 @@ Progress merge/activity, statistics, recent history, section persistence, study-
 - A docs-only PR adds a root guide and a documentation index; it does not change runtime files.
 - Housekeeping PR #18 removed the unreferenced `beta-scroll-optimization-v1.html` snapshot and redundant `.gitkeep` markers; it is merged into `main`.
 - The recovery snapshot remains until a newer rebuild checkpoint has been verified and deliberately retained elsewhere.
-- Documentation PR #19 remains documentation-only until its updated checkpoint is merged.
+- Documentation PR #19 adds the root guide and documentation index; it does not change runtime files.
+- A static audit of draft PR #17 found malformed document-canvas CSS and changes to effective keyframe and responsive rules. That draft is not safe to merge as written; only cascade-preserving CSS cleanup should proceed.
 - PR #20 is merged into `main`: question/grading logic and selected workbook/study-plan patches were extracted at their existing execution points; duplicate `</style>` and document-end markup were corrected.
 - Build synchronization passed for all 42 source modules and all 39 existing Node tests. GitHub Actions source contracts passed on the merge commit, and GitHub Pages deployment completed successfully.
 - The owner reviewed the live Beta shell/dashboard; the full exercise, study-plan, and responsive regression matrix remains a final manual check.
