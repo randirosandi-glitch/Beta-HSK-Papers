@@ -16,7 +16,7 @@ function collectRules(source, context = '', baseOffset = 0, out = []) {
     }
     if (!quote && source[i] === '/' && source[i + 1] === '*') { comment = true; i += 2; continue; }
     if (quote) {
-      if (source[i] === '\\\\') { i += 2; continue; }
+      if (source[i] === '\\') { i += 2; continue; }
       if (source[i] === quote) quote = '';
       i++; continue;
     }
@@ -33,7 +33,7 @@ function collectRules(source, context = '', baseOffset = 0, out = []) {
         }
         if (!innerQuote && source[j] === '/' && source[j + 1] === '*') { innerComment = true; j++; continue; }
         if (innerQuote) {
-          if (source[j] === '\\\\') { j++; continue; }
+          if (source[j] === '\\') { j++; continue; }
           if (source[j] === innerQuote) innerQuote = '';
           continue;
         }
@@ -42,8 +42,8 @@ function collectRules(source, context = '', baseOffset = 0, out = []) {
         else if (source[j] === '}') depth--;
       }
       const body = source.slice(i + 1, j - 1);
-      if (/^@(media|supports|container|layer|scope)\\b/.test(prelude)) {
-        collectRules(body, context + '|' + prelude.replace(/\\s+/g, ' ').trim(), baseOffset + i + 1, out);
+      if (/^@(media|supports|container|layer|scope)\b/.test(prelude)) {
+        collectRules(body, context + '|' + prelude.replace(/\s+/g, ' ').trim(), baseOffset + i + 1, out);
       } else {
         out.push({ selector: prelude, body, context, start: baseOffset + chunkStart, end: baseOffset + j });
       }
@@ -54,13 +54,13 @@ function collectRules(source, context = '', baseOffset = 0, out = []) {
   return out;
 }
 
-const normalize = value => value.replace(/\\/\*[\\s\\S]*?\\*\//g, '').replace(/\\s+/g, ' ').trim();
+const normalize = value => value.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').trim();
 
 test('canonical CSS contains no exact duplicate rule blocks in the same cascade context', () => {
   const seen = new Map();
   const duplicates = [];
   for (const rule of collectRules(css)) {
-    const key = rule.context + '\\n' + normalize(rule.selector) + '\\n' + normalize(rule.body);
+    const key = rule.context + '\n' + normalize(rule.selector) + '\n' + normalize(rule.body);
     if (seen.has(key)) duplicates.push({ selector: normalize(rule.selector), context: rule.context });
     else seen.set(key, true);
   }
