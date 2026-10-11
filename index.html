@@ -4830,16 +4830,6 @@ window.correctIndex=function(q,type){
   // Ensure the word-bank renderer remains constrained to those five items.
   window.__finalAuditApplied=true;
 
-  // HSK 4 score page should show only the 25 regular HSK4 packages.
-  const oldRenderScores=window.renderScores;
-  if(typeof oldRenderScores==='function'){
-    window.renderScores=function(){
-      const saved=window.__finalScoreFilter;
-      window.__finalScoreFilter=true;
-      try{return oldRenderScores.apply(this,arguments)}finally{window.__finalScoreFilter=saved}
-    };
-  }
-
 
 })();
 </script>
