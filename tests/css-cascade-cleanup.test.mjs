@@ -110,6 +110,10 @@ function declarationsOf(body) {
   }).filter(Boolean);
 }
 
+test('canonical CSS has no empty declaration separators left by consolidation', () => {
+  assert.doesNotMatch(css, /;{2,}/, 'Remove empty declaration separators without touching quoted strings or comments.');
+});
+
 test('canonical CSS contains no exact duplicate rule blocks in the same cascade context', () => {
   const seen = new Map();
   const duplicates = [];
