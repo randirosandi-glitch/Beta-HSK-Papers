@@ -25,5 +25,5 @@ jobs:
           persist-credentials: false
       - name: Transfer selected public Drive MP3s to GitHub Releases
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: python3 .github/scripts/migrate_drive_audio.py .github/audio-migration-mode
