@@ -104,21 +104,8 @@
   window.resetPackageProgress=resetPackageProgress;
   window.resetSectionProgress=resetSectionProgress;
 
-  const originalPackage=window.renderPackage;
-  if(typeof originalPackage==='function'){
-    window.renderPackage=function(){
-      originalPackage.apply(this,arguments);
-      requestAnimationFrame(appendPackageReset);
-    };
-  }
-
-  const originalSections=window.renderSections;
-  if(typeof originalSections==='function'){
-    window.renderSections=function(){
-      originalSections.apply(this,arguments);
-      requestAnimationFrame(appendSectionReset);
-    };
-  }
+  window.__appendPackageResetControl=appendPackageReset;
+  window.__appendSectionResetControl=appendSectionReset;
 
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded',function(){

@@ -24,6 +24,7 @@
         +'</button>';
     });
     $('sections').innerHTML=arr.length?arr.join(''):'<div class="notice"><strong>'+escFinal(route.packageCode)+' · '+escFinal(m.label)+'</strong><br>Bagian ini belum tersedia sebagai teks soal pada paket ini.</div>';
+    window.__appendSectionResetControl?.();
   }
   window.renderSections=renderSectionsFinalV23;
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{try{if(route&&route.screen==='parts') renderSectionsFinalV23();}catch(e){}});

@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const reliability = await readFile(new URL('../src/core/reliability-fixes.js', import.meta.url), 'utf8');
 const functional = await readFile(new URL('../src/core/functional-repair.js', import.meta.url), 'utf8');
+const resetControls = await readFile(new URL('../src/core/progress-reset-controls.js', import.meta.url), 'utf8');
 const index = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 
 const canonicalFunctionalOwners = [
@@ -25,6 +26,8 @@ const canonicalFunctionalOwners = [
 test('study-plan navigation and picker globals have one repair-layer owner', () => {
   assert.doesNotMatch(reliability, /MASTER\.planState|planState|renderStudyPlanPickerMaster|materialOptionsMaster/,
     'legacy picker state and renderer must be removed from reliability-fixes.js');
+  assert.doesNotMatch(resetControls, /originalPackage=window\\.renderPackage|originalSections=window\\.renderSections/,
+    'progress reset controls must use renderer hooks instead of wrapping renderers');
   assert.doesNotMatch(index, /FINAL_STUDY_PLAN_CREATE_ENTRY|oldRenderStudyPlans|previousRenderStudyPlans|parts-renderer|__finalScoreFilter/,
     'study-plan renderer must not be wrapped by inline follow-up patches');
   for (const name of canonicalFunctionalOwners) {
