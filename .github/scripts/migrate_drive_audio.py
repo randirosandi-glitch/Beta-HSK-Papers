@@ -104,22 +104,60 @@ def download_mp3(code, item, directory):
         fail("Drive download failed for " + code + ": " + str(error))
     if len(data) > MAX_FILE_BYTES:
         fail(code + " exceeded the expected 100 MiB safety limit.")
+    raw_path = Path(directory) / (code + ".source")
+    raw_path.write_bytes(data)
+    destination = Path(directory) / (code + ".mp3")
     prefix = data[:8192]
     has_id3 = prefix.startswith(b"ID3")
     has_mpeg_frame = any(
         prefix[index] == 0xFF and (prefix[index + 1] & 0xE0) == 0xE0
         for index in range(len(prefix) - 1)
     )
-    if len(data) < 4096 or not (has_id3 or has_mpeg_frame):
-        content_type = response.headers.get("Content-Type", "unknown")
-        fail(
-            code + " did not download as a valid MP3 (Content-Type="
-            + content_type + ", first-bytes=" + data[:16].hex() + ")."
+    if len(data) < 4096:
+        fail(code + " download is too small to contain audio.")
+    if has_id3 or has_mpeg_frame:
+        destination.write_bytes(data)
+        print("Downloaded " + code + ".mp3 as MP3.")
+    else:
+        probe = subprocess.run(
+            [
+                "ffprobe", "-v", "error", "-select_streams", "a:0",
+                "-show_entries", "stream=codec_name", "-of", "default=noprint_wrappers=1:nokey=1",
+                str(raw_path),
+            ],
+            check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
         )
-    destination = Path(directory) / (code + ".mp3")
-    destination.write_bytes(data)
+        codec = probe.stdout.strip().splitlines()[0] if probe.returncode == 0 and probe.stdout.strip() else ""
+        if not codec:
+            content_type = response.headers.get("Content-Type", "unknown")
+            fail(
+                code + " is neither a valid MP3 nor a readable audio stream "
+                + "(Content-Type=" + content_type + ", first-bytes=" + data[:16].hex()
+                + ", ffprobe=" + probe.stderr.strip() + ")."
+            )
+        converted = subprocess.run(
+            [
+                "ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-y",
+                "-i", str(raw_path), "-map", "0:a:0", "-vn",
+                "-codec:a", "libmp3lame", "-q:a", "2", str(destination),
+            ],
+            check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        )
+        if converted.returncode != 0 or not destination.exists():
+            fail(code + " audio conversion to MP3 failed: " + converted.stderr.strip())
+        normalized = destination.read_bytes()
+        normalized_prefix = normalized[:8192]
+        normalized_has_frame = any(
+            normalized_prefix[index] == 0xFF and (normalized_prefix[index + 1] & 0xE0) == 0xE0
+            for index in range(len(normalized_prefix) - 1)
+        )
+        if len(normalized) < 4096 or not (normalized_prefix.startswith(b"ID3") or normalized_has_frame):
+            fail(code + " conversion did not produce a valid MP3.")
+        data = normalized
+        print("Converted " + code + ".mp3 from " + codec + " audio to MP3.")
+    raw_path.unlink()
     digest = hashlib.sha256(data).hexdigest()
-    print("Downloaded " + code + ".mp3 (" + str(len(data)) + " bytes, sha256 " + digest + ").")
+    print("Prepared " + code + ".mp3 (" + str(len(data)) + " bytes, sha256 " + digest + ").")
     return destination, digest, len(data)
 
 
