@@ -196,8 +196,12 @@
     const el=has('studyPlansGrid');
     if(!el)return;
     const plans=plansStoreMaster();
+    const refreshPackageActions=()=>{
+      if(route?.screen==='levels'||route?.screen==='packages')setTimeout(()=>window.renderPackagesScreen?.(),0);
+    };
     if(!plans.length){
       el.innerHTML='<div class="studyPlanEmpty"><strong>Belum ada rencana belajar</strong><span>Kumpulkan paket penting untuk membuat playlist latihanmu sendiri.</span><br><button class="btn primary" type="button" onclick="openStudyPlanCreator()">＋ Buat Rencana Baru</button></div>';
+      refreshPackageActions();
       return;
     }
     el.innerHTML=plans.map(p=>{
@@ -216,6 +220,14 @@
         <div class="studyPlanBar"><i style="width:${st.pct}%"></i></div>
       </article>`;
     }).join('');
+    const createCard=document.createElement('button');
+    createCard.type='button';
+    createCard.className='studyPlanCard studyPlanCreateCard';
+    createCard.setAttribute('aria-label','Buat Rencana Belajar Baru');
+    createCard.innerHTML='<div class="studyPlanIcon">＋</div><h3>Buat Rencana Baru</h3><div class="studyPlanDesc">Buat playlist untuk tujuan belajar yang berbeda.</div>';
+    createCard.addEventListener('click',()=>window.openStudyPlanCreator?.());
+    el.appendChild(createCard);
+    refreshPackageActions();
   };
 
   window.openStudyPlanCreator=function(){
