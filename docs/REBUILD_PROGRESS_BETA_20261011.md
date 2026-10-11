@@ -62,21 +62,22 @@ Stable is out of scope and has not been modified in this rebuild.
 
 ## CSS cascade cleanup checkpoint — 2026-10-11
 
-- Removed the separate navigation cascade file and consolidated the effective portrait/landscape navigation rules into `src/styles/responsive-navigation.css`.
-- Removed the versioned v38–v46 navbar override blocks and duplicate portrait glass / icon patches.
-- Consolidated top-bar geometry/visuals, top-bar inner spacing, brand title rules, tile icon base rules, Back control rules, root/body theme tokens, and the document canvas rules.
-- Folded HSK 5 header/numbering and study-plan picker styles into their owning modules; removed an empty HSK 5 header patch and nested writing-field style wrapper.
-- The canonical stylesheet was reduced from roughly 319 KB to roughly 275 KB; this is progress, not proof that every legacy component override is gone. The remaining duplicate component selectors in `canonical.css` still need a controlled pass before claiming zero stacked patches.
+- Existing cleanup already consolidated portrait/landscape navigation, top-bar geometry, brand title rules, tile icon base rules, Back control rules, theme tokens, document canvas, HSK 5 header/numbering, and study-plan picker styles.
+- A controlled cleanup is in draft PR [#17](https://github.com/randirosandi-glitch/Beta-HSK-Papers/pull/17), branch `rebuild/css-exact-duplicate-cleanup`; it has not been merged or deployed to `main`.
+- In this pass, `src/styles/canonical.css` was reduced from 275,236 bytes to 242,968 bytes (about 32 KB smaller). It removed 21 exact duplicate rule blocks, repeated identical declarations, superseded declarations, 161 empty rule blocks, and consolidated 19 repeated base-element rule blocks.
+- Responsive media-query whitespace is normalized during the cleanup analysis so equivalent media conditions do not evade duplicate detection. One obsolete mobile `display:none` rule for study-plan actions was removed because a later rule explicitly makes those actions visible.
+- A new test checks exact duplicate CSS blocks and identical declarations within the same cascade context. The latest contract/build/test workflow for this checkpoint passed: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38099973442.
+- The pass intentionally retains fallback pairs where a modern value such as `var()`, `color-mix()`, or dynamic viewport units may need a prior supported value. This is not yet a claim that every legacy component style block has been consolidated.
 
 ## What is not claimed yet
 
 - These are not full browser/end-to-end tests.
-- The app has not yet completed the manual regression matrix across phone, tablet, and desktop.
+- The app has not yet completed the manual regression matrix across phone, tablet, and desktop. The latest CSS cleanup is still branch-only until that regression pass is completed.
 - The main question/data script (including embedded question data), home-history DOM rendering, canonical grading implementation and its final wrapper, some auth/logout UI, study-plan follow-up patches, and most remaining CSS override blocks remain inline.
 
 ## Next migration step
 
-Progress merge/activity, statistics, recent history, section persistence, study-plan merge, Supabase transport, and selected presentation concerns now have source modules and behavior-focused tests. The study-plan feature, catalog/package runtime, navigation controller, result pagination, weekly dashboard, reliability/repair layers, section renderers, cloud-sync orchestration, auth flow, and selected CSS blocks were extracted into source modules while remaining in their original positions. A targeted correctness fix ensures the active section's answer-event ID map is saved by default, so checked answers can continue updating existing activity records after state persistence; no storage key or record schema changed. Next: continue removing the remaining legacy component overrides from `src/styles/canonical.css` without changing the tested app behavior; then run the contract suite and perform a focused browser regression check of sign-in, package opening, answer selection/checking, return navigation, study plans, and theme/responsive behavior. The public Beta page responds with the HSK Papers shell, but the full authenticated interaction matrix has not yet been verified. Do not change the 5,000-event retention policy during code movement.
+Progress merge/activity, statistics, recent history, section persistence, study-plan merge, Supabase transport, and selected presentation concerns now have source modules and behavior-focused tests. The study-plan feature, catalog/package runtime, navigation controller, result pagination, weekly dashboard, reliability/repair layers, section renderers, cloud-sync orchestration, auth flow, and selected CSS blocks were extracted into source modules while remaining in their original positions. A targeted correctness fix ensures the active section's answer-event ID map is saved by default, so checked answers can continue updating existing activity records after state persistence; no storage key or record schema changed. Next: review the remaining CSS fallback pairs one by one and remove only those proven unnecessary; then audit remaining inline JavaScript repair layers and the main question/grading/auth sections. Keep the contract suite green and complete a browser regression check of sign-in, package opening, answer selection/checking, return navigation, study plans, and theme/responsive behavior before merging or deploying. The public Beta page responds with the HSK Papers shell, but the full authenticated interaction matrix has not yet been verified. Do not change the 5,000-event retention policy during code movement.
 
 ## Permanent guardrails
 
