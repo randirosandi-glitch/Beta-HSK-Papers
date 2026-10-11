@@ -131,13 +131,13 @@ body.dark .brandTitleWrap .brandSubtitle{
 /* Additional actual-rendered-ID contrast rules consolidated from the former final cascade. */
 /* Dark Mode text-visibility audit: color only; no layout/size changes. */
 body.dark .brand span{
-  color:#ff7658!important;
+  color:#F9383B!important;
 }
 body.dark .logoutNav{
   color:#ff8e86!important;
 }
 body.dark .mark{
-  color:#ff7658!important;
+  color:#F9383B!important;
 }
 body.dark .levelChoice.comingSoon small{
   color:#c2b0ff!important;
