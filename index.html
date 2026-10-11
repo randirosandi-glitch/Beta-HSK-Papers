@@ -2922,25 +2922,78 @@ html{margin:0;min-height:100dvh!important;width:100%;max-width:100%;overflow-x:h
 body{background:#ffffff!important;background-image:none!important;color:var(--text)!important;}
 body.dark,html.dark{background:#000000!important;background-image:none!important;color:var(--text)!important;}
 
-/* Combined Listening screen and sticky, native audio controls. */
+/* Full-bleed Listening player attached to the fixed top bar. */
 #exercise .listeningAudioDock{
   position:sticky;
   top:calc(68px + env(safe-area-inset-top,0px));
   z-index:30;
-  margin:10px 0 16px;
-  padding:10px 12px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:var(--surface);
+  box-sizing:border-box;
+  width:100vw;
+  margin:0 0 16px calc(50% - 50vw);
+  padding:8px max(24px,calc((100vw - var(--app-max))/2 + 24px));
+  border:0;
+  border-bottom:1px solid var(--line);
+  border-radius:0;
+  background:var(--top);
   color:var(--text);
+  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
 }
 #exercise .listeningAudioDock[hidden],
+#exercise .listeningAudioControls[hidden],
 #exercise .listeningAudioDock audio[hidden],
 #exercise .listeningAudioRetry[hidden]{display:none!important}
-#exercise .listeningAudioDock audio{display:block;width:100%;max-width:100%;height:42px}
+#exercise .listeningAudioControls{
+  display:flex;
+  align-items:center;
+  width:100%;
+  min-width:0;
+  gap:2px;
+}
+#exercise .listeningAudioSeek{
+  display:grid;
+  place-items:center;
+  flex:0 0 42px;
+  width:42px;
+  height:42px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:inherit;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#exercise .listeningAudioSeek:hover{background:var(--surface2)}
+#exercise .listeningAudioSeek:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+#exercise .listeningAudioSeek .material-symbols-rounded{font-size:25px;line-height:1}
+#exercise .listeningAudioDock audio{
+  display:block;
+  flex:1 1 auto;
+  min-width:0;
+  width:100%;
+  max-width:100%;
+  height:42px;
+  color-scheme:dark;
+}
+body.dark #exercise .listeningAudioDock audio{color-scheme:light}
 #exercise .listeningAudioStatus{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45}
-#exercise .listeningAudioDock audio:not([hidden])+.listeningAudioStatus{margin-top:6px}
+#exercise .listeningAudioStatus:empty{display:none}
 #exercise .listeningAudioRetry{margin-top:8px;min-height:36px}
+@media (min-width:600px) and (orientation:landscape){
+  #exercise .listeningAudioDock{
+    top:calc(var(--app-topbar-h) + env(safe-area-inset-top,0px));
+    margin-left:calc(50% - 50vw - var(--nav-rail)/2);
+  }
+}
+@media(max-width:599px){
+  #exercise .listeningAudioDock{
+    margin:0 0 14px calc(50% - 50vw);
+    padding:8px 16px;
+  }
+  #exercise .listeningAudioSeek{flex-basis:40px;width:40px;height:40px}
+  #exercise .listeningAudioDock audio{height:40px}
+}
 #exercise .listeningPartDivider{
   display:grid;
   grid-template-columns:minmax(20px,1fr) auto minmax(20px,1fr);
@@ -2959,11 +3012,8 @@ body.dark,html.dark{background:#000000!important;background-image:none!important
 #exercise .listeningPartDivider.is-first::after{display:none}
 #exercise .listeningPartDivider.is-first span{grid-column:1/-1}
 @media(max-width:599px){
-  #exercise .listeningAudioDock{margin:8px 0 14px;padding:9px 10px}
-  #exercise .listeningAudioDock audio{height:40px}
   #exercise .listeningPartDivider{margin:21px 0 10px}
-}
-/* END GENERATED MODULE: src/styles/canonical.css */
+}/* END GENERATED MODULE: src/styles/canonical.css */
 </style>
 <style id="responsive-grid-contract">
 /* BEGIN GENERATED MODULE: src/styles/responsive-grid.css */
