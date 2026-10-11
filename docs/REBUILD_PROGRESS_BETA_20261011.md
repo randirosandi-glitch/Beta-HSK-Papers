@@ -63,9 +63,9 @@ Stable is out of scope and has not been modified in this rebuild.
 - tests/cloud-transport.test.mjs checks minimal Supabase requests, username encoding, request payloads, and HTTP errors.
 - .github/workflows/rebuild-contracts.yml checks module synchronization, reproducible index generation, inline script syntax, and all Node tests.
 - Earlier full contract run after the 30-module extraction: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38068983933
-- Latest source contract run after question-engine and patch extraction: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38105623903 (success, 39 tests pass).
-- Latest GitHub Pages deployment after the runtime update: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38105623520 (success).
-- Latest GitHub Pages deployment for the same runtime index: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38069015163
+- Contract run after question-engine and patch extraction: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38105623903 (success, 39 tests pass).
+- GitHub Pages deployment after the PR #20 runtime update: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38105623520 (success).
+- Earlier GitHub Pages deployment for the same runtime index: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38069015163
 
 ## CSS cascade cleanup checkpoint — 2026-10-11
 
@@ -73,18 +73,19 @@ Stable is out of scope and has not been modified in this rebuild.
 - Removed the versioned v38–v46 navbar override blocks and duplicate portrait glass / icon patches.
 - Consolidated top-bar geometry/visuals, top-bar inner spacing, brand title rules, tile icon base rules, Back control rules, root/body theme tokens, and the document canvas rules.
 - Folded HSK 5 header/numbering and study-plan picker styles into their owning modules; removed an empty HSK 5 header patch and nested writing-field style wrapper.
-- The canonical stylesheet was reduced from roughly 319 KB to roughly 275 KB; this is progress, not proof that every legacy component override is gone. The remaining duplicate component selectors in `canonical.css` still need a controlled pass before claiming zero stacked patches.
+- The canonical stylesheet is 274,796 bytes (275,236 before the latest pass). PR #21 removed four audited exact duplicate blocks (440 bytes) and regenerated the matching region in `index.html`.
+- Other repeated component selectors remain. Broader consolidation is not included because draft PR #17 changed effective keyframe and responsive rules.
 
 ## What is not claimed yet
 
 - These are not full browser/end-to-end tests.
 - The app has not yet completed the manual regression matrix across phone, tablet, and desktop.
 - The large embedded question/data payload, home-history DOM rendering, and some auth/logout UI remain inline.
-- The CSS stack cleanup in PR #17 is still under review and is not included in the live app. A static audit found effective keyframe and responsive-style differences in that draft, so it must be corrected before merging.
+- Draft PR #17 was closed without merge after a static audit found effective keyframe/responsive changes and malformed document-canvas CSS.
 
 ## Next migration step
 
-Progress merge/activity, statistics, recent history, section persistence, study-plan merge, Supabase transport, and selected presentation concerns now have source modules and behavior-focused tests. The study-plan feature, catalog/package runtime, navigation controller, result pagination, weekly dashboard, reliability/repair layers, section renderers, cloud-sync orchestration, auth flow, and selected CSS blocks were extracted into source modules while remaining in their original positions. A targeted correctness fix ensures the active section's answer-event ID map is saved by default, so checked answers can continue updating existing activity records after state persistence; no storage key or record schema changed. Next: revise the PR #17 CSS cleanup so computed style behavior remains unchanged, then run the contract suite and perform a focused browser regression check of sign-in, package opening, answer selection/checking, return navigation, study plans, and theme/responsive behavior. The public Beta page responds with the HSK Papers shell, but the full authenticated interaction matrix has not yet been verified. Do not change the 5,000-event retention policy during code movement.
+Progress merge/activity, statistics, recent history, section persistence, study-plan merge, Supabase transport, and selected presentation concerns now have source modules and behavior-focused tests. The study-plan feature, catalog/package runtime, navigation controller, result pagination, weekly dashboard, reliability/repair layers, section renderers, cloud-sync orchestration, auth flow, and selected CSS blocks were extracted into source modules while remaining in their original positions. A targeted correctness fix ensures the active section's answer-event ID map is saved by default, so checked answers can continue updating existing activity records after state persistence; no storage key or record schema changed. The next validation step is the manual regression matrix across phone, tablet, and desktop for sign-in, package opening, answer selection/checking, return navigation, study plans, theme, and responsive layout. Further CSS consolidation should wait until those states are checked. The public Beta page responds with the HSK Papers dashboard, but authenticated exercise and study-plan interactions have not yet been verified. Do not change the 5,000-event retention policy during code movement.
 
 ## Permanent guardrails
 
@@ -99,7 +100,9 @@ Progress merge/activity, statistics, recent history, section persistence, study-
 - Housekeeping PR #18 removed the unreferenced `beta-scroll-optimization-v1.html` snapshot and redundant `.gitkeep` markers; it is merged into `main`.
 - The recovery snapshot remains until a newer rebuild checkpoint has been verified and deliberately retained elsewhere.
 - Documentation PR #19 adds the root guide and documentation index; it does not change runtime files.
-- A static audit of draft PR #17 found malformed document-canvas CSS and changes to effective keyframe and responsive rules. That draft is not safe to merge as written; only cascade-preserving CSS cleanup should proceed.
+- A static audit of draft PR #17 found malformed document-canvas CSS and changes to effective keyframe and responsive rules. It was closed without merge; only cascade-preserving CSS cleanup proceeded in PR #21.
 - PR #20 is merged into `main`: question/grading logic and selected workbook/study-plan patches were extracted at their existing execution points; duplicate `</style>` and document-end markup were corrected.
-- Build synchronization passed for all 42 source modules and all 39 existing Node tests. GitHub Actions source contracts passed on the merge commit, and GitHub Pages deployment completed successfully.
+- PR #21 is merged into `main`: four cascade-audited duplicate CSS blocks were removed; the broad PR #17 rewrite remains excluded.
+- Build synchronization passed for all 42 source modules; all 40 Node tests passed in PR #21 workflow run [#152](https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38106661763).
+- GitHub Pages deployment after PR #21 completed successfully in [run #411](https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38106690395).
 - The owner reviewed the live Beta shell/dashboard; the full exercise, study-plan, and responsive regression matrix remains a final manual check.
