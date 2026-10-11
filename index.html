@@ -3128,7 +3128,7 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 }
 
 
-<style id="beta-writing-autogrow-v1">
+/* Writing answer field sizing. */
 /* Beta: flexible writing answer field */
 #exercise .writingAnswerField{
   display:block!important;
@@ -3404,11 +3404,8 @@ html body.dark .mainNav .navItem.active .navLabel,html body.dark .mainNav .navIt
   #exercise .hsk5PaperPart3 .hsk5PaperOptions:not(.paperOptionsTwoRows) .hsk5PaperOption{width:auto!important;}
   #exercise .hsk5PaperPart3 .hsk5PaperOptions.paperOptionsTwoRows .hsk5PaperOption{width:100%!important;}
 }
-/* END GENERATED MODULE: src/styles/hsk5-paper-engine.css */
-</style>
 
-
-<style id="hsk5PaperPart2HeaderC4">
+/* Reading Part 2 header typography. */
 #exercise .section h2#exTitle.hsk5PaperSectionHeader{
   margin:0!important;
   padding:0!important;
@@ -3441,9 +3438,7 @@ html body.dark .mainNav .navItem.active .navLabel,html body.dark .mainNav .navIt
   #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle{font-size:44px!important;}
   #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{margin-top:22px!important;font-size:21px!important;line-height:1.7!important;}
 }
-</style>
 
-<style id="hsk5PaperPart2PdfNumberingC5">
 /* C5: HSK 5 Reading Part 2 — PDF-style numbering/content alignment. */
 #exercise .hsk5PaperPart2 .hsk5PaperQuestion{
   display:grid!important;
@@ -3509,15 +3504,11 @@ html body.dark .mainNav .navItem.active .navLabel,html body.dark .mainNav .navIt
     line-height:1.5!important;
   }
 }
+/* END GENERATED MODULE: src/styles/hsk5-paper-engine.css */
 </style>
 
 
 <!-- HSK Papers: cleaned Paper Part 3 CSS — one authoritative rule set -->
-<style id="hsk5PaperPart1HeaderC6">
-/* C6: HSK 5 Reading Part 1 PDF-style section header. Source: H51002.pdf, Reading Part 1. */
-#exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle{}
-</style>
-
 <style id="hsk-darkmode-text-fixed-all-v2">
 /* BEGIN GENERATED MODULE: src/styles/dark-mode-contrast.css */
 
@@ -7830,31 +7821,8 @@ body.dark .studyPlanPickerLevel.active{background:var(--blue)!important;color:#f
 @media(prefers-reduced-motion:reduce){
   #studyPlansGrid .studyPlanCard,#studyPlanPackages .studyPlanPackage{transition:none!important}
 }
-/* END GENERATED MODULE: src/styles/study-plans.css */
-</style>
-<script id="study-plan-ui-keyboard-audit-v1">
-(function(){
-  'use strict';
-  document.addEventListener('keydown',function(e){
-    if(e.altKey||e.ctrlKey||e.metaKey)return;
-    const row=e.target.closest?.('#studyPlanPackages .studyPlanPackage');
-    if(row && !e.target.closest('button') && (e.key==='Enter'||e.key===' ')){
-      e.preventDefault();
-      const id=row.dataset.planId,code=row.dataset.packageCode;
-      if(id&&code&&typeof window.openPackageFromStudyPlan==='function')window.openPackageFromStudyPlan(id,code);
-      return;
-    }
-    const card=e.target.closest?.('#studyPlansGrid .studyPlanCard[role="button"]');
-    if(card && e.target===card && (e.key==='Enter'||e.key===' ')){
-      e.preventDefault();
-      if(typeof window.openStudyPlan==='function'&&card.dataset.planId)window.openStudyPlan(card.dataset.planId);
-    }
-  },true);
-})();
-</script>
 
-
-<style id="study-plan-picker-actions-mobile-fix-v1">
+/* Keep picker actions reachable above the fixed mobile navbar. */
 /* Keep the study-plan picker actions reachable above the fixed mobile navbar. */
 #studyPlanPickerModal{z-index:10050!important;padding:12px 12px calc(104px + env(safe-area-inset-bottom))!important;align-items:center!important;overflow-y:auto!important}
 #studyPlanPickerModal .studyPlanModalBox{
@@ -7887,7 +7855,28 @@ body.dark #studyPlanPickerModal .studyPlanPickerActions{background:#151618!impor
   }
   #studyPlanPickerModal .studyPlanPickerActions .btn{width:100%!important;min-height:46px!important}
 }
+/* END GENERATED MODULE: src/styles/study-plans.css */
 </style>
+<script id="study-plan-ui-keyboard-audit-v1">
+(function(){
+  'use strict';
+  document.addEventListener('keydown',function(e){
+    if(e.altKey||e.ctrlKey||e.metaKey)return;
+    const row=e.target.closest?.('#studyPlanPackages .studyPlanPackage');
+    if(row && !e.target.closest('button') && (e.key==='Enter'||e.key===' ')){
+      e.preventDefault();
+      const id=row.dataset.planId,code=row.dataset.packageCode;
+      if(id&&code&&typeof window.openPackageFromStudyPlan==='function')window.openPackageFromStudyPlan(id,code);
+      return;
+    }
+    const card=e.target.closest?.('#studyPlansGrid .studyPlanCard[role="button"]');
+    if(card && e.target===card && (e.key==='Enter'||e.key===' ')){
+      e.preventDefault();
+      if(typeof window.openStudyPlan==='function'&&card.dataset.planId)window.openStudyPlan(card.dataset.planId);
+    }
+  },true);
+})();
+</script>
 
 
 <style id="answer-feedback-heroicons-v2">
@@ -7938,7 +7927,9 @@ body.dark .authForm .usernameInput[aria-invalid="true"]:focus-visible{
 
 
 
-<style id="hsk-beta-scroll-v1">
+<style id="scroll-performance-styles">
+/* BEGIN GENERATED MODULE: src/styles/scroll-performance.css */
+/* Scroll and rendering performance safeguards for lower-powered devices. */
 /* HSK PAPERS BETA — FLAT TOPBAR + SCROLL PERFORMANCE TEST */
 .top,
 body.dark .top {
@@ -7969,8 +7960,8 @@ body.dark .top {
     scroll-behavior: auto !important;
   }
 }
+/* END GENERATED MODULE: src/styles/scroll-performance.css */
 </style>
-
 
 <style id="hsk-beta-grade-loading-v1">
 /* BEGIN GENERATED MODULE: src/styles/grade-loading.css */
