@@ -7,7 +7,9 @@ body.dark .top {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
   box-shadow: none !important;
+  border-bottom: 1px solid rgba(130,150,180,.18) !important;
 }
+body.dark .top { border-bottom-color: rgba(190,204,224,.10) !important; }
 @media (max-width: 900px) and (pointer: coarse) {
   .question, .questionCard {
     content-visibility: auto;
