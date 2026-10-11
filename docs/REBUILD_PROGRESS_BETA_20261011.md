@@ -7,7 +7,7 @@ Stable is out of scope and has not been modified in this rebuild.
 ## Current checkpoint
 
 - The deployable app remains index.html.
-- Thirty-three source modules are integrated while preserving the existing classic-script/global interfaces:
+- Forty-two source modules are integrated while preserving the existing classic-script/global interfaces:
   - src/core/storage-adapter.js — storage key, readStore(), writeStore().
   - src/core/route-persistence.js — LAST_ROUTE_KEY and the three existing window route-persistence functions.
   - src/core/progress.js — progress-reset helpers, local/cloud store merge, and question-activity create/update helpers.
@@ -41,6 +41,12 @@ Stable is out of scope and has not been modified in this rebuild.
   - src/styles/dark-mode-contrast.css — dark-mode text-contrast rules.
   - src/core/cloud-sync.js — pull/push orchestration, cached cloud snapshot, cooldown, and retry queue.
   - src/core/auth-flow.js — username save/change, user pill, and cloud initialization flow.
+  - src/questions/engine.js — existing question rendering, answer selection, and grading implementation.
+  - src/questions/workbook-hsk4a-integration.js — workbook catalog integration.
+  - src/questions/workbook-answer-sync.js — existing workbook answer synchronization patch.
+  - src/questions/verified-question-audit-patch.js — verified question content fixes.
+  - src/study-plans/feature-restore.js — existing study-plan feature follow-up.
+  - src/study-plans/create-entry.js — existing study-plan creation entry point.
 - scripts/build.mjs assembles the source fragments back into the marked regions of index.html.
 - The build is designed to keep a single-file deployment artifact while source modules are separated for maintainability.
 - Source extraction preserves the original script/style order and legacy globals. The only targeted behavior correction so far is persisting the active answer-event map by default; no storage key or serialized data schema migration was introduced.
@@ -57,7 +63,8 @@ Stable is out of scope and has not been modified in this rebuild.
 - tests/cloud-transport.test.mjs checks minimal Supabase requests, username encoding, request payloads, and HTTP errors.
 - .github/workflows/rebuild-contracts.yml checks module synchronization, reproducible index generation, inline script syntax, and all Node tests.
 - Earlier full contract run after the 30-module extraction: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38068983933
-- Latest contract run after CSS cascade consolidation: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38097481791 (success).
+- Latest source contract run after question-engine and patch extraction: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38105623903 (success, 39 tests pass).
+- Latest GitHub Pages deployment after the runtime update: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38105623520 (success).
 - Latest GitHub Pages deployment for the same runtime index: https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38069015163
 
 ## CSS cascade cleanup checkpoint — 2026-10-11
@@ -72,11 +79,12 @@ Stable is out of scope and has not been modified in this rebuild.
 
 - These are not full browser/end-to-end tests.
 - The app has not yet completed the manual regression matrix across phone, tablet, and desktop.
-- The main question/data script (including embedded question data), home-history DOM rendering, canonical grading implementation and its final wrapper, some auth/logout UI, study-plan follow-up patches, and most remaining CSS override blocks remain inline.
+- The large embedded question/data payload, home-history DOM rendering, and some auth/logout UI remain inline.
+- The CSS stack cleanup in PR #17 is still under review and is not included in the live app. A static audit found effective keyframe and responsive-style differences in that draft, so it must be corrected before merging.
 
 ## Next migration step
 
-Progress merge/activity, statistics, recent history, section persistence, study-plan merge, Supabase transport, and selected presentation concerns now have source modules and behavior-focused tests. The study-plan feature, catalog/package runtime, navigation controller, result pagination, weekly dashboard, reliability/repair layers, section renderers, cloud-sync orchestration, auth flow, and selected CSS blocks were extracted into source modules while remaining in their original positions. A targeted correctness fix ensures the active section's answer-event ID map is saved by default, so checked answers can continue updating existing activity records after state persistence; no storage key or record schema changed. Next: continue removing the remaining legacy component overrides from `src/styles/canonical.css` without changing the tested app behavior; then run the contract suite and perform a focused browser regression check of sign-in, package opening, answer selection/checking, return navigation, study plans, and theme/responsive behavior. The public Beta page responds with the HSK Papers shell, but the full authenticated interaction matrix has not yet been verified. Do not change the 5,000-event retention policy during code movement.
+Progress merge/activity, statistics, recent history, section persistence, study-plan merge, Supabase transport, and selected presentation concerns now have source modules and behavior-focused tests. The study-plan feature, catalog/package runtime, navigation controller, result pagination, weekly dashboard, reliability/repair layers, section renderers, cloud-sync orchestration, auth flow, and selected CSS blocks were extracted into source modules while remaining in their original positions. A targeted correctness fix ensures the active section's answer-event ID map is saved by default, so checked answers can continue updating existing activity records after state persistence; no storage key or record schema changed. Next: revise the PR #17 CSS cleanup so computed style behavior remains unchanged, then run the contract suite and perform a focused browser regression check of sign-in, package opening, answer selection/checking, return navigation, study plans, and theme/responsive behavior. The public Beta page responds with the HSK Papers shell, but the full authenticated interaction matrix has not yet been verified. Do not change the 5,000-event retention policy during code movement.
 
 ## Permanent guardrails
 
@@ -84,3 +92,14 @@ Progress merge/activity, statistics, recent history, section persistence, study-
 - Preserve username identity, existing storage key prefixes, stored data shape, study plans, reset tombstones, route restoration, package cache-first/background-refresh behavior, and the single canonical grading path.
 - Keep Supabase traffic minimal by design, but do not let traffic optimization replace the rebuild objective.
 - Do not claim a behavioral fix from source checks alone.
+
+## Repository housekeeping — 2026-10-11
+
+- A docs-only PR adds a root guide and a documentation index; it does not change runtime files.
+- Housekeeping PR #18 removed the unreferenced `beta-scroll-optimization-v1.html` snapshot and redundant `.gitkeep` markers; it is merged into `main`.
+- The recovery snapshot remains until a newer rebuild checkpoint has been verified and deliberately retained elsewhere.
+- Documentation PR #19 adds the root guide and documentation index; it does not change runtime files.
+- A static audit of draft PR #17 found malformed document-canvas CSS and changes to effective keyframe and responsive rules. That draft is not safe to merge as written; only cascade-preserving CSS cleanup should proceed.
+- PR #20 is merged into `main`: question/grading logic and selected workbook/study-plan patches were extracted at their existing execution points; duplicate `</style>` and document-end markup were corrected.
+- Build synchronization passed for all 42 source modules and all 39 existing Node tests. GitHub Actions source contracts passed on the merge commit, and GitHub Pages deployment completed successfully.
+- The owner reviewed the live Beta shell/dashboard; the full exercise, study-plan, and responsive regression matrix remains a final manual check.
