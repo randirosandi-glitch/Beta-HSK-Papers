@@ -23,9 +23,9 @@ const canonicalFunctionalOwners = [
 ];
 
 test('study-plan navigation and picker globals have one repair-layer owner', () => {
-  assert.doesNotMatch(reliability, /MASTER\\.planState|planState|renderStudyPlanPickerMaster|materialOptionsMaster/,
+  assert.doesNotMatch(reliability, /MASTER\.planState|planState|renderStudyPlanPickerMaster|materialOptionsMaster/,
     'legacy picker state and renderer must be removed from reliability-fixes.js');
-  assert.doesNotMatch(index, /FINAL_STUDY_PLAN_CREATE_ENTRY|oldRenderStudyPlans|previousRenderStudyPlans|src\\/ui\\/parts-renderer\\.js/,
+  assert.doesNotMatch(index, /FINAL_STUDY_PLAN_CREATE_ENTRY|oldRenderStudyPlans|previousRenderStudyPlans|parts-renderer/,
     'study-plan renderer must not be wrapped by inline follow-up patches');
   for (const name of canonicalFunctionalOwners) {
     const assignment = new RegExp('window\\.' + name + '\\s*=(?!=)', 'g');
