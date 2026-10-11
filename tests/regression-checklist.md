@@ -53,10 +53,11 @@ Minimum fixture families:
 
 ## Rebuild rule
 
-Extract one responsibility at a time. Run the automated gate after every extraction. Run the relevant browser tests before promoting that checkpoint. Do not combine an architectural move with a storage schema change or a visual redesign.
+Keep storage keys and serialized progress shape stable during refactors. A sync-cadence change must be explicitly scoped and tested; verify affected browser states before promoting it.
 ## Current checkpoint — 2026-10-11
 
-- The build synchronization check passed for all 42 source modules; all 40 Node tests passed in [workflow run #152](https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38106661763).
-- The public Beta dashboard (HSK Papers v1.31) loaded after the cleanup; the runtime deployment completed in [Pages run #411](https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38106690395).
-- The phone/tablet/desktop manual matrix above is still pending. The unchecked items remain release checks for the owner.
-- The broader CSS cleanup draft was closed without merge because it changed effective keyframe and responsive rules. PR #21 only removed four audited duplicate blocks; keep wider CSS consolidation behind the browser matrix.
+- PR #24 is merged into Beta `main` as commit `a561e1414434a675d353ef2412f083b58d647bbe`.
+- The build check passed for all 42 source modules and all 44 Node tests passed in [workflow run #159](https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38108533258).
+- GitHub Pages deployment completed successfully in [run #414](https://github.com/randirosandi-glitch/Beta-HSK-Papers/actions/runs/38108533564). The live dashboard now shows weekly progress and weekly comparison only.
+- Cloud changes stay local for at least 12 hours before upload; cloud pulls are limited to once per 12 hours per username/device after the initial pull.
+- The phone/tablet/desktop manual matrix above is still pending for the owner to verify. Source tests do not substitute for exercising the app in a browser.
