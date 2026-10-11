@@ -239,8 +239,8 @@
     if(drivePreview.getAttribute('src')!==previewUrl)drivePreview.src=previewUrl;
     drivePreview.hidden=false;
     driveFallbackActive=true;
-    audioStatus.textContent=String(message||'Gunakan kontrol Google Drive untuk memutar audio.');
-    retryButton.textContent='Coba audio langsung lagi';
+    audioStatus.textContent=String(message||'MP3 langsung gagal dibuka. Tekan Putar pada pemutar Google Drive di atas.');
+    retryButton.textContent='Muat ulang pemutar Drive';
     retryButton.hidden=!showRetry;
   }
   function jsonp(url,timeout){
@@ -347,10 +347,28 @@
     }
   }
   window.__hskRetryListeningAudio=function(){
-    driveFallbackActive=false;
-    activeAudioFileId='';
+    if(activeAudioFileId&&route?.type==='listening'){
+      if(audio){audio.pause();audio.hidden=true}
+      driveFallbackActive=true;
+      const retryCode=String(route.packageCode||'');
+      const retryFileId=activeAudioFileId;
+      const previewUrl='https://drive.google.com/file/d/'+encodeURIComponent(retryFileId)+'/preview';
+      if(drivePreview){
+        drivePreview.hidden=true;
+        drivePreview.removeAttribute('src');
+        requestAnimationFrame(function(){
+          if(!drivePreview||!driveFallbackActive||route?.type!=='listening'||String(route.packageCode||'')!==retryCode||activeAudioCode!==retryCode||activeAudioFileId!==retryFileId)return;
+          drivePreview.src=previewUrl;
+          drivePreview.hidden=false;
+        });
+      }
+      if(audioStatus)audioStatus.textContent='Pemutar Drive dimuat ulang. Tekan tombol Putar pada pemutar untuk mulai.';
+      if(retryButton){retryButton.textContent='Muat ulang pemutar Drive';retryButton.hidden=false}
+      return Promise.resolve();
+    }
     if(audio){audio.pause();audio.removeAttribute('src');audio.load()}
     if(drivePreview){drivePreview.hidden=true;drivePreview.removeAttribute('src')}
+    driveFallbackActive=false;
     activeAudioUrl='';
     return loadAudioForPackage(String(route?.packageCode||''),true);
   };
