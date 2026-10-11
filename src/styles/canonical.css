@@ -3085,7 +3085,7 @@ body.dark .mainNav,body.dark .levelCard,body.dark .levelCardIcon,body.dark .pack
 }
 
 
-<style id="beta-writing-autogrow-v1">
+/* Writing answer field sizing. */
 /* Beta: flexible writing answer field */
 #exercise .writingAnswerField{
   display:block!important;
