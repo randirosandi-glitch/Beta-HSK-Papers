@@ -11,6 +11,7 @@ These notes describe the current Beta rebuild checkpoint. They are audit records
 
 - [Dependency audit](DEPENDENCY_AUDIT_BETA_20261011.md) — app data flows, dependency map, and high-risk compatibility behavior.
 - [Supabase traffic audit](SUPABASE_TRAFFIC_AUDIT_BETA_20261011.md) — cloud request patterns and traffic considerations.
+- [Regression checklist](../tests/regression-checklist.md) — manual release checks across account, catalog, grading, study plans, and devices.
 
 ## Current guardrails
 
