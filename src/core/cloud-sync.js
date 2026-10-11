@@ -26,11 +26,12 @@ async function pullCloudStateInternal(force=false){
     return true;
   }catch(e){console.warn('Cloud sync pull failed',e);return false}
 }
-let cloudPullInFlight=null,cloudLastPullAt=0,cloudLastPullUsername='';
+let cloudPullInFlight=null,cloudLastPullAt=0,cloudLastPullUsername='',cloudLastPullAttemptAt=0,cloudLastPullAttemptUsername='';
 let cloudLastSyncedSnapshot='';
 let cloudKnownRemoteUsername='',cloudKnownRemoteStore=null,cloudKnownRemoteLoaded=false,cloudKnownRemoteAt=0;
 const CLOUD_SYNC_INTERVAL=12*60*60*1000;
 const CLOUD_PULL_COOLDOWN=CLOUD_SYNC_INTERVAL;
+const CLOUD_PULL_FAILURE_COOLDOWN=5*60*1000;
 const CLOUD_SNAPSHOT_MAX_AGE=15*60*1000;
 const CLOUD_SYNC_META_PREFIX='hsk4-kelas-e-cloud-sync-v1:';
 function cloudSyncStorageKey(kind,username=currentUsername){return CLOUD_SYNC_META_PREFIX+kind+':'+String(username||'')}
@@ -73,9 +74,17 @@ function pullCloudState(force=false){
     flushPendingCloudSync();
     return Promise.resolve(false);
   }
-  cloudLastPullUsername=username;cloudLastPullAt=now;
+  const lastAttempt=cloudLastPullAttemptUsername===username?cloudLastPullAttemptAt:0;
+  if(lastAttempt&&now-lastAttempt<CLOUD_PULL_FAILURE_COOLDOWN){
+    flushPendingCloudSync();
+    return Promise.resolve(false);
+  }
+  cloudLastPullAttemptUsername=username;cloudLastPullAttemptAt=now;
   cloudPullInFlight=pullCloudStateInternal(force).then(result=>{
-    if(result&&currentUsername===username)writeCloudTimestamp('pull',Date.now(),username);
+    if(result&&currentUsername===username){
+      cloudLastPullUsername=username;cloudLastPullAt=Date.now();
+      writeCloudTimestamp('pull',cloudLastPullAt,username);
+    }
     return result;
   }).finally(()=>{
     cloudPullInFlight=null;
