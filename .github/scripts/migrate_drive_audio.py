@@ -166,13 +166,14 @@ def existing_assets(tag, repository):
     return assets
 
 
-def verify_existing(tag, code, destination, expected_size, expected_digest, repository, directory):
-    local = Path(directory) / ("existing-" + code + ".mp3")
+def verify_existing(tag, code, expected_size, expected_digest, repository, directory):
+    existing_directory = Path(directory) / ("existing-" + code)
+    existing_directory.mkdir()
     gh(
         "release", "download", tag, "--repo", repository,
-        "--pattern", code + ".mp3", "--dir", directory, "--clobber",
+        "--pattern", code + ".mp3", "--dir", str(existing_directory), "--clobber",
     )
-    downloaded = Path(directory) / (code + ".mp3")
+    downloaded = existing_directory / (code + ".mp3")
     if not downloaded.exists():
         fail("Release download did not produce the existing asset " + code + ".mp3.")
     actual = downloaded.read_bytes()
@@ -212,7 +213,7 @@ def main():
             assets = existing_assets(tag, repository)
             if code + ".mp3" in assets:
                 verified = verify_existing(
-                    tag, code, path, size, digest, repository, temporary
+                    tag, code, size, digest, repository, temporary
                 )
                 if verified:
                     continue
