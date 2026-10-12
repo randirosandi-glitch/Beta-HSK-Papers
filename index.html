@@ -3777,20 +3777,26 @@ body.dark #exercise .hsk4PaperSequenceResponse label{color:var(--text)!important
 }
 @media(max-width:599px){.mainNav{width:calc(100% - 18px);max-width:540px;gap:1px;padding:5px 4px;justify-content:space-between}.mainNav .navItem{flex:1 1 0;width:0;min-width:0;padding:6px 0;gap:3px;font-size:9px}.mainNav .navItem .ico{width:19px;height:19px;flex:none}.mainNav .navItem .navLabel{display:block;font-size:9px;line-height:1.1;white-space:nowrap;letter-spacing:-.25px}.donationLayout{gap:14px;margin-top:10px}.donationHero,.donationCard{padding:22px 18px;border-radius:21px}.donationHero h1{font-size:clamp(31px,9vw,43px)}.donationBenefits{grid-template-columns:1fr;gap:10px;margin-top:24px;padding-top:16px}.donationBenefits>div{font-size:12px}.donationThanks{margin-bottom:100px}}
 </style><style id="donation-viewport-refinement">
-/* Donation is a single centered card: stable dimensions across orientation changes. */
-#donations{min-height:calc(100dvh - 150px);display:flex;flex-direction:column;justify-content:center;padding:18px 14px 100px}
-#donations .donationLayout{display:block;width:100%;max-width:470px;margin:0 auto}
-#donations .donationCard{width:100%;max-width:470px;margin:0 auto;padding:clamp(16px,3vw,24px);border-radius:24px}
+/* Wider, centered donation card; QR remains prominent across orientations. */
+#donations{min-height:calc(100dvh - 150px);display:flex;flex-direction:column;justify-content:center;padding:16px 12px 100px}
+#donations .donationLayout{display:block;width:100%;max-width:620px;margin:0 auto}
+#donations .donationCard{width:100%;max-width:620px;margin:0 auto;padding:clamp(18px,3vw,28px);border-radius:24px}
 #donations .donationCardHead{display:block;margin:0 0 14px}
-#donations .donationCallout h2{font-size:clamp(21px,5.2vw,25px);line-height:1.25;letter-spacing:-.025em;margin:0 0 6px}
-#donations .donationCallout p{font-size:clamp(14px,3.8vw,16px);line-height:1.45;color:var(--muted);margin:0}
-#donations .donationQrFrame{width:min(100%,260px);margin:0 auto 14px;min-height:0;padding:8px}
-#donations .donationQrFrame img{max-height:38dvh;width:auto;max-width:100%;object-fit:contain}
+#donations .donationCallout h2{font-size:clamp(22px,5.2vw,27px);line-height:1.25;letter-spacing:-.025em;margin:0 0 6px}
+#donations .donationCallout p{font-size:clamp(14px,3.8vw,17px);line-height:1.45;color:var(--muted);margin:0}
+#donations .donationQrFrame{width:min(100%,360px);margin:0 auto 14px;min-height:0;padding:8px}
+#donations .donationQrFrame img{display:block;width:100%;height:auto;max-height:44dvh;object-fit:contain}
 #donations .donationDownload{padding:12px 16px}
 #donations .donationSecurity{margin-top:12px;padding:11px 12px}
+@media(min-width:600px){
+ #donations{padding-left:22px;padding-right:22px}
+ #donations .donationLayout,#donations .donationCard{max-width:680px}
+ #donations .donationQrFrame{width:min(100%,390px)}
+}
 @media(orientation:landscape) and (max-height:600px){
  #donations{min-height:calc(100dvh - 120px);padding-top:8px;padding-bottom:78px}
- #donations .donationCard{max-width:390px;padding:12px 16px;border-radius:20px}
+ #donations .donationLayout,#donations .donationCard{max-width:560px}
+ #donations .donationCard{padding:12px 16px;border-radius:20px}
  #donations .donationCardHead{margin-bottom:8px}
  #donations .donationCallout h2{font-size:20px}
  #donations .donationCallout p{font-size:13px;line-height:1.35}
