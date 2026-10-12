@@ -3807,6 +3807,11 @@ body.dark #exercise .hsk4PaperSequenceResponse label{color:var(--text)!important
  #donations .donationSecurity strong{font-size:12px}
  #donations .donationSecurity p{line-height:1.35}
 }
+</style><style id="donation-screen-isolation-fix">
+/* Ensure the Donasi page is never rendered underneath another screen. */
+main > .screen#donations{display:none}
+main > .screen#donations.active{display:block}
+main > .screen:not(.active){display:none!important}
 </style></head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
