@@ -3763,6 +3763,18 @@ body.dark #exercise .hsk4PaperSequenceResponse label{color:var(--text)!important
 .donationThanks{text-align:center;color:var(--muted);font-size:13px;margin:22px 0 90px}
 .mainNav .navItem[data-nav="donations"].active{color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent)}
 @media(max-width:850px){.donationLayout{grid-template-columns:1fr}.donationHero{min-height:auto}.donationCard{max-width:600px;width:100%;margin:0 auto}}
+@media(max-width:599px){
+  /* Put the actual QRIS action first so donors see it without scrolling past the hero. */
+  #donations .donationLayout{display:flex;flex-direction:column;gap:14px}
+  #donations .donationCard{order:-1;padding:18px 16px}
+  #donations .donationHero{order:1;min-height:auto;padding:22px 18px}
+  #donations .donationCardHead{margin-bottom:10px}
+  #donations .donationCardHead h2{font-size:17px}
+  #donations .donationQrFrame{width:min(100%,230px);min-height:0;margin-bottom:12px;padding:7px}
+  #donations .donationDownload{padding:11px 16px}
+  #donations .donationSecurity{margin-top:10px;padding:10px}
+  #donations .donationThanks{margin-top:16px}
+}
 @media(max-width:599px){.mainNav{width:calc(100% - 18px);max-width:540px;gap:1px;padding:5px 4px;justify-content:space-between}.mainNav .navItem{flex:1 1 0;width:0;min-width:0;padding:6px 0;gap:3px;font-size:9px}.mainNav .navItem .ico{width:19px;height:19px;flex:none}.mainNav .navItem .navLabel{display:block;font-size:9px;line-height:1.1;white-space:nowrap;letter-spacing:-.25px}.donationLayout{gap:14px;margin-top:10px}.donationHero,.donationCard{padding:22px 18px;border-radius:21px}.donationHero h1{font-size:clamp(31px,9vw,43px)}.donationBenefits{grid-template-columns:1fr;gap:10px;margin-top:24px;padding-top:16px}.donationBenefits>div{font-size:12px}.donationThanks{margin-bottom:100px}}
 </style></head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
