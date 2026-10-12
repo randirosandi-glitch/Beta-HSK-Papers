@@ -3747,71 +3747,42 @@ body.dark #exercise .hsk4PaperSentenceLine,
 body.dark #exercise .hsk4PaperSequenceResponse label{color:var(--text)!important;}
 /* END GENERATED MODULE: src/styles/hsk4-paper-engine.css */
 </style>
-<style id="donation-tab-styles">
-.donationLayout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:22px;max-width:1120px;margin:18px auto 0}
-.donationHero,.donationCard{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:26px;background:var(--surface);padding:clamp(22px,3vw,38px)}
-.donationHero{display:flex;flex-direction:column;justify-content:center;min-height:460px;background:linear-gradient(135deg,var(--surface),color-mix(in srgb,var(--blue) 7%,var(--surface)))}
-.donationEyebrow{display:flex;gap:8px;align-items:center;width:max-content;border-radius:99px;padding:7px 13px;color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent);font-weight:800;font-size:13px}
-.donationHero h1{font-size:clamp(32px,4vw,52px);line-height:1.1;letter-spacing:-.045em;margin:22px 0 16px;position:relative;z-index:1}
-.donationHero h1 span{color:var(--blue)}.donationLead{color:var(--muted);font-size:clamp(15px,1.5vw,19px);line-height:1.6;margin:0;position:relative;z-index:1}
-.donationBenefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:30px;padding-top:20px;border-top:1px solid var(--line);position:relative;z-index:1}
-.donationBenefits>div{display:flex;align-items:center;gap:9px;font-size:12px;line-height:1.4}.donationBenefits i{display:grid;place-items:center;flex:none;width:35px;height:35px;border-radius:50%;font-style:normal;color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent);font-size:20px}
-.donationCard{display:flex;flex-direction:column}.donationCardHead{display:flex;align-items:center;gap:12px;margin-bottom:18px}.donationQrIcon{display:grid;place-items:center;width:44px;height:44px;border-radius:13px;color:#fff;background:var(--blue);font-size:25px;flex:none}.donationCardHead h2{font-size:19px;margin:0 0 5px}.donationCardHead p{font-size:13px;color:var(--muted);margin:0}
-.donationQrFrame{width:min(100%,320px);margin:0 auto 20px;padding:10px;background:#fff;border:1px solid #e4e9f2;border-radius:17px;box-shadow:0 8px 24px rgba(20,45,90,.1);min-height:180px;display:grid;place-items:center}.donationQrFrame img{display:block;width:100%;height:auto;object-fit:contain}#donationQrMissing{padding:25px 10px;text-align:center;color:#586579;font-size:13px}
-.donationDownload{display:flex;justify-content:center;align-items:center;padding:13px 18px;border-radius:14px;background:var(--blue);color:#fff!important;text-decoration:none!important;font-weight:800}
-.donationSecurity{margin-top:16px;padding:14px;border-radius:14px;background:color-mix(in srgb,var(--blue) 7%,var(--surface));font-size:12px;color:var(--muted)}.donationSecurity strong{display:block;color:var(--text);font-size:13px;margin-bottom:4px}.donationSecurity p{margin:0;line-height:1.5}
-.donationThanks{text-align:center;color:var(--muted);font-size:13px;margin:22px 0 90px}
-.mainNav .navItem[data-nav="donations"].active{color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent)}
-@media(max-width:850px){.donationLayout{grid-template-columns:1fr}.donationHero{min-height:auto}.donationCard{max-width:600px;width:100%;margin:0 auto}}
-@media(max-width:599px){
-  /* Put the actual QRIS action first so donors see it without scrolling past the hero. */
-  #donations .donationLayout{display:flex;flex-direction:column;gap:14px}
-  #donations .donationCard{order:-1;padding:18px 16px}
-  #donations .donationHero{order:1;min-height:auto;padding:22px 18px}
-  #donations .donationCardHead{margin-bottom:10px}
-  #donations .donationCardHead h2{font-size:17px}
-  #donations .donationQrFrame{width:min(100%,230px);min-height:0;margin-bottom:12px;padding:7px}
-  #donations .donationDownload{padding:11px 16px}
-  #donations .donationSecurity{margin-top:10px;padding:10px}
-  #donations .donationThanks{margin-top:16px}
-}
-@media(max-width:599px){.mainNav{width:calc(100% - 18px);max-width:540px;gap:1px;padding:5px 4px;justify-content:space-between}.mainNav .navItem{flex:1 1 0;width:0;min-width:0;padding:6px 0;gap:3px;font-size:9px}.mainNav .navItem .ico{width:19px;height:19px;flex:none}.mainNav .navItem .navLabel{display:block;font-size:9px;line-height:1.1;white-space:nowrap;letter-spacing:-.25px}.donationLayout{gap:14px;margin-top:10px}.donationHero,.donationCard{padding:22px 18px;border-radius:21px}.donationHero h1{font-size:clamp(31px,9vw,43px)}.donationBenefits{grid-template-columns:1fr;gap:10px;margin-top:24px;padding-top:16px}.donationBenefits>div{font-size:12px}.donationThanks{margin-bottom:100px}}
-</style><style id="donation-viewport-refinement">
-/* Give the Donasi card more horizontal room on phones without changing other tabs. */
-#donations{min-height:calc(100dvh - 150px);display:flex;flex-direction:column;justify-content:center;padding:16px 8px 100px}
+<style id="donation-styles">
+/* Donasi: one compact card, isolated from every other app screen. */
+main>.screen#donations{display:none}
+main>.screen#donations.active{display:block}
+main>.screen:not(.active){display:none!important}
+#donations{min-height:calc(100svh - 170px);padding:8px 8px 88px;box-sizing:border-box}
 #donations .donationLayout{display:block;width:100%;max-width:720px;margin:0 auto}
-#donations .donationCard{width:100%;max-width:720px;margin:0 auto;padding:clamp(16px,2.5vw,26px);border-radius:24px}
-#donations .donationCardHead{display:block;margin:0 0 14px}
-#donations .donationCallout h2{font-size:clamp(22px,5.2vw,27px);line-height:1.25;letter-spacing:-.025em;margin:0 0 6px}
-#donations .donationCallout p{font-size:clamp(14px,3.8vw,17px);line-height:1.45;color:var(--muted);margin:0}
-#donations .donationQrFrame{width:min(100%,390px);margin:0 auto 14px;min-height:0;padding:8px}
-#donations .donationQrFrame img{display:block;width:100%;height:auto;max-height:44dvh;object-fit:contain}
-#donations .donationDownload{padding:12px 16px}
-#donations .donationSecurity{margin-top:12px;padding:11px 12px}
+#donations .donationCard{display:flex;flex-direction:column;width:100%;max-width:720px;margin:0 auto;padding:clamp(12px,2.4vw,22px);border:1px solid var(--line);border-radius:22px;background:var(--surface);box-sizing:border-box}
+#donations .donationCardHead{display:block;margin:0 0 10px}
+#donations .donationCallout h2{font-size:clamp(20px,4.8vw,26px);line-height:1.18;letter-spacing:-.025em;margin:0 0 5px}
+#donations .donationCallout p{font-size:clamp(13px,3.5vw,16px);line-height:1.35;color:var(--muted);margin:0}
+#donations .donationQrFrame{display:flex;align-items:center;justify-content:center;width:min(100%,340px);margin:0 auto 10px;padding:5px;min-height:0;box-sizing:border-box;border:1px solid #e4e9f2;border-radius:16px;background:#fff;box-shadow:none}
+#donations .donationQrFrame img{display:block;width:auto;height:auto;max-width:100%;max-height:24svh;object-fit:contain;flex:none}
+#donations .donationDownload{display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border-radius:13px;background:var(--blue);color:#fff!important;text-decoration:none!important;font-weight:800}
+#donations .donationSecurity{margin-top:9px;padding:9px 11px;border-radius:12px;background:color-mix(in srgb,var(--blue) 7%,var(--surface));font-size:11px;color:var(--muted)}
+#donations .donationSecurity strong{display:block;color:var(--text);font-size:12px;margin-bottom:2px}
+#donations .donationSecurity p{margin:0;line-height:1.35}
 @media(min-width:600px){
- #donations{padding-left:22px;padding-right:22px}
- #donations .donationLayout,#donations .donationCard{max-width:720px}
- #donations .donationQrFrame{width:min(100%,410px)}
+ #donations{padding:12px 22px 90px}
+ #donations .donationLayout,#donations .donationCard{max-width:680px}
+ #donations .donationQrFrame{width:min(100%,340px)}
+ #donations .donationQrFrame img{max-height:28svh}
 }
 @media(orientation:landscape) and (max-height:600px){
- #donations{min-height:calc(100dvh - 120px);padding-top:8px;padding-bottom:78px}
- #donations .donationLayout,#donations .donationCard{max-width:620px}
- #donations .donationCard{padding:12px 16px;border-radius:20px}
- #donations .donationCardHead{margin-bottom:8px}
- #donations .donationCallout h2{font-size:20px}
- #donations .donationCallout p{font-size:13px;line-height:1.35}
- #donations .donationQrFrame{width:min(100%,180px);margin-bottom:8px;padding:5px}
- #donations .donationQrFrame img{max-height:25dvh}
- #donations .donationDownload{padding:8px 12px}
- #donations .donationSecurity{margin-top:8px;padding:8px 10px;font-size:11px}
- #donations .donationSecurity strong{font-size:12px}
- #donations .donationSecurity p{line-height:1.35}
+ #donations{min-height:auto;padding:6px 8px 72px}
+ #donations .donationLayout,#donations .donationCard{max-width:520px}
+ #donations .donationCard{padding:9px 13px;border-radius:17px}
+ #donations .donationCardHead{margin-bottom:6px}
+ #donations .donationCallout h2{font-size:18px}
+ #donations .donationCallout p{font-size:12px;line-height:1.25}
+ #donations .donationQrFrame{width:min(100%,135px);margin-bottom:6px;padding:3px}
+ #donations .donationQrFrame img{max-height:18svh}
+ #donations .donationDownload{padding:7px 12px}
+ #donations .donationSecurity{margin-top:6px;padding:6px 8px;font-size:10px}
+ #donations .donationSecurity strong{font-size:11px}
 }
-</style><style id="donation-screen-isolation-fix">
-/* Ensure the Donasi page is never rendered underneath another screen. */
-main > .screen#donations{display:none}
-main > .screen#donations.active{display:block}
-main > .screen:not(.active){display:none!important}
 </style></head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
