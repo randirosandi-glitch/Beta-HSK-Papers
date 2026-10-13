@@ -2413,9 +2413,9 @@ body.dark #appBootLoader .bootText{color:#aab3c0!important;}
 #package .flatPartCard .progressBar .fill{background:var(--part-accent)!important;border-radius:999px!important;}
 
 /* Dark mode: same geometry, only color treatment changes. */
-body.dark #package .flatPartCard{border-color:#2d3035!important;color:#f3f5f8!important;background:linear-gradient(118deg,#08090b 0%,#101114 50%,#17120f 76%,#24120f 100%)!important;}
-body.dark #package .flatPartCard:nth-child(2){background:linear-gradient(118deg,#08090b 0%,#101114 50%,#111722 76%,#18233d 100%)!important;}
-body.dark #package .flatPartCard:nth-child(3){background:linear-gradient(118deg,#08090b 0%,#101114 50%,#1d170e 76%,#2a1e0b 100%)!important;}
+body.dark #package .flatPartCard{border:0!important;color:#f3f5f8!important;background:#151618!important;background-image:none!important;}
+body.dark #package .flatPartCard:nth-child(2){background:#151618!important;background-image:none!important;}
+body.dark #package .flatPartCard:nth-child(3){background:#151618!important;background-image:none!important;}
 body.dark #package .flatPartCard .partHanzi{color:var(--part-accent)!important;}
 body.dark #package .flatPartCard strong{color:#f3f5f8!important;}
 body.dark #package .flatPartCard .partMeta,
@@ -2570,7 +2570,7 @@ body:not(.dark){--answer-selected-bg:#17181A;--answer-selected-text:#FFFFFF;--an
   padding:24px 28px 20px!important;
   border:0!important;
   border-radius:28px!important;
-  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  background:#FFFFFF!important;
 
   transform:none!important;
   overflow:hidden!important;
@@ -2590,19 +2590,19 @@ body:not(.dark){--answer-selected-bg:#17181A;--answer-selected-text:#FFFFFF;--an
 }
 #partsScreen #sections .sectionPartTile:nth-child(1){
   --section-accent:#F9383B;
-  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  background:#FFFFFF!important;
 }
 #partsScreen #sections .sectionPartTile:nth-child(2){
   --section-accent:#7890d8;
-  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  background:#FFFFFF!important;
 }
 #partsScreen #sections .sectionPartTile:nth-child(3){
   --section-accent:#F9383B;
-  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  background:#FFFFFF!important;
 }
 #partsScreen #sections .sectionPartTile:nth-child(n/**/+4){
   --section-accent:#7890d8;
-  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  background:#FFFFFF!important;
 }
 #partsScreen #sections .sectionPartTile:hover{
   transform:translateY(-1px)!important;
@@ -2635,24 +2635,24 @@ body:not(.dark){--answer-selected-bg:#17181A;--answer-selected-text:#FFFFFF;--an
 /* Both themes use the same surface treatment as the level cards. */
 body.dark #partsScreen #sections .sectionPartTile{
   border:0!important;
-  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  background:#151618!important;
   color:#f3f5f8!important;
 }
 body.dark #partsScreen #sections .sectionPartTile:nth-child(1){
   --section-accent:#F9383B;
-  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  background:#151618!important;
 }
 body.dark #partsScreen #sections .sectionPartTile:nth-child(2){
   --section-accent:#7890d8;
-  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  background:#151618!important;
 }
 body.dark #partsScreen #sections .sectionPartTile:nth-child(3){
   --section-accent:#F9383B;
-  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  background:#151618!important;
 }
 body.dark #partsScreen #sections .sectionPartTile:nth-child(n/**/+4){
   --section-accent:#7890d8;
-  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  background:#151618!important;
 }
 body.dark #partsScreen #sections .sectionPartTile:hover{
   border-color:transparent!important;
@@ -2691,11 +2691,11 @@ body.dark #partsScreen #sections .sectionPartTile .progressBar .fill{
 /* === consolidated CSS: skill-cards-canonical-v1 === */
 
 /* HSK Papers canonical Listening / Reading / Writing card layer. */
-#package .flatPartCard{position:relative!important;display:grid!important;grid-template-columns:88px minmax(0,1fr) 40px!important;grid-template-rows:auto auto!important;column-gap:14px!important;row-gap:0!important;align-items:center!important;min-height:0!important;height:148px!important;padding:18px 20px 16px 24px!important;overflow:hidden!important;border:1px solid rgba(117,127,141,.30)!important;border-radius:28px!important;transform:none!important;transition:background .18s ease,border-color .18s ease,transform .18s ease!important;}
+#package .flatPartCard{position:relative!important;display:grid!important;grid-template-columns:88px minmax(0,1fr) 40px!important;grid-template-rows:auto auto!important;column-gap:14px!important;row-gap:0!important;align-items:center!important;min-height:0!important;height:148px!important;padding:18px 20px 16px 24px!important;overflow:hidden!important;border:0!important;border-radius:28px!important;background:#FFFFFF!important;background-image:none!important;transform:none!important;transition:background .18s ease,border-color .18s ease,transform .18s ease!important;}
 #package .flatPartCard::before{content:""!important;position:absolute!important;left:0!important;top:50%!important;width:6px!important;height:58px!important;transform:translateY(-50%)!important;border-radius:0 6px 6px 0!important;background:var(--part-accent)!important;opacity:1!important;pointer-events:none!important;}
-#package .flatPartCard:nth-child(1){background:linear-gradient(112deg,#fff4f4 0%,#fff9f9 38%,#fffefd 70%,#FFFFFF 100%)!important;}
-#package .flatPartCard:nth-child(2){background:linear-gradient(112deg,#edf3ff 0%,#f6f9ff 38%,#fcfdff 70%,#FFFFFF 100%)!important;}
-#package .flatPartCard:nth-child(3){background:linear-gradient(112deg,#fff4f4 0%,#fff9f9 38%,#fffefa 70%,#FFFFFF 100%)!important;}
+#package .flatPartCard:nth-child(1){background:#FFFFFF!important;background-image:none!important;}
+#package .flatPartCard:nth-child(2){background:#FFFFFF!important;background-image:none!important;}
+#package .flatPartCard:nth-child(3){background:#FFFFFF!important;background-image:none!important;}
 #package .flatPartCard:hover{transform:translateY(-1px)!important;border-color:transparent!important;}
 #package .flatPartCard .partHanzi{grid-column:1!important;grid-row:1 / span 2!important;align-self:center!important;justify-self:start!important;width:88px!important;max-width:88px!important;min-height:64px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;background:transparent!important;border-radius:0!important;font-size:50px!important;line-height:1!important;white-space:nowrap!important;overflow:visible!important;margin:0!important;padding:0!important;}
 #package .flatPartCard .partMain{grid-column:2!important;grid-row:1 / span 2!important;width:auto!important;min-width:0!important;align-self:center!important;justify-self:stretch!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;padding:0!important;margin:0!important;}
@@ -2709,10 +2709,10 @@ body.dark #partsScreen #sections .sectionPartTile .progressBar .fill{
 @media (min-width:600px) and (max-width:1199px){#package .flatPartCard{min-height:148px!important;height:148px!important;padding:18px 20px 16px 24px!important;}#package .flatPartCard .partHanzi{font-size:50px!important;}}
 @media(max-width:599px){#package .flatPartCard{grid-template-columns:112px minmax(0,1fr) 42px!important;column-gap:10px!important;height:148px!important;padding:17px 16px 15px 20px!important;border-radius:23px!important;}#package .flatPartCard .partHanzi{width:112px!important;max-width:112px!important;font-size:50px!important;}#package .flatPartCard strong{font-size:21px!important;}#package .flatPartCard .partMeta{font-size:12px!important;}#package .flatPartCard .partArrow{width:42px!important;height:42px!important;}#package .flatPartCard::before{width:6px!important;height:56px!important;}}
 @media(max-width:430px){#package .flatPartCard{grid-template-columns:96px minmax(0,1fr) 40px!important;column-gap:8px!important;height:140px!important;padding:16px 14px 14px 18px!important;}#package .flatPartCard .partHanzi{width:96px!important;max-width:96px!important;font-size:45px!important;}#package .flatPartCard strong{font-size:20px!important;}#package .flatPartCard .partMeta{font-size:11px!important;}#package .flatPartCard .progressWrap{margin-top:9px!important;}#package .flatPartCard .partArrow{width:40px!important;height:40px!important;}}
-body.dark #package .flatPartCard{border-color:rgba(170,181,198,.28)!important;color:#f3f5f8!important;}
-body.dark #package .flatPartCard:nth-child(1){background:#171c27!important;}
-body.dark #package .flatPartCard:nth-child(2){background:#171c27!important;}
-body.dark #package .flatPartCard:nth-child(3){background:#171c27!important;}
+body.dark #package .flatPartCard{border:0!important;color:#f3f5f8!important;background:#151618!important;background-image:none!important;}
+body.dark #package .flatPartCard:nth-child(1){background:#151618!important;background-image:none!important;}
+body.dark #package .flatPartCard:nth-child(2){background:#151618!important;background-image:none!important;}
+body.dark #package .flatPartCard:nth-child(3){background:#151618!important;background-image:none!important;}
 body.dark #package .flatPartCard:hover{border-color:transparent!important;}.levelCard,.levelCardIcon,.packageCardV16,.flatPartCard,.partHanzi,.partArrow{box-shadow:none!important;text-shadow:none!important;}body.dark .levelCard,body.dark .levelCardIcon,body.dark .packageCardV16,body.dark .flatPartCard,body.dark .partHanzi,body.dark .partArrow{box-shadow:none!important;text-shadow:none!important;}
 @media (max-width:599px){:root{--content-gutter:18px;}}
 @media (min-width:600px) and (max-width:1199px){:root{--content-gutter:24px;}}
@@ -2903,7 +2903,7 @@ body{background:#f7f7f7!important;background-image:none!important;color:var(--te
 body.dark,html.dark{background:#000000!important;background-image:none!important;color:var(--text)!important;}
 body:not(.dark).readingExercise,body:not(.dark).readingExercise #app,body:not(.dark).readingExercise main,body:not(.dark).readingExercise .screen.active,body:not(.dark).readingExercise #exercise,body:not(.dark).readingExercise #exercise .section,body:not(.dark).readingExercise #exercise #questions{background:#fff!important;background-color:#fff!important;background-image:none!important;color:#17181b!important;}
 body:not(.dark).readingExercise #exercise .sectionProgress,body:not(.dark).readingExercise #exercise .instruction,body:not(.dark).readingExercise #exercise .question,body:not(.dark).readingExercise #exercise .readingPassage,body:not(.dark).readingExercise #exercise .reference,body:not(.dark).readingExercise #exercise .hsk5PassageGroup,body:not(.dark).readingExercise #exercise .hsk5PaperGroup,body:not(.dark).readingExercise #exercise .hsk5PaperPart1,body:not(.dark).readingExercise #exercise .hsk5PaperPart2,body:not(.dark).readingExercise #exercise .hsk5PaperPart3{background:#fff!important;background-color:#fff!important;background-image:none!important;color:#17181b!important;}
-body:not(.dark).readingExercise #exercise .qtext,body:not(.dark).readingExercise #exercise .qtop,body:not(.dark).readingExercise #exercise .instruction *,body:not(.dark).readingExercise #exercise .readingPassage *,body:not(.dark).readingExercise #exercise .reference *,body:not(.dark).readingExercise #exercise .hsk5PaperGroup *,body:not(.dark).readingExercise #exercise .hsk5PaperPart1 *,body:not(.dark).readingExercise #exercise .hsk5PaperPart2 *,body:not(.dark).readingExercise #exercise .hsk5PaperPart3 *{color:#17181b!important;}
+body:not(.dark).readingExercise #exercise .qtext,body:not(.dark).readingExercise #exercise .qtop,body:not(.dark).readingExercise #exercise .instruction h2,body:not(.dark).readingExercise #exercise .instruction p,body:not(.dark).readingExercise #exercise .readingPassage .rpText,body:not(.dark).readingExercise #exercise .reference,body:not(.dark).readingExercise #exercise .hsk5PaperGroupHeader,body:not(.dark).readingExercise #exercise .hsk5PaperPassageText,body:not(.dark).readingExercise #exercise .hsk5PaperQText,body:not(.dark).readingExercise #exercise .hsk5PaperQNo,body:not(.dark).readingExercise #exercise .hsk5ClozeText,body:not(.dark).readingExercise #exercise .hsk5ClozeQtop,body:not(.dark).readingExercise #exercise .hsk5ClozeQtop strong{color:#17181b!important;}
 
 /* Full-bleed Listening player attached to the fixed top bar. */
 #exercise .listeningAudioDock{
