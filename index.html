@@ -1445,9 +1445,10 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
 }
 #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Info small{
   display:block!important;
-  margin-top:5px!important;
-  font-size:var(--type-card-body)!important;
+  margin-top:4px!important;
+  font-size:16px!important;
   line-height:1.25!important;
+  font-weight:500!important;
   color:var(--muted)!important;
 }
 #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Status{
@@ -1499,7 +1500,7 @@ body.dark .authChoice span,body.dark .authChoice.primary span{color:var(--muted)
   color:var(--muted)!important;
 }
 #packagesScreen #packagesGrid.packageGridV16 .packageCardV16ProgressValue{
-  grid-column:3!important;
+  grid-column:1 / 4!important;
   grid-row:3!important;
   align-self:end!important;
   justify-self:end!important;
@@ -6962,7 +6963,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     grid.innerHTML=codes.map((c,i)=>{
       const st=typeof packageStats==='function'?packageStats(c,progressStore):{pct:0,answered:0,total:0};
       const pct=Math.max(0,Math.min(100,Number(st.pct)||0));
-      const status=pct>=100?'Selesai':pct>0?'Sedang berjalan':'Belum dimulai';
+
       const accent=['#ff6548','#765fc7','#2aa876','#e15b64','#e6a21a'][i%5];
       return `<article class="packageCardV16" style="--package-accent:${accent}">
         <button class="packageCardV16Main" type="button" data-package-code="${esc(c)}" onclick="openPackage('${esc(c)}')" aria-label="Buka Paket ${esc(c)}">
@@ -6972,9 +6973,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
             <strong>${esc(c)}</strong>
             <small>${esc(g.name)}</small>
           </span>
-          <span class="packageCardV16Status"><i></i>${status}</span>
           <span class="packageCardV16Arrow material-symbols-rounded" aria-hidden="true">arrow_forward</span>
-          <span class="packageCardV16ProgressLabel">Progres paket</span>
           <span class="packageCardV16ProgressValue">${st.total?`${st.answered||0}/${st.total} · ${pct}%`:`${pct}%`}</span>
           <span class="packageCardV16Progress" aria-hidden="true"><i style="width:${pct}%"></i></span>
         </button>
