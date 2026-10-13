@@ -4641,7 +4641,7 @@ function hsk4PaperPart3(pkg,qs){
   const validPermutations=permutations();
   return '<section class="hsk5PaperGroup hsk4PaperPart hsk4PaperPart3">'+qs.map(q=>{
     const id=String(q[0]);
-    const promptLines=String(q[1]||'').split(/\\r?\\n/).map(line=>/^\\s*([ABC])(?:[.．、:]\\s*|\\s+)(.+)$/.exec(line)).filter(Boolean);
+    const promptLines=String(q[1]||'').split(/\r?\n/).map(line=>/^\s*([ABC])(?:[.．、:]\s*|\s+)(.+)$/.exec(line)).filter(Boolean);
     const items=promptLines.length===3?promptLines.map(match=>[match[1],match[2]]):(Array.isArray(q[2])&&q[2].length===3?q[2].map((text,index)=>[String.fromCharCode(65+index),String(text)]):[]);
     const lines=items.map(([label,text])=>'<div class="hsk4PaperSentenceLine"><b>'+label+'.</b><span>'+esc(text)+'</span></div>').join('');
     const selected=hsk4Part3PermutationAnswer(q,answers[id]);
