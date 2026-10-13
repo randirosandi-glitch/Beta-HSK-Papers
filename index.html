@@ -8828,6 +8828,62 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
 #packagesScreen .packageCardV16Info small{font-size:12px!important;line-height:1.2!important;font-weight:500!important;letter-spacing:0!important;}
 #packagesScreen .levelV12{font-size:12px!important;line-height:1.15!important;letter-spacing:.8px!important;margin-bottom:3px!important;}
 body.dark #packagesScreen .packageCardV16Info small{color:var(--muted)!important;}
+
+/* Beta typography experiment: one oversized Hanzi watermark behind the package code. */
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Main{
+  grid-template-columns:minmax(0,1fr) 42px!important;
+  column-gap:10px!important;
+  padding-left:30px!important;
+}
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Hanzi{
+  position:absolute!important;
+  left:20px!important;
+  top:50%!important;
+  transform:translateY(-54%)!important;
+  z-index:0!important;
+  display:block!important;
+  font-size:clamp(76px,8vw,104px)!important;
+  line-height:.9!important;
+  opacity:.14!important;
+  pointer-events:none!important;
+}
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Info{
+  grid-column:1!important;
+  grid-row:1 / span 2!important;
+  position:relative!important;
+  z-index:1!important;
+  min-width:0!important;
+}
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Info strong,
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Info small{
+  position:relative!important;
+  z-index:1!important;
+}
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Arrow{
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  position:relative!important;
+  z-index:1!important;
+}
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16ProgressValue{
+  grid-column:1 / 3!important;
+  z-index:1!important;
+}
+#packagesScreen #packagesGrid.packageGridV16 .packageCardV16Progress{
+  grid-column:1 / 3!important;
+  position:relative!important;
+  z-index:1!important;
+}
+@media (min-width:600px) and (max-width:1199px){
+  #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Main{padding-left:28px!important;}
+  #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Hanzi{font-size:clamp(72px,7vw,92px)!important;left:18px!important;}
+}
+@media (max-width:599px){
+  #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Main{padding-left:28px!important;}
+  #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Hanzi{font-size:88px!important;left:17px!important;opacity:.13!important;}
+}
+body.dark #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Hanzi{opacity:.12!important;}
+
 </style>
 </body>
 </html>
