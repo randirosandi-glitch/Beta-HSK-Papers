@@ -8229,6 +8229,44 @@ body.dark #hskGradeLoading .hskGradePanel{background:#171819;color:#f4f4f4;borde
 @media(prefers-reduced-motion:reduce){#hskGradeLoading.show,#hskGradeLoading .hskGradeSpinner,#exercise .inlineResult,#exercise .inlineResultScore{animation:none!important}}
 /* END GENERATED MODULE: src/styles/grade-loading.css */
 
+
+/* Mobile density refinement: compact correctness feedback and controls. */
+@media (max-width:599px) {
+  #exercise .feedback,
+  #exercise .feedback.show {
+    box-sizing:border-box!important;
+    margin-top:8px!important;
+    padding:9px 11px!important;
+    border-radius:12px!important;
+    font-size:15px!important;
+    line-height:1.4!important;
+    font-weight:650!important;
+  }
+  #exercise .feedback p,
+  #exercise .feedback strong,
+  #exercise .feedback span {
+    font-size:inherit!important;
+    line-height:inherit!important;
+  }
+  #exercise .feedback .ico,
+  #exercise .feedback svg {
+    width:18px!important;
+    height:18px!important;
+    min-width:18px!important;
+    flex:0 0 18px!important;
+  }
+  #exercise .row {
+    gap:7px!important;
+    margin-top:9px!important;
+  }
+  #exercise .row .btn {
+    min-height:38px!important;
+    padding:7px 10px!important;
+    font-size:14px!important;
+    border-radius:11px!important;
+  }
+}
+
 </style>
 <script id="hsk-beta-grade-loading-v1-js">
 // BEGIN GENERATED MODULE: src/questions/grading-loading-wrapper.js
