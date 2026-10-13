@@ -2848,6 +2848,26 @@ body.dark .tileIcon{box-shadow:none!important;filter:none!important;border-color
   --type-meta:clamp(14px,calc(13px + .12vw),16px);
   --type-label:clamp(12px,calc(11px + .12vw),14px);
 }
+
+/* Large-viewport comfort tuning: preserve the existing phone/tablet scale. */
+@media (min-width:1200px) {
+  :root {
+    --content-max:1320px;
+    --content-gutter:32px;
+    --type-body:clamp(17px,calc(16px + .28vw),20px);
+    --type-reading-question:clamp(19px,calc(18px + .28vw),23px);
+    --type-reading-passage:clamp(19px,calc(18px + .3vw),24px);
+    --type-heading:clamp(29px,calc(26px + .5vw),38px);
+    --type-card-title:clamp(24px,calc(22px + .4vw),32px);
+    --type-tile-title:clamp(19px,calc(18px + .22vw),23px);
+    --type-card-body:clamp(17px,calc(16px + .22vw),20px);
+    --type-meta:clamp(14px,calc(13px + .2vw),17px);
+    --type-label:clamp(13px,calc(12px + .18vw),16px);
+  }
+  body {
+    font-size:var(--type-body);
+  }
+}
 body{
   --selected-bg:#17181a;
   --selected-text:#fff;
