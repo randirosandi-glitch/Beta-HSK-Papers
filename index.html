@@ -3649,7 +3649,8 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
   letter-spacing:0!important;
 }
 #exercise .hsk4PaperPart{margin:0 0 22px!important;}
-#exercise .hsk4PaperPart .hsk5PaperQuestion{content-visibility:auto;}
+/* Avoid intermittent blank HSK 4 question content on mobile scroll; render paper questions normally. */
+#exercise .hsk4PaperPart .hsk5PaperQuestion{content-visibility:visible!important;contain:none!important;}
 #exercise .hsk4PaperWordBank{
   display:flex!important;
   flex-wrap:wrap!important;
