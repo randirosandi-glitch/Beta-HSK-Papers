@@ -3790,6 +3790,99 @@ html body.donations-active header.top #topBack,html body.donations-active #topBa
 html body .mainNav .navItem .navLabel,html body .mainNav .navItem.active .navLabel,html body .mainNav .navItem[aria-current="page"] .navLabel{display:none!important;visibility:hidden!important;opacity:0!important;width:0!important;max-width:0!important;height:0!important;max-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;font-size:0!important;line-height:0!important}
 html body .mainNav .navItem{gap:0!important}
 </style>
+
+<style id="hsk-gradient-hanzi-cards">
+/* Visual-only dashboard card treatment: palette matched to the supplied reference. */
+#weeklyDashboard .weekTargetCard,
+#weeklyDashboard .weeklySummaryCard,
+#weeklyDashboard .weeklyTargets > *,
+#weeklyDashboard .performanceGrid > *{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.24)!important;
+  border-radius:28px!important;
+  color:#fff!important;
+  box-shadow:0 12px 28px var(--card-glow,rgba(132,68,154,.22))!important;
+}
+#weeklyDashboard .weekTargetCard > *,
+#weeklyDashboard .weeklySummaryCard > *,
+#weeklyDashboard .weeklyTargets > * > *,
+#weeklyDashboard .performanceGrid > * > *{
+  position:relative;
+  z-index:1;
+}
+#weeklyDashboard .weekTargetCard{
+  --card-glow:rgba(133,68,154,.28);
+  background:linear-gradient(135deg,#c46ab0 0%,#a456a8 48%,#85449a 100%)!important;
+}
+#weeklyDashboard .weeklySummaryCard{
+  --card-glow:rgba(101,188,112,.28);
+  background:linear-gradient(135deg,#9bd1a5 0%,#7fc987 52%,#65bc70 100%)!important;
+}
+#weeklyDashboard .weeklyTargets > *{
+  --card-glow:rgba(76,128,194,.28);
+  background:linear-gradient(135deg,#83c9dd 0%,#649fce 50%,#4c80c2 100%)!important;
+}
+#weeklyDashboard .performanceGrid > *{
+  --card-glow:rgba(185,55,125,.25);
+  background:linear-gradient(135deg,#e47d91 0%,#c45b91 48%,#92266f 100%)!important;
+}
+#weeklyDashboard .weekTargetCard::after,
+#weeklyDashboard .weeklySummaryCard::after,
+#weeklyDashboard .weeklyTargets > *::after,
+#weeklyDashboard .performanceGrid > *::after{
+  content:"文";
+  position:absolute;
+  z-index:0;
+  right:12px;
+  bottom:-.32em;
+  font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;
+  font-size:clamp(108px,17vw,176px);
+  font-weight:700;
+  line-height:1;
+  color:rgba(255,255,255,.13);
+  text-shadow:0 3px 12px rgba(255,255,255,.08);
+  pointer-events:none;
+  user-select:none;
+}
+#weeklyDashboard .weeklySummaryCard::after{font-size:clamp(112px,18vw,190px);right:8px}
+#weeklyDashboard .weeklyTargets > *::after{font-size:clamp(100px,15vw,158px)}
+#weeklyDashboard .performanceGrid > *::after{font-size:clamp(104px,16vw,166px)}
+#weeklyDashboard .cardEyebrow,
+#weeklyDashboard .weekTargetTop span,
+#weeklyDashboard .weekTargetMeta,
+#weeklyDashboard .weeklyAccuracy,
+#weeklyDashboard .skillRows,
+#weeklyDashboard .weeklyTargets > * *,
+#weeklyDashboard .performanceGrid > * *{
+  color:rgba(255,255,255,.94);
+}
+#weeklyDashboard .weekTargetTop strong,
+#weeklyDashboard .weekTargetPct,
+#weeklyDashboard .weeklyAccuracy strong{
+  color:#fff!important;
+}
+#weeklyDashboard .weekProgressTrack{background:rgba(255,255,255,.24)!important}
+#weeklyDashboard .weekProgressFill{background:#fff!important}
+#weeklyDashboard .weeklySummaryCard .homeContinueBtn{
+  background:rgba(255,255,255,.22)!important;
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.34)!important;
+  box-shadow:none!important;
+}
+@media(max-width:600px){
+  #weeklyDashboard .weekTargetCard,
+  #weeklyDashboard .weeklySummaryCard,
+  #weeklyDashboard .weeklyTargets > *,
+  #weeklyDashboard .performanceGrid > *{border-radius:23px!important}
+  #weeklyDashboard .weekTargetCard::after,
+  #weeklyDashboard .weeklySummaryCard::after,
+  #weeklyDashboard .weeklyTargets > *::after,
+  #weeklyDashboard .performanceGrid > *::after{font-size:112px}
+}
+</style>
+
 </head><body><div aria-live="polite" id="appBootLoader" role="status"><div class="bootCard"><div aria-hidden="true" class="bootMark"><svg aria-hidden="true" class="bootLogoSvg bootLogoLight" preserveaspectratio="xMidYMid meet" viewbox="0 0 1536 581">
 <svg height="581" viewbox="0 0 1536 581" width="1536" xmlns="http://www.w3.org/2000/svg">
 <defs>
