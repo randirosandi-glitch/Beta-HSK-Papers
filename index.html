@@ -3155,22 +3155,22 @@ html body.dark .mainNav .navItem.active .navLabel,html body.dark .mainNav .navIt
 #exercise .hsk5PaperPassageText{font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:18px!important;line-height:1.9!important;color:var(--text)!important;white-space:pre-wrap!important;}
 /* Keep HSK 5 Reading comfortably legible on wide laptop screens. Smaller layouts retain their current scale. */
 @media (min-width:1400px) and (orientation:landscape){
-  #exercise .hsk5PaperPassageText{font-size:22px!important;line-height:1.85!important;}
+  #exercise .hsk5PaperPassageText{font-size:clamp(20px,1.2vw,23px)!important;line-height:1.85!important;}
   #exercise .hsk5PaperQText,
-  #exercise .hsk5PaperPart2 .hsk5PaperQText{font-size:19px!important;line-height:1.75!important;}
-  #exercise .hsk5PaperOption.opt{font-size:17px!important;line-height:1.6!important;}
-  #exercise .hsk5PaperPart2 .hsk5PaperQNo{font-size:18px!important;line-height:1.75!important;}
+  #exercise .hsk5PaperPart2 .hsk5PaperQText,
+  #exercise .hsk5PaperOption.opt{font-size:clamp(16px,calc(14px + .45vw),19px)!important;line-height:1.7!important;}
+  #exercise .hsk5PaperPart2 .hsk5PaperQNo{font-size:clamp(16px,calc(14px + .45vw),19px)!important;line-height:1.7!important;}
 }
 #exercise .hsk5PaperQuestion{margin:0!important;padding:7px 0 10px!important;border-bottom:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;}
 /* Scroll performance: defer off-screen Reading questions without changing their visual styling. */
 #exercise .hsk5PaperQuestion{content-visibility:auto;}
 
-#exercise .hsk5PaperQText{margin:0 0 5px!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:16px!important;line-height:1.65!important;font-weight:650!important;color:var(--text)!important;white-space:pre-wrap!important;}
+#exercise .hsk5PaperQText{margin:0 0 5px!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:clamp(16px,calc(14px + .45vw),19px)!important;line-height:1.7!important;font-weight:650!important;color:var(--text)!important;white-space:pre-wrap!important;}
 #exercise .hsk5PaperQText .paperQNo{font-family:inherit!important;font-weight:800!important;}
 #exercise .hsk5PaperOptions{display:flex!important;flex-wrap:nowrap!important;align-items:flex-start!important;gap:2px 20px!important;}
 #exercise .hsk5PaperOptions.paperOptionsTwoRows{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1px 20px!important;}
 #exercise .hsk5PaperOptions.paperOptionsTwoRows .hsk5PaperOption{width:100%!important;}
-#exercise .hsk5PaperOption.opt{appearance:none!important;-webkit-appearance:none!important;min-height:0!important;width:auto!important;margin:0!important;padding:1px 0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--text)!important;box-shadow:none!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:15px!important;line-height:1.55!important;text-align:left!important;transform:none!important;}
+#exercise .hsk5PaperOption.opt{appearance:none!important;-webkit-appearance:none!important;min-height:0!important;width:auto!important;margin:0!important;padding:1px 0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--text)!important;box-shadow:none!important;font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:clamp(16px,calc(14px + .45vw),19px)!important;line-height:1.7!important;text-align:left!important;transform:none!important;}
 #exercise .hsk5PaperOption.opt:hover,#exercise .hsk5PaperOption.opt:focus,#exercise .hsk5PaperOption.opt:active{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--text)!important;}
 #exercise .hsk5PaperOption.opt.selected{background:transparent!important;border:0!important;color:var(--text)!important;font-weight:800!important;padding:1px 0!important;}
 #exercise .hsk5PaperOption.opt.correct{background:transparent!important;border:0!important;color:var(--text)!important;font-weight:800!important;padding:1px 0!important;}
@@ -3653,8 +3653,8 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
 #exercise .hsk4PaperClozeQuestion .hsk5PaperQText{
   margin:0 0 6px!important;
   font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;
-  font-size:16px!important;
-  line-height:1.75!important;
+  font-size:clamp(16px,calc(14px + .45vw),19px)!important;
+  line-height:1.7!important;
   font-weight:500!important;
   white-space:pre-wrap!important;
 }
@@ -3717,10 +3717,10 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
   #exercise .hsk4PaperPermutation.opt{font-size:15px!important;}
 }
 @media (min-width:1400px) and (orientation:landscape){
-  #exercise .hsk4PaperWordBank{font-size:19px!important;}
+  #exercise .hsk4PaperWordBank{font-size:clamp(16px,calc(14px + .45vw),19px)!important;}
   #exercise .hsk4PaperClozeQuestion .hsk5PaperQText,
-  #exercise .hsk4PaperSentenceLine{font-size:19px!important;line-height:1.75!important;}
-  #exercise .hsk4PaperPermutation.opt{font-size:18px!important;}
+  #exercise .hsk4PaperSentenceLine,
+  #exercise .hsk4PaperPermutation.opt{font-size:clamp(16px,calc(14px + .45vw),19px)!important;line-height:1.7!important;}
 }
 body.dark #exercise .hsk4PaperOverallTitle,
 body.dark #exercise .hsk4PaperWordBank,
