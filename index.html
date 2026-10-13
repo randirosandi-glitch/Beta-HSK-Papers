@@ -3184,7 +3184,7 @@ html body.dark .mainNav .navItem.active .navLabel,html body.dark .mainNav .navIt
 #exercise .hsk5PaperPassage{margin:0 0 8px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;}
 #exercise .hsk5PaperPassageText{font-family:Kaiti,STKaiti,"Noto Serif CJK SC",serif!important;font-size:var(--type-reading-passage)!important;line-height:1.9!important;color:var(--text)!important;white-space:pre-wrap!important;}
 /* Keep HSK 5 Reading comfortably legible on wide laptop screens. Smaller layouts retain their current scale. */
-@media (min-width:1400px) and (orientation:landscape){
+@media (min-width:1200px) and (orientation:landscape){
   #exercise .hsk5PaperPassageText{font-size:var(--type-reading-passage)!important;line-height:1.85!important;}
   #exercise .hsk5PaperQText,
   #exercise .hsk5PaperPart2 .hsk5PaperQText,
@@ -3321,6 +3321,13 @@ html body.dark .mainNav .navItem.active .navLabel,html body.dark .mainNav .navIt
 @media(max-width:599px){
   #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionTitle{font-size:44px!important;}
   #exercise .section h2#exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction{margin-top:22px!important;font-size:21px!important;line-height:1.7!important;}
+  /* Keep the passage size unchanged; make the question UI proportionate on phones. */
+  #exercise .hsk5PaperQText,
+  #exercise .hsk5PaperOption.opt{font-size:16px!important;line-height:1.65!important;}
+  #exercise .hsk5PaperOptions{column-gap:12px!important;row-gap:4px!important;}
+  #exercise .hsk5PaperOptions.paperOptionsTwoRows{column-gap:12px!important;row-gap:4px!important;}
+  #exercise .hsk5PaperActions .btn{min-height:34px!important;padding:5px 9px!important;font-size:13px!important;}
+  #exercise .hsk5PaperFeedback{font-size:13px!important;line-height:1.4!important;padding:7px 9px!important;}
 }
 
 /* C5: HSK 5 Reading Part 2 — PDF-style numbering/content alignment. */
@@ -3739,14 +3746,14 @@ body.dark #exercise #exTitle.hsk5PaperSectionHeader .hsk5PaperSectionInstruction
   #exercise .hsk4PaperClozeQuestion .hsk5PaperQNo,
   #exercise .hsk4PaperSequenceQuestion .hsk5PaperQNo{font-size:var(--type-reading-question)!important;line-height:1.65!important;}
   #exercise .hsk4PaperClozeQuestion .hsk5PaperQText,
-  #exercise .hsk4PaperSentenceLine{font-size:var(--type-reading-question)!important;line-height:1.65!important;}
-  #exercise .hsk4PaperClozeOptions{column-gap:12px!important;row-gap:0!important;}
-  #exercise .hsk4PaperPart4 .hsk5PaperOptions{gap:1px 12px!important;}
-  #exercise .hsk4PaperPart4 .hsk5PaperOptions.paperOptionsTwoRows{gap:1px 10px!important;}
-  #exercise .hsk4PaperPermutations{gap:2px 3px!important;}
-  #exercise .hsk4PaperPermutation.opt{font-size:var(--type-reading-question)!important;}
+  #exercise .hsk4PaperSentenceLine{font-size:16px!important;line-height:1.65!important;}
+  #exercise .hsk4PaperClozeOptions{column-gap:10px!important;row-gap:3px!important;}
+  #exercise .hsk4PaperPart4 .hsk5PaperOptions{gap:3px 12px!important;}
+  #exercise .hsk4PaperPart4 .hsk5PaperOptions.paperOptionsTwoRows{gap:3px 10px!important;}
+  #exercise .hsk4PaperPermutations{gap:3px 5px!important;}
+  #exercise .hsk4PaperPermutation.opt{font-size:16px!important;line-height:1.6!important;}
 }
-@media (min-width:1400px) and (orientation:landscape){
+@media (min-width:1200px) and (orientation:landscape){
   #exercise .hsk4PaperWordBank{font-size:var(--type-reading-passage)!important;}
   #exercise .hsk4PaperClozeQuestion .hsk5PaperQText,
   #exercise .hsk4PaperSentenceLine,
