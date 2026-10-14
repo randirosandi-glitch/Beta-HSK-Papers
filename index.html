@@ -5128,7 +5128,7 @@ removeStrayEscapedNewlines();
 function finishAppBoot(){const loader=document.getElementById('appBootLoader');document.documentElement.classList.remove('app-booting');if(loader){loader.classList.add('hide');setTimeout(()=>loader.remove(),240)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>Promise.resolve(initApp()).finally(finishAppBoot),{once:true});else Promise.resolve(initApp()).finally(finishAppBoot);
 </script>
-<footer aria-label="Versi aplikasi" class="appFooter"><span>HSK Papers</span><span>v 1.31</span></footer>
+<footer aria-label="Versi aplikasi" class="appFooter"><span>HSK Papers</span><span>v 2.01</span></footer>
 <script>
 (function(){
   const originalApplyTheme=window.applyTheme;
@@ -6981,7 +6981,7 @@ function filterStudyPlanPicker(value){studyPlanPickerQuery=String(value||'');if(
     }).join('');
   }
 
-  const PACKAGE_CACHE_NAME='hsk-papers-package-cache-v4';
+  const PACKAGE_CACHE_NAME='hsk-papers-package-cache-v3';
   const PACKAGE_CACHE_TTL=30*24*60*60*1000;
   const packageRefresh=new Map();
 
@@ -8886,6 +8886,33 @@ body.dark #packagesScreen .packageCardV16Info small{color:var(--muted)!important
   #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Hanzi{font-size:88px!important;left:-28px!important;opacity:.13!important;}
 }
 body.dark #packagesScreen #packagesGrid.packageGridV16 .packageCardV16Hanzi{opacity:.12!important;}
+
+
+/* Stable cleanup: remove all CSS box and text shadows globally. */
+*, *::before, *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+
+/* FINAL STABLE SHADOW RESET
+   Keep navbar portrait blur intact; remove shadows regardless of theme,
+   component state, hover, active, focus, or pseudo-element. */
+html body *:not(#shadow-cleanup):not(#shadow-cleanup),
+html body *:not(#shadow-cleanup):not(#shadow-cleanup)::before,
+html body *:not(#shadow-cleanup):not(#shadow-cleanup)::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+html body *:not(#shadow-cleanup):not(#shadow-cleanup):hover,
+html body *:not(#shadow-cleanup):not(#shadow-cleanup):active,
+html body *:not(#shadow-cleanup):not(#shadow-cleanup):focus,
+html body *:not(#shadow-cleanup):not(#shadow-cleanup):focus-visible {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
 
 </style>
 </body>
