@@ -4660,7 +4660,7 @@ function hsk4PaperPart3(pkg,qs){
 }
 function hsk4Part3PermutationAnswer(q,value){
   const code=String(route?.packageCode||'');
-  if(!code.startsWith('H410')||Number(route?.sectionIndex)!==2||!Array.isArray(q?.[2])||q[2].length!==3)return String(value??'').trim().toUpperCase();
+  if(!code.startsWith('H410')||!Array.isArray(q?.[2])||q[2].length!==3)return String(value??'').trim().toUpperCase();
   const answer=String(value??'').trim().toUpperCase();
   if(/^[1-6]$/.test(answer))return permutations()[Number(answer)-1];
   return answer;
